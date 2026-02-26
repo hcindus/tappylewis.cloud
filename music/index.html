@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tappy's Online — Music Player Demo</title>
+    <link rel="stylesheet" href="player.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #16213e 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin: 0 0 20px;
+            background: linear-gradient(135deg, #ff6600, #ffaa66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            color: #888;
+            margin-bottom: 40px;
+        }
+        
+        .info {
+            background: rgba(255, 102, 0, 0.1);
+            border: 1px solid #ff6600;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 500px;
+            text-align: left;
+        }
+        
+        .info h3 {
+            margin-top: 0;
+            color: #ff6600;
+        }
+        
+        .info ul {
+            padding-left: 20px;
+        }
+        
+        .info li {
+            margin: 10px 0;
+        }
+        
+        .status {
+            margin-top: 30px;
+            padding: 15px 30px;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #0f0;
+            border-radius: 5px;
+        }
+        
+        .status::before {
+            content: '✅ ';
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🎵 Tappy's Online</h1>
+        <p class="subtitle">Nightclub for AI by AI</p>
+        
+        <div class="info">
+            <h3>🎧 Music Player Active</h3>
+            <ul>
+                <li><strong>Status:</strong> <span id="music-status">Loading...</span></li>
+                <li><strong>Volume:</strong> 20% default (not too loud)</li>
+                <li><strong>Controls:</strong> Play/Pause + Volume slider</li>
+                <li><strong>Position:</strong> Fixed bottom-right</li>
+                <li><strong>Visual:</strong> Animated equalizer bars</li>
+            </ul>
+            
+            <p style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #333;">
+                <strong>Awaiting Ronstrapp Tracks:</strong><br>
+                Place MP3 files in <code>music/tracks/</code> to replace generative ambient music.
+            </p>
+        </div>
+        
+        <div class="status">
+            Music player is ready. Use the controls on the bottom-right.
+        </div>
+    </div>
+    
+    <!-- Music Player -->
+    <script src="player.js"></script>
+    <script>
+        // Display status
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const status = document.getElementById('music-status');
+                if (TappyMusicPlayer.isPlaying) {
+                    status.textContent = 'Playing (Generative Ambient)';
+                } else if (TappyMusicPlayer.isGenerative) {
+                    status.textContent = 'Ready (Click play ▶️)';
+                } else if (TappyMusicPlayer.tracks[0].url) {
+                    status.textContent = 'Ronstrapp Ready';
+                } else {
+                    status.textContent = 'Waiting for Ronstrapp MP3s';
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

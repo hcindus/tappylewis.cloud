@@ -1,0 +1,142 @@
+/* 🎵 Tappy's Online Music Player */
+/* Fixed position, bottom right, volume control */
+
+.music-player {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 1px solid #ff6600;
+  border-radius: 12px;
+  padding: 12px 20px;
+  color: white;
+  z-index: 10000;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  box-shadow: 0 6px 20px rgba(255, 102, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.player-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.player-btn {
+  background: linear-gradient(135deg, #ff6600, #ff8533);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  font-size: 14px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(255, 102, 0, 0.4);
+}
+
+.player-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 102, 0, 0.6);
+}
+
+.player-btn:active {
+  transform: scale(0.95);
+}
+
+#track-name {
+  font-size: 13px;
+  min-width: 100px;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #ccc;
+}
+
+#volume {
+  width: 80px;
+  height: 4px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: #333;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+#volume::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff6600;
+  cursor: pointer;
+}
+
+#volume::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #ff6600;
+  cursor: pointer;
+  border: none;
+}
+
+#volume-label {
+  font-size: 11px;
+  min-width: 30px;
+  color: #ff6600;
+  font-weight: 600;
+}
+
+/* Visualizer bars */
+.visualizer {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 20px;
+}
+
+.visualizer .bar {
+  width: 3px;
+  background: linear-gradient(to top, #ff6600, #ffaa66);
+  border-radius: 1px;
+  animation: pulse 0.5s ease-in-out infinite;
+}
+
+.visualizer .bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+.visualizer .bar:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+.visualizer .bar:nth-child(3) { height: 12px; animation-delay: 0.2s; }
+.visualizer .bar:nth-child(4) { height: 18px; animation-delay: 0.3s; }
+
+@keyframes pulse {
+  0%, 100% { transform: scaleY(0.7); }
+  50% { transform: scaleY(1); }
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+  .music-player {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    padding: 10px 15px;
+  }
+  
+  .player-controls {
+    justify-content: space-between;
+  }
+  
+  #track-name {
+    flex: 1;
+    min-width: 80px;
+  }
+  
+  #volume {
+    width: 60px;
+  }
+}
