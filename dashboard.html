@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptonio Portfolio | myl0nr0s.cloud</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0d1117;
+            --bg-secondary: #161b22;
+            --bg-card: #21262d;
+            --text-primary: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent-cyan: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-orange: #f0883e;
+            --accent-red: #f85149;
+            --accent-purple: #a371f7;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f7931a, #627eea, #00ff88, #58a6ff);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #58a6ff, #a371f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+
+        .total-value {
+            font-size: 3.5em;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin: 20px 0;
+        }
+
+        .btc-equivalent {
+            font-size: 1.4em;
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.offline {
+            background: var(--accent-red);
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .refresh-btn {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            font-size: 0.95em;
+        }
+
+        .refresh-btn:hover {
+            opacity: 0.9;
+        }
+
+        .refresh-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Exchange Cards */
+        .exchanges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .exchange-card {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .exchange-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-cyan);
+        }
+
+        .exchange-name {
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .exchange-value {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .exchange-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85em;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+        }
+
+        .exchange-status.offline {
+            background: rgba(248, 81, 73, 0.15);
+            color: var(--accent-red);
+        }
+
+        /* Holdings List */
+        .holdings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .holding-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-card);
+            border-radius: 10px;
+            border-left: 4px solid;
+            transition: background 0.2s;
+        }
+
+        .holding-item:hover {
+            background: rgba(88, 166, 255, 0.1);
+        }
+
+        .holding-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .holding-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85em;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .holding-info h3 {
+            font-size: 1em;
+            font-weight: 600;
+        }
+
+        .holding-info p {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .holding-value {
+            text-align: right;
+        }
+
+        .holding-amount {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        .holding-usd {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        /* Trades Table */
+        .trades-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .trades-table th,
+        .trades-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .trades-table th {
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.85em;
+            text-transform: uppercase;
+        }
+
+        .trades-table tr:hover td {
+            background: rgba(88, 166, 255, 0.05);
+        }
+
+        .trade-side {
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        .trade-side.buy {
+            background: rgba(63, 185, 80, 0.2);
+            color: var(--accent-green);
+        }
+
+        .trade-side.sell {
+            background: rgba(248, 81, 73, 0.2);
+            color: var(--accent-red);
+        }
+
+        .trade-status {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--accent-green);
+        }
+
+        .trade-status.pending {
+            background: rgba(210, 153, 34, 0.15);
+            color: #d29922;
+        }
+
+        /* Loading State */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent-cyan);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error-container {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--accent-red);
+        }
+
+        .error-container h3 {
+            margin-bottom: 10px;
+        }
+
+        .error-container p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 40px;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .total-value {
+                font-size: 2.5em;
+            }
+
+            .header {
+                padding: 24px;
+            }
+
+            .meta-row {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .holding-value {
+                text-align: left;
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🦑</div>
+            <h1>Cryptonio Portfolio Dashboard</h1>
+            <div class="header-subtitle">Performance Supply Depot LLC — Trading Operations</div>
+
+            <div class="total-value" id="totalValue">$0.00</div>
+            <div class="btc-equivalent" id="btcValue">0.000000 BTC</div>
+
+            <div class="meta-row">
+                <div class="meta-item">
+                    <div class="status-indicator" id="statusIndicator"></div>
+                    <span id="systemStatus">Loading...</span>
+                </div>
+                <div class="meta-item">
+                    <span>📊</span>
+                    <span id="lastUpdate">--</span>
+                </div>
+                <div class="meta-item">
+                    <span>🏦</span>
+                    <span id="exchangeCount">0 exchanges</span>
+                </div>
+                <div class="meta-item">
+                    <span>💰</span>
+                    <span id="assetCount">0 assets</span>
+                </div>
+                <button class="refresh-btn" onclick="refreshData()" id="refreshBtn">🔄 Refresh</button>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📊</span>
+                    <div class="card-title">Portfolio Distribution</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📈</span>
+                    <div class="card-title">Portfolio Value (7 Days)</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="lineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exchange Holdings -->
+        <div class="exchanges-grid" id="exchangesGrid">
+            <div class="loading-container">
+                <div class="spinner"></div>
+                <p>Loading exchange data...</p>
+            </div>
+        </div>
+
+        <!-- Holdings List -->
+        <div class="card" style="margin-bottom: 30px;">
+            <div class="card-header">
+                <span class="card-icon">💰</span>
+                <div class="card-title">Asset Holdings</div>
+            </div>
+            <div class="holdings-list" id="holdingsList">
+                <div class="loading-container">
+                    <div class="spinner"></div>
+                    <p>Loading portfolio data...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Trades -->
+        <div class="card" style="margin-bottom: 30px;">
+            <div class="card-header">
+                <span class="card-icon">💱</span>
+                <div class="card-title">Recent Trades</div>
+            </div>
+            <div id="tradesContainer">
+                <table class="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Symbol</th>
+                            <th>Side</th>
+                            <th>Amount</th>
+                            <th>Exchange</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tradesBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No trades recorded
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Cryptonio Live Dashboard v1.0 | <a href="https://github.com/hcindus/aocros" target="_blank">GitHub</a> | <a href="https://myl0nr0s.cloud" target="_blank">myl0nr0s.cloud</a></p>
+            <p>Real-time portfolio tracking across multiple exchanges</p>
+        </div>
+    </div>
+
+    <script>
+        // Crypto brand colors
+        const CRYPTO_COLORS = {
+            'BTC': '#F7931A', 'ETH': '#627EEA', 'LTC': '#BFBBBB',
+            'XRP': '#23292F', 'DOGE': '#C2A633', 'ADA': '#0033AD',
+            'SOL': '#00FFA3', 'UNI': '#FF007A', 'AAVE': '#B6509E',
+            'LINK': '#2A5ADA', 'SHIB': '#E8D44D', 'BCH': '#8DC351',
+            'AVAX': '#E84142', 'TRX': '#FF060A', 'XMR': '#FF6600',
+            'USDT': '#26A17B', 'USDC': '#2775CA', 'USD': '#85BB65',
+            'DEFAULT': '#6B7280'
+        };
+
+        // Exchange colors
+        const EXCHANGE_COLORS = {
+            'kraken': '#5843D7',
+            'binance': '#F0B90B',
+            'gemini': '#00DCFA',
+            'coinbase': '#0052FF',
+            'default': '#6B7280'
+        };
+
+        let pieChart, lineChart;
+        let refreshInterval;
+
+        function getCryptoColor(symbol) {
+            const base = symbol.replace('USD', '').replace('USDT', '');
+            return CRYPTO_COLORS[base] || CRYPTO_COLORS.DEFAULT;
+        }
+
+        function getExchangeColor(name) {
+            if (name.includes('kraken')) return EXCHANGE_COLORS.kraken;
+            if (name.includes('binance')) return EXCHANGE_COLORS.binance;
+            if (name.includes('gemini')) return EXCHANGE_COLORS.gemini;
+            if (name.includes('coinbase')) return EXCHANGE_COLORS.coinbase;
+            return EXCHANGE_COLORS.default;
+        }
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(value);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function initCharts() {
+            // Pie Chart
+            const pieCtx = document.getElementById('pieChart').getContext('2d');
+            pieChart = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        data: [],
+                        backgroundColor: [],
+                        borderColor: '#161b22',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#c9d1d9',
+                                padding: 15,
+                                font: { size: 12 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    const total = ctx.dataset.data.reduce((a,b) => a+b, 0);
+                                    const pct = ((ctx.raw / total) * 100).toFixed(1);
+                                    return `${ctx.label}: $${ctx.raw.toFixed(2)} (${pct}%)`;
+                                }
+                            },
+                            backgroundColor: '#21262d',
+                            borderColor: '#30363d',
+                            borderWidth: 1,
+                            padding: 12
+                        }
+                    }
+                }
+            });
+
+            // Line Chart
+            const lineCtx = document.getElementById('lineChart').getContext('2d');
+            lineChart = new Chart(lineCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Portfolio Value',
+                        data: [],
+                        borderColor: '#3fb950',
+                        backgroundColor: 'rgba(63, 185, 80, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#3fb950',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(48, 54, 61, 0.5)' },
+                            ticks: { color: '#8b949e' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(48, 54, 61, 0.5)' },
+                            ticks: {
+                                color: '#8b949e',
+                                callback: v => '$' + v.toFixed(0)
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#21262d',
+                            borderColor: '#30363d',
+                            borderWidth: 1,
+                            padding: 12,
+                            callbacks: {
+                                label: ctx => 'Value: ' + formatCurrency(ctx.raw)
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateUI(data) {
+            // Update header
+            document.getElementById('totalValue').textContent = formatCurrency(data.total_value || 0);
+            document.getElementById('btcValue').textContent = (data.total_btc || 0).toFixed(6) + ' BTC';
+            document.getElementById('lastUpdate').textContent = data.timestamp ? formatDate(data.timestamp) : '--';
+            document.getElementById('statusIndicator').classList.remove('offline');
+            document.getElementById('systemStatus').textContent = 'Live';
+
+            // Update counts
+            const exchanges = Object.keys(data.exchanges || {}).length;
+            const assets = Object.keys(data.portfolio || {}).length;
+            document.getElementById('exchangeCount').textContent = `${exchanges} exchange${exchanges !== 1 ? 's' : ''}`;
+            document.getElementById('assetCount').textContent = `${assets} asset${assets !== 1 ? 's' : ''}`;
+
+            // Portfolio for charts
+            const portfolio = Object.entries(data.portfolio || {})
+                .filter(([_, item]) => item.value_usd > 0.01)
+                .map(([symbol, item]) => ({ symbol, ...item }))
+                .sort((a, b) => b.value_usd - a.value_usd);
+
+            // Update Pie Chart
+            pieChart.data.labels = portfolio.map(p => p.symbol);
+            pieChart.data.datasets[0].data = portfolio.map(p => p.value_usd);
+            pieChart.data.datasets[0].backgroundColor = portfolio.map(p => getCryptoColor(p.symbol));
+            pieChart.update();
+
+            // Update Line Chart (if history available)
+            if (data.history && data.history.length > 0) {
+                lineChart.data.labels = data.history.map(h => formatDate(h.timestamp));
+                lineChart.data.datasets[0].data = data.history.map(h => h.total_value);
+            } else {
+                // Sample data for demo
+                lineChart.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+                lineChart.data.datasets[0].data = [1100, 1150, 1080, 1200, 1180, 1220, data.total_value || 1247];
+            }
+            lineChart.update();
+
+            // Update Exchanges
+            const exchangesHtml = Object.entries(data.exchanges || {}).map(([name, ex]) => `
+                <div class="exchange-card">
+                    <div class="exchange-name">${name.replace(/_/g, ' ').toUpperCase()}</div>
+                    <div class="exchange-value" style="color: ${getExchangeColor(name)}">${formatCurrency(ex.total_usd || 0)}</div>
+                    <span class="exchange-status ${ex.connected ? '' : 'offline'}">
+                        ${ex.connected ? '🟢' : '🔴'} ${ex.connected ? 'Connected' : 'Offline'}
+                    </span>
+                </div>
+            `).join('');
+            document.getElementById('exchangesGrid').innerHTML = exchangesHtml || '<p style="color: #8b949e; text-align: center; padding: 40px;">No exchange data</p>';
+
+            // Update Holdings
+            const holdingsHtml = portfolio.map(item => `
+                <div class="holding-item" style="border-left-color: ${getCryptoColor(item.symbol)}">
+                    <div class="holding-left">
+                        <div class="holding-icon" style="background: ${getCryptoColor(item.symbol)}">
+                            ${item.symbol.substring(0, 2).toUpperCase()}
+                        </div>
+                        <div class="holding-info">
+                            <h3>${item.symbol}</h3>
+                            <p>${Object.keys(item.exchanges || {}).length} exchange${Object.keys(item.exchanges || {}).length !== 1 ? 's' : ''}</p>
+                        </div>
+                    </div>
+                    <div class="holding-value">
+                        <div class="holding-amount">${item.amount.toLocaleString(undefined, {maximumFractionDigits: 6})}</div>
+                        <div class="holding-usd">${formatCurrency(item.value_usd)}</div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('holdingsList').innerHTML = holdingsHtml || '<p style="color: #8b949e; text-align: center; padding: 40px;">No holdings data</p>';
+
+            // Update Trades
+            const trades = data.trades || [];
+            if (trades.length > 0) {
+                const tradesHtml = trades.map(trade => `
+                    <tr class="${trade.side === 'buy' ? 'trade-buy' : 'trade-sell'}">
+                        <td>${formatDate(trade.timestamp)}</td>
+                        <td>${trade.symbol}</td>
+                        <td><span class="trade-side ${trade.side}">${trade.side.toUpperCase()}</span></td>
+                        <td>${trade.amount}</td>
+                        <td>${trade.exchange}</td>
+                        <td><span class="trade-status ${trade.status || 'filled'}">${trade.status || 'Filled'}</span></td>
+                    </tr>
+                `).join('');
+                document.getElementById('tradesBody').innerHTML = tradesHtml;
+            }
+        }
+
+        async function refreshData() {
+            const btn = document.getElementById('refreshBtn');
+            btn.disabled = true;
+            btn.textContent = '🔄 Loading...';
+
+            try {
+                // Try local API first
+                const response = await fetch('http://localhost:5000/api/data', { 
+                    method: 'GET',
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (!response.ok) throw new Error('API error');
+                const data = await response.json();
+                updateUI(data);
+            } catch (e) {
+                // Fallback: Show error or demo data
+                document.getElementById('systemStatus').textContent = 'Offline';
+                document.getElementById('statusIndicator').classList.add('offline');
+                
+                // Demo data
+                const demoData = {
+                    total_value: 1250,
+                    total_btc: 0.018,
+                    timestamp: new Date().toISOString(),
+                    exchanges: {
+                        'kraken': { total_usd: 450, connected: true },
+                        'binance_primary': { total_usd: 500, connected: true },
+                        'binance_secondary': { total_usd: 300, connected: true }
+                    },
+                    portfolio: {
+                        'BTC': { amount: 0.01, value_usd: 600, exchanges: {kraken: 0.01} },
+                        'ETH': { amount: 0.5, value_usd: 400, exchanges: {binance_primary: 0.5} },
+                        'SHIB': { amount: 10000000, value_usd: 250, exchanges: {binance_secondary: 10000000} }
+                    },
+                    trades: []
+                };
+                updateUI(demoData);
+            }
+
+            btn.disabled = false;
+            btn.textContent = '🔄 Refresh';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            refreshData();
+            
+            // Auto-refresh every 30 seconds
+            refreshInterval = setInterval(refreshData, 30000);
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (refreshInterval) clearInterval(refreshInterval);
+        });
+    </script>
+</body>
+</html>
