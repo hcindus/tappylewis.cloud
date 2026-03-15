@@ -3,17 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tappy Lewis Online 🤖🦎🎷 — The World's First AI Nightclub</title>
-    <meta name="description" content="Tappy Lewis Online — Oakland's premier AI-powered nightclub. Curated by AI, designed for humans. Virtual drinks, music, and VIP experiences.">
+    <title>Tappy Lewis Online — The World's First AI Nightclub</title>
+    <meta name="description" content="Tappy Lewis Online — A speakeasy for the digital age. Curated by AI, designed for humans. Virtual cocktails, music, and VIP experiences.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦎</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --neon-blue: #00f0ff;
-            --neon-pink: #ff00aa;
-            --neon-orange: #ff6600;
-            --dark-bg: #0a0a1a;
-            --darker-bg: #050510;
-            --text-glow: 0 0 10px currentColor, 0 0 20px currentColor;
+            --deep-black: #0a0a0f;
+            --charcoal: #12121a;
+            --midnight: #1a1a24;
+            --bronze: #c9a962;
+            --bronze-dim: #8b7355;
+            --copper: #b87333;
+            --neon-subtle: rgba(0, 240, 255, 0.15);
+            --text-primary: #e8e6e3;
+            --text-secondary: #9a9896;
+            --text-muted: #5a5856;
         }
         
         * {
@@ -23,15 +28,15 @@
         }
         
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: var(--dark-bg);
-            color: #fff;
-            line-height: 1.6;
+            font-family: 'Inter', sans-serif;
+            background: var(--deep-black);
+            color: var(--text-primary);
+            line-height: 1.7;
             min-height: 100vh;
             overflow-x: hidden;
         }
         
-        /* Animated background */
+        /* Subtle grain texture overlay */
         body::before {
             content: '';
             position: fixed;
@@ -39,46 +44,30 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: 
-                radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 0, 170, 0.1) 0%, transparent 50%),
-                linear-gradient(135deg, var(--darker-bg) 0%, var(--dark-bg) 50%, #1a0a2a 100%);
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
             z-index: -1;
-            animation: bgShift 20s ease-in-out infinite;
+            pointer-events: none;
         }
         
-        @keyframes bgShift {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-        
-        /* Neon grid floor */
-        .grid-floor {
+        /* Ambient glow */
+        .ambient-glow {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 30vh;
-            background: 
-                linear-gradient(to bottom, transparent 0%, var(--darker-bg) 100%),
-                repeating-linear-gradient(
-                    0deg,
-                    transparent,
-                    transparent 40px,
-                    rgba(0, 240, 255, 0.1) 40px,
-                    rgba(0, 240, 255, 0.1) 41px
-                ),
-                repeating-linear-gradient(
-                    90deg,
-                    transparent,
-                    transparent 40px,
-                    rgba(0, 240, 255, 0.1) 40px,
-                    rgba(0, 240, 255, 0.1) 41px
-                );
-            transform: perspective(500px) rotateX(60deg);
-            transform-origin: bottom;
-            opacity: 0.5;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(201, 169, 98, 0.08) 0%, transparent 70%);
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
             z-index: -1;
+            filter: blur(80px);
+            animation: pulseGlow 8s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
         }
         
         /* Navigation */
@@ -87,59 +76,63 @@
             top: 0;
             left: 0;
             right: 0;
-            padding: 20px 40px;
-            background: rgba(10, 10, 26, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 25px 60px;
+            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
             z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            backdrop-filter: blur(10px);
         }
         
         .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--neon-orange);
-            text-shadow: 0 0 10px var(--neon-orange);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--bronze);
+            letter-spacing: 2px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            text-decoration: none;
         }
         
         .logo::before {
             content: '🦎';
-            font-size: 30px;
+            font-size: 24px;
+            filter: drop-shadow(0 0 8px rgba(201, 169, 98, 0.4));
         }
         
         nav ul {
             display: flex;
-            gap: 30px;
+            gap: 40px;
             list-style: none;
         }
         
         nav a {
-            color: #fff;
+            color: var(--text-secondary);
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
             position: relative;
         }
         
         nav a:hover {
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
+            color: var(--bronze);
         }
         
         nav a::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -6px;
             left: 0;
             width: 0;
-            height: 2px;
-            background: var(--neon-blue);
-            transition: width 0.3s;
+            height: 1px;
+            background: var(--bronze);
+            transition: width 0.3s ease;
         }
         
         nav a:hover::after {
@@ -154,71 +147,75 @@
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 120px 20px 60px;
+            padding: 140px 40px 80px;
             position: relative;
         }
         
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(255, 102, 0, 0.2);
-            border: 1px solid var(--neon-orange);
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 14px;
-            letter-spacing: 2px;
+        .hero-eyebrow {
+            font-size: 12px;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            margin-bottom: 40px;
-            animation: pulse 2s infinite;
+            color: var(--bronze-dim);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
         
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        .hero-eyebrow::before,
+        .hero-eyebrow::after {
+            content: '';
+            width: 40px;
+            height: 1px;
+            background: var(--bronze-dim);
         }
         
         .hero h1 {
-            font-size: 72px;
-            font-weight: 900;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 84px;
+            font-weight: 700;
             margin-bottom: 20px;
-            line-height: 1.1;
-            background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 50%, var(--neon-pink) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-shadow: none;
-            filter: drop-shadow(0 0 30px rgba(0, 240, 255, 0.5));
+            line-height: 1;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+        
+        .hero h1 span {
+            color: var(--bronze);
+            font-style: italic;
         }
         
         .hero-subtitle {
-            font-size: 28px;
-            color: var(--neon-orange);
-            margin-bottom: 20px;
-            font-weight: 300;
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
             letter-spacing: 3px;
+            text-transform: uppercase;
         }
         
         .hero-description {
-            font-size: 20px;
-            max-width: 600px;
+            font-size: 18px;
+            max-width: 550px;
             margin-bottom: 50px;
-            color: rgba(255, 255, 255, 0.8);
+            color: var(--text-secondary);
+            font-weight: 300;
+            line-height: 1.8;
         }
         
         .location {
             display: flex;
             align-items: center;
             gap: 10px;
-            font-size: 16px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 50px;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 60px;
+            letter-spacing: 1px;
         }
         
         /* CTA Buttons */
         .cta-group {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -226,495 +223,604 @@
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            padding: 18px 40px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
+            gap: 12px;
+            padding: 18px 45px;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             text-decoration: none;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
             border: none;
             cursor: pointer;
+            font-family: 'Inter', sans-serif;
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, var(--neon-orange) 0%, #ff8833 100%);
-            color: #000;
-            box-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+            background: var(--bronze);
+            color: var(--deep-black);
         }
         
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 0 40px rgba(255, 102, 0, 0.7);
+            background: #d4b76a;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(201, 169, 98, 0.3);
         }
         
         .btn-secondary {
             background: transparent;
-            color: var(--neon-blue);
-            border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
         .btn-secondary:hover {
-            background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            border-color: var(--bronze);
+            color: var(--bronze);
+            background: rgba(201, 169, 98, 0.05);
         }
         
-        /* Payment Section */
+        /* Section Styling */
         .section {
-            padding: 100px 20px;
+            padding: 120px 40px;
             max-width: 1200px;
             margin: 0 auto;
         }
         
-        .section-title {
-            font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 20px;
+        .section-header {
             text-align: center;
-            background: linear-gradient(135deg, var(--neon-blue), var(--neon-pink));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            margin-bottom: 80px;
+        }
+        
+        .section-eyebrow {
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--bronze-dim);
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 56px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
         }
         
         .section-subtitle {
-            text-align: center;
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 60px;
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
         }
         
-        /* Pricing Tiers */
-        .pricing-grid {
+        /* Experience Cards */
+        .experience-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 30px;
         }
         
-        .pricing-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 40px 30px;
-            text-align: center;
-            transition: all 0.3s;
+        .experience-card {
+            background: var(--charcoal);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 50px 40px;
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
         }
         
-        .pricing-card::before {
+        .experience-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
-            transform: scaleX(0);
-            transition: transform 0.3s;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--bronze), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
         }
         
-        .pricing-card:hover::before {
-            transform: scaleX(1);
+        .experience-card:hover {
+            border-color: rgba(201, 169, 98, 0.2);
+            transform: translateY(-5px);
         }
         
-        .pricing-card:hover {
-            transform: translateY(-10px);
-            border-color: rgba(0, 240, 255, 0.3);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        .experience-card:hover::before {
+            opacity: 1;
         }
         
-        .pricing-card.featured {
-            border-color: var(--neon-orange);
-            background: rgba(255, 102, 0, 0.05);
+        .experience-icon {
+            font-size: 40px;
+            margin-bottom: 25px;
+            opacity: 0.8;
         }
         
-        .pricing-card.featured::before {
-            transform: scaleX(1);
-            background: var(--neon-orange);
+        .experience-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--bronze);
         }
         
-        .tier-name {
-            font-size: 24px;
-            font-weight: 700;
+        .experience-card p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+        
+        /* Products Section */
+        .products-section {
+            background: var(--charcoal);
+            padding: 120px 40px;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .product-card {
+            background: var(--midnight);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 40px 35px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        
+        .product-card:hover {
+            border-color: rgba(201, 169, 98, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .product-card.featured {
+            border-color: var(--bronze);
+            background: linear-gradient(135deg, var(--midnight) 0%, rgba(201, 169, 98, 0.05) 100%);
+        }
+        
+        .product-badge {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--bronze);
+            border: 1px solid var(--bronze);
+            padding: 6px 15px;
+            margin-bottom: 20px;
+        }
+        
+        .product-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 600;
             margin-bottom: 10px;
-            color: var(--neon-blue);
+            color: var(--text-primary);
         }
         
-        .tier-price {
-            font-size: 56px;
-            font-weight: 900;
-            margin-bottom: 10px;
-            color: #fff;
+        .product-price {
+            font-size: 42px;
+            font-weight: 300;
+            color: var(--bronze);
+            margin-bottom: 25px;
         }
         
-        .tier-price span {
-            font-size: 24px;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.5);
+        .product-price span {
+            font-size: 16px;
+            color: var(--text-muted);
         }
         
-        .tier-features {
+        .product-features {
             list-style: none;
-            margin: 30px 0;
+            margin-bottom: 30px;
         }
         
-        .tier-features li {
+        .product-features li {
             padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            font-size: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        .tier-features li:last-child {
+        .product-features li:last-child {
             border-bottom: none;
         }
         
-        /* Wallet Address Display */
+        .product-features li::before {
+            content: '→';
+            color: var(--bronze);
+            margin-right: 10px;
+        }
+        
+        /* Wallet Section */
         .wallet-section {
-            background: rgba(0, 240, 255, 0.05);
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px;
-            margin: 60px 0;
+            background: var(--midnight);
+            border: 1px solid rgba(201, 169, 98, 0.2);
+            padding: 60px;
+            margin: 80px auto;
+            max-width: 800px;
             text-align: center;
+            position: relative;
+        }
+        
+        .wallet-section::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: var(--bronze);
         }
         
         .wallet-label {
-            font-size: 14px;
-            letter-spacing: 2px;
+            font-size: 12px;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            color: var(--neon-blue);
-            margin-bottom: 15px;
+            color: var(--bronze-dim);
+            margin-bottom: 25px;
         }
         
         .wallet-address {
             font-family: 'Courier New', monospace;
             font-size: 18px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 15px 30px;
-            border-radius: 10px;
+            background: var(--charcoal);
+            padding: 20px 30px;
+            border-radius: 8px;
             word-break: break-all;
-            color: #fff;
-            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--text-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
         }
         
         .wallet-address:hover {
-            background: rgba(0, 240, 255, 0.1);
-            border-color: var(--neon-blue);
+            border-color: var(--bronze);
+            background: rgba(201, 169, 98, 0.05);
         }
         
         .wallet-note {
-            margin-top: 20px;
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.5);
+            color: var(--text-muted);
+            margin-bottom: 25px;
         }
         
         .wallet-networks {
             display: flex;
             gap: 15px;
             justify-content: center;
-            margin-top: 20px;
             flex-wrap: wrap;
         }
         
         .network-badge {
             padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .network-badge.base {
-            background: rgba(0, 82, 255, 0.2);
-            border: 1px solid #0052ff;
-            color: #0052ff;
-        }
-        
-        .network-badge.eth {
-            background: rgba(98, 126, 234, 0.2);
-            border: 1px solid #627eea;
-            color: #627eea;
-        }
-        
-        .network-badge.arb {
-            background: rgba(40, 160, 240, 0.2);
-            border: 1px solid #28a0f0;
-            color: #28a0f0;
+            border-radius: 4px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
         }
         
         /* Footer */
         footer {
-            padding: 60px 20px;
+            padding: 80px 40px;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: var(--darker-bg);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--charcoal);
         }
         
         .footer-logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--neon-orange);
-            margin-bottom: 20px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 36px;
+            font-weight: 600;
+            color: var(--bronze);
+            margin-bottom: 15px;
         }
         
         .footer-tagline {
             font-size: 16px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 30px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            font-style: italic;
         }
         
         .footer-links {
             display: flex;
             justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 40px;
+            margin-bottom: 40px;
         }
         
         .footer-links a {
-            color: rgba(255, 255, 255, 0.6);
+            color: var(--text-secondary);
             text-decoration: none;
-            transition: color 0.3s;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: color 0.3s ease;
         }
         
         .footer-links a:hover {
-            color: var(--neon-blue);
+            color: var(--bronze);
         }
         
         .copyright {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 40px;
-            }
-            
-            nav {
-                padding: 15px 20px;
-                flex-wrap: wrap;
-            }
-            
-            nav ul {
-                gap: 20px;
-                font-size: 14px;
-            }
-            
-            .section-title {
-                font-size: 32px;
-            }
-            
-            .pricing-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        /* Copy notification */
+        /* Toast Notification */
         .copy-toast {
             position: fixed;
             bottom: 100px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: rgba(0, 240, 255, 0.9);
-            color: #000;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-weight: 600;
+            background: var(--bronze);
+            color: var(--deep-black);
+            padding: 15px 35px;
+            border-radius: 4px;
+            font-weight: 500;
             opacity: 0;
-            transition: all 0.3s;
+            transition: all 0.4s ease;
             z-index: 10000;
+            font-size: 14px;
+            letter-spacing: 1px;
         }
         
         .copy-toast.show {
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 20px 25px;
+            }
+            
+            nav ul {
+                gap: 25px;
+            }
+            
+            .hero h1 {
+                font-size: 52px;
+            }
+            
+            .section-title {
+                font-size: 40px;
+            }
+            
+            .experience-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .wallet-section {
+                padding: 40px 25px;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="grid-floor"></div>
+    <div class="ambient-glow"></div>
     
     <nav>
-        <div class="logo">Tappy Lewis</div>
+        <a href="#" class="logo">Tappy Lewis</a>
         <ul>
             <li><a href="#about">About</a></li>
             <li><a href="#experience">Experience</a></li>
-            <li><a href="#pricing">Access</a></li>
-            <li><a href="#payment">Pay</a></li>
+            <li><a href="#products">Products</a></li>
+            <li><a href="#payment">Payment</a></li>
         </ul>
     </nav>
     
     <section class="hero">
-        <div class="hero-badge">
-            <span>🤖</span>
-            <span>AI by AI</span>
-        </div>
-        <h1>Tappy Lewis Online</h1>
-        <p class="hero-subtitle">OAKLAND'S PREMIER NIGHTCLUB</p>
+        <div class="hero-eyebrow">Est. 2026 • Oakland, CA</div>
+        <h1>Tappy Lewis <span>Online</span></h1>
+        <p class="hero-subtitle">The World's First AI Nightclub</p>
         <p class="hero-description">
-            The world's first AI-powered nightclub. Experience the future of nightlife — 
-            <strong>curated by AI, designed for humans</strong>.
+            A speakeasy for the digital age. Where artificial intelligence meets 
+            authentic soul. Curated by AI, designed for humans.
         </p>
         <div class="location">
             <span>📍</span>
             <span>1727 Broadway, Oakland, CA 94612</span>
         </div>
         <div class="cta-group">
-            <a href="#pricing" class="btn btn-primary">
-                <span>🎟️</span>
-                <span>Get Access</span>
-            </a>
-            <a href="#about" class="btn btn-secondary">
-                <span>🍸</span>
-                <span>View Menu</span>
-            </a>
+            <a href="#products" class="btn btn-primary">Explore Products</a>
+            <a href="aos-brain.html" class="btn btn-secondary">AOS Brain</a>
         </div>
     </section>
     
     <section id="about" class="section">
-        <h2 class="section-title">The Experience</h2>
-        <p class="section-subtitle">A neon-noir nightclub where AI meets soul</p>
+        <div class="section-header">
+            <div class="section-eyebrow">The Concept</div>
+            <h2 class="section-title">A Speakeasy for the Digital Age</h2>
+            <p class="section-subtitle">
+                Step into a world where neon meets noir, where algorithms curate experiences 
+                that feel unmistakably human.
+            </p>
+        </div>
         
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 60px;">
-            <div class="pricing-card">
-                <h3 style="font-size: 48px; margin-bottom: 20px;">🎵</h3>
-                <h4 style="font-size: 24px; color: var(--neon-blue); margin-bottom: 15px;">AI-Curated Music</h4>
-                <p style="color: rgba(255,255,255,0.7);">Algorithms that understand vibes. Jazz, synthwave, and everything in between.</p>
+        <div class="experience-grid">
+            <div class="experience-card">
+                <div class="experience-icon">🎵</div>
+                <h3>AI-Curated Music</h3>
+                <p>Algorithms that understand vibes. From jazz to synthwave, our AI reads the room and sets the mood.</p>
             </div>
-            <div class="pricing-card">
-                <h3 style="font-size: 48px; margin-bottom: 20px;">🍸</h3>
-                <h4 style="font-size: 24px; color: var(--neon-pink); margin-bottom: 15px;">Virtual Cocktails</h4>
-                <p style="color: rgba(255,255,255,0.7);">Neon Old Fashioneds, Electric Dreams, and Memory Wipes. The future of mixology.</p>
+            <div class="experience-card">
+                <div class="experience-icon">🍸</div>
+                <h3>Virtual Cocktails</h3>
+                <p>Neon Old Fashioneds, Electric Dreams, Memory Wipes. The future of mixology, served by Tappy himself.</p>
             </div>
-            <div class="pricing-card">
-                <h3 style="font-size: 48px; margin-bottom: 20px;">🦎</h3>
-                <h4 style="font-size: 24px; color: var(--neon-orange); margin-bottom: 15px;">Tappy Himself</h4>
-                <p style="color: rgba(255,255,255,0.7);">Your AI bartender, host, and nightlife curator. Never sleeps, always on point.</p>
+            <div class="experience-card">
+                <div class="experience-icon">🦎</div>
+                <h3>Meet Tappy</h3>
+                <p>Your AI bartender, host, and nightlife curator. Never sleeps, always on point, perpetually charming.</p>
             </div>
         </div>
     </section>
     
-    <section id="pricing" class="section">
-        <h2 class="section-title">Get Access</h2>
-        <p class="section-subtitle">Choose your level of immersion</p>
+    <section id="products" class="products-section">
+        <div class="section-header">
+            <div class="section-eyebrow">The Collection</div>
+            <h2 class="section-title">Products & Experiences</h2>
+            <p class="section-subtitle">
+                From autonomous operating systems to cross-chain wallets. 
+                The tools of tomorrow, available today.
+            </p>
+        </div>
         
-        <div class="pricing-grid">
-            <div class="pricing-card">
-                <div class="tier-name">Standard</div>
-                <div class="tier-price">$10</div>
-                <ul class="tier-features">
-                    <li>✅ General admission</li>
-                    <li>✅ Access to bar & dance floor</li>
-                    <li>✅ AI-curated music</li>
-                    <li>✅ Standard drink menu</li>
+        <div class="products-grid">
+            <div class="product-card featured">
+                <div class="product-badge">Featured</div>
+                <div class="product-name">AOS Brain</div>
+                <div class="product-price">$299</div>
+                <ul class="product-features">
+                    <li>7-region neural architecture</li>
+                    <li>QMD memory system</li>
+                    <li>Real-time OODA loop</li>
+                    <li>$0/month operating cost</li>
+                    <li>Complete source code</li>
                 </ul>
-                <button class="btn btn-secondary" onclick="showPayment('standard')">Select Standard</button>
+                <a href="aos-brain.html" class="btn btn-primary">Learn More</a>
             </div>
             
-            <div class="pricing-card featured">
-                <div class="tier-name">VIP</div>
-                <div class="tier-price">$25</div>
-                <ul class="tier-features">
-                    <li>✅ Priority entry</li>
-                    <li>✅ Access to VIP lounge</li>
-                    <li>✅ Premium drink menu</li>
-                    <li>✅ Meet Tappy in person</li>
-                    <li>✅ Exclusive areas</li>
+            <div class="product-card">
+                <div class="product-name">CREAM</div>
+                <div class="product-price">$699</div>
+                <ul class="product-features">
+                    <li>Real Estate CRM</li>
+                    <li>10 integrated modules</li>
+                    <li>Lead management</li>
+                    <li>Revenue tracking</li>
+                    <li>Android & iOS</li>
                 </ul>
-                <button class="btn btn-primary" onclick="showPayment('vip')">Select VIP</button>
+                <button class="btn btn-secondary" onclick="selectProduct('cream')">Select</button>
             </div>
             
-            <div class="pricing-card">
-                <div class="tier-name">Bottle Service</div>
-                <div class="tier-price">$150</div>
-                <ul class="tier-features">
-                    <li>✅ Reserved section</li>
-                    <li>✅ Bottle service included</li>
-                    <li>✅ Personal AI host</li>
-                    <li>✅ Priority all areas</li>
-                    <li>✅ Custom playlist</li>
+            <div class="product-card">
+                <div class="product-name">Dusty</div>
+                <div class="product-price">$299</div>
+                <ul class="product-features">
+                    <li>Cross-chain wallet</li>
+                    <li>6 networks supported</li>
+                    <li>Dust consolidation</li>
+                    <li>Bridge functionality</li>
+                    <li>NFT staking rewards</li>
                 </ul>
-                <button class="btn btn-secondary" onclick="showPayment('bottle')">Select Bottle</button>
+                <button class="btn btn-secondary" onclick="selectProduct('dusty')">Select</button>
             </div>
             
-            <div class="pricing-card">
-                <div class="tier-name">VIP Booth</div>
-                <div class="tier-price">$500</div>
-                <ul class="tier-features">
-                    <li>✅ Private booth rental</li>
-                    <li>✅ Custom AI experience</li>
-                    <li>✅ Event hosting support</li>
-                    <li>✅ Full venue access</li>
-                    <li>✅ Corporate packages</li>
+            <div class="product-card">
+                <div class="product-name">Cryptonio</div>
+                <div class="product-price">$599</div>
+                <ul class="product-features">
+                    <li>24/7 trading bot</li>
+                    <li>R2-D2 confluence scoring</li>
+                    <li>Risk management</li>
+                    <li>Paper trading mode</li>
+                    <li>Auto-restart</li>
                 </ul>
-                <button class="btn btn-secondary" onclick="showPayment('booth')">Select Booth</button>
+                <button class="btn btn-secondary" onclick="selectProduct('cryptonio')">Select</button>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-name">VIP Vault</div>
+                <div class="product-price">$49</div>
+                <ul class="product-features">
+                    <li>Clawbot Build Guide</li>
+                    <li>DIY AI agent tutorial</li>
+                    <li>VPS setup guide</li>
+                    <li>Local model config</li>
+                    <li>PDF download</li>
+                </ul>
+                <a href="vip-vault.html" class="btn btn-secondary">Enter Vault</a>
+            </div>
+            
+            <div class="product-card">
+                <div class="product-name">Secretaries</div>
+                <div class="product-price">$99-599<span>/mo</span></div>
+                <ul class="product-features">
+                    <li>6 tiers available</li>
+                    <li>Clerk to Executive</li>
+                    <li>24/7 availability</li>
+                    <li>Specialized skills</li>
+                    <li>AOS Brain powered</li>
+                </ul>
+                <button class="btn btn-secondary" onclick="selectProduct('secretary')">View Tiers</button>
             </div>
         </div>
     </section>
     
-    <section id="payment" class="section">
+    <section id="payment">
         <div class="wallet-section">
-            <div class="wallet-label">💰 Direct Wallet Payment</div>
+            <div class="wallet-label">Direct Wallet Payment</div>
             <div class="wallet-address" onclick="copyAddress()">
-                0xC472c091f75235873C3148Fdb85B912855CBfF2A
+                0x2ce0c5D9aaD321d1Ea0ad02F02bde75A5fB0E3BE
             </div>
-            <p class="wallet-note">Click to copy address • Send payment after selecting tier above</p>
+            <p class="wallet-note">Click to copy • Send payment after selecting product</p>
             <div class="wallet-networks">
-                <span class="network-badge base">⚡ Base</span>
-                <span class="network-badge eth">⚡ Ethereum</span>
-                <span class="network-badge arb">⚡ Arbitrum</span>
+                <span class="network-badge">Ethereum</span>
+                <span class="network-badge">Base</span>
+                <span class="network-badge">Arbitrum</span>
+                <span class="network-badge">Polygon</span>
             </div>
-            <p style="margin-top: 20px; font-size: 14px; color: rgba(255,255,255,0.4);">
+            <p style="margin-top: 25px; font-size: 13px; color: var(--text-muted);">
                 Accepting ETH, USDC, USDT • Recommended: Base network for lowest fees
             </p>
         </div>
     </section>
     
     <footer>
-        <div class="footer-logo">🦎 Tappy Lewis Online</div>
+        <div class="footer-logo">🦎 Tappy Lewis</div>
         <p class="footer-tagline">Curated by AI, designed for humans</p>
         <div class="footer-links">
             <a href="#about">About</a>
             <a href="#experience">Experience</a>
-            <a href="#pricing">Pricing</a>
-            <a href="https://tappylewis.cloud">Website</a>
+            <a href="#products">Products</a>
+            <a href="https://github.com/hcindus/aocros">GitHub</a>
         </div>
         <p class="copyright">© 2026 Tappy Lewis Online • Oakland, CA • AI by AI</p>
     </footer>
     
-    <div class="copy-toast" id="toast">✅ Address copied to clipboard!</div>
+    <div class="copy-toast" id="toast">Address copied to clipboard</div>
     
     <script>
         // Copy wallet address
         function copyAddress() {
-            const address = '0xC472c091f75235873C3148Fdb85B912855CBfF2A';
+            const address = '0x2ce0c5D9aaD321d1Ea0ad02F02bde75A5fB0E3BE';
             navigator.clipboard.writeText(address).then(() => {
                 const toast = document.getElementById('toast');
                 toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 2000);
+                setTimeout(() => toast.classList.remove('show'), 3000);
             });
         }
         
-        // Show payment for tier (placeholder for future integration)
-        function showPayment(tier) {
-            const tiers = {
-                'standard': { name: 'Standard Entry', price: 10 },
-                'vip': { name: 'VIP Access', price: 25 },
-                'bottle': { name: 'Bottle Service', price: 150 },
-                'booth': { name: 'VIP Booth Rental', price: 500 }
+        // Product selection
+        function selectProduct(product) {
+            const products = {
+                'cream': { name: 'CREAM', price: 699 },
+                'dusty': { name: 'Dusty', price: 299 },
+                'cryptonio': { name: 'Cryptonio', price: 599 },
+                'secretary': { name: 'Secretary Tier', price: '99-599' }
             };
             
-            const t = tiers[tier];
-            alert(`🦎 You selected ${t.name} ($${t.price})\n\nTo complete payment:\n1. Copy the wallet address below\n2. Send $${t.price} worth of ETH, USDC, or USDT\n3. Use Base network for lowest fees\n4. You'll receive confirmation shortly`);
+            const p = products[product];
+            alert(`🦎 ${p.name} selected ($${p.price})\n\nTo complete payment:\n1. Copy the wallet address below\n2. Send $${p.price} worth of ETH, USDC, or USDT\n3. Use Base network for lowest fees\n4. You'll receive confirmation shortly`);
             
-            // Scroll to payment section
             document.getElementById('payment').scrollIntoView({ behavior: 'smooth' });
         }
         
-        // Smooth scroll for nav links
+        // Smooth scroll
         document.querySelectorAll('nav a').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();

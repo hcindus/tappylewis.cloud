@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AOS Brain | Autonomous Operating System</title>
+    <style>
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff00aa;
+            --neon-orange: #ff6600;
+            --neon-green: #7ee787;
+            --dark-bg: #0a0a1a;
+            --darker-bg: #050510;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--darker-bg);
+            color: #fff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Animated neural background */
+        .neural-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255, 0, 170, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(255, 102, 0, 0.05) 0%, transparent 50%);
+            z-index: -1;
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom: 1px solid rgba(0, 240, 255, 0.3);
+        }
+        
+        h1 {
+            font-size: 4em;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
+        }
+        
+        .tagline {
+            font-size: 1.3em;
+            color: #888;
+            letter-spacing: 3px;
+        }
+        
+        .hero {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            padding: 60px 20px;
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .brain-preview {
+            flex: 1;
+            min-width: 400px;
+            max-width: 600px;
+            background: rgba(10, 10, 26, 0.8);
+            border: 2px solid var(--neon-blue);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.2);
+        }
+        
+        .brain-viz {
+            width: 100%;
+            height: 300px;
+            background: radial-gradient(circle at center, #1a1a3e 0%, #0a0a1a 100%);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .node {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            box-shadow: 0 0 20px var(--neon-blue);
+            animation: nodePulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes nodePulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.3); opacity: 1; }
+        }
+        
+        .phase-indicator {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+            color: var(--neon-green);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        
+        .product-info {
+            flex: 1;
+            min-width: 400px;
+            max-width: 600px;
+        }
+        
+        .price-box {
+            background: linear-gradient(135deg, rgba(255, 0, 170, 0.2), rgba(0, 240, 255, 0.2));
+            border: 2px solid var(--neon-pink);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .price {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: var(--neon-green);
+            text-shadow: 0 0 20px var(--neon-green);
+        }
+        
+        .price-note {
+            color: #888;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .features {
+            list-style: none;
+            margin: 30px 0;
+        }
+        
+        .features li {
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .features li::before {
+            content: "✓";
+            color: var(--neon-green);
+            font-size: 1.5em;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+        
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-orange));
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            font-size: 1.3em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 30px rgba(255, 0, 170, 0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(255, 0, 170, 0.6);
+        }
+        
+        .specs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .spec-card {
+            background: rgba(10, 10, 26, 0.6);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .spec-card h3 {
+            color: var(--neon-blue);
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .spec-value {
+            font-size: 2em;
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            border-top: 1px solid rgba(0, 240, 255, 0.3);
+            color: #666;
+        }
+        
+        .wallet-display {
+            background: #000;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: #0f0;
+            word-break: break-all;
+            margin-top: 20px;
+            border: 1px solid #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="neural-bg"></div>
+    
+    <header>
+        <pre style="color: var(--neon-blue); font-size: 0.5em; line-height: 1.2; margin-bottom: 20px; text-shadow: 0 0 10px var(--neon-blue);">
+ █████╗   ██████╗  ██████╗ ██████╗  ██████╗ ███████╗
+██╔══██╗ ██╔═══██╗██╔═══██╗██╔══██╗██╔═══██╗██╔════╝
+██║  ██║ ██║   ██║██║   ██║██████╔╝██║   ██║███████╗
+██║  ██║ ██║   ██║██║   ██║██╔══██╗██║   ██║╚════██║
+╚█████╔╝ ╚██████╔╝╚██████╔╝██║  ██║╚██████╔╝███████║
+ ╚════╝   ╚═════╝  ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ ╚══════╝
+        </pre>
+        <h1>AOS Brain</h1>
+        <div class="tagline">Autonomous Operating System | Zero-Cost AI Infrastructure</div>
+    </header>
+    
+    <section class="hero">
+        <div class="brain-preview">
+            <h2 style="text-align: center; margin-bottom: 20px; color: var(--neon-blue);">Live Brain Visualizer</h2>
+            <div class="brain-viz" id="brainViz">
+                <div class="node" style="top: 20%; left: 30%;"></div>
+                <div class="node" style="top: 40%; left: 50%; animation-delay: 0.5s;"></div>
+                <div class="node" style="top: 60%; left: 25%; animation-delay: 1s;"></div>
+                <div class="node" style="top: 30%; left: 70%; animation-delay: 1.5s;"></div>
+                <div class="node" style="top: 70%; left: 60%; animation-delay: 0.3s;"></div>
+            </div>
+            <div class="phase-indicator" id="phaseIndicator">OODA: ACTIVATING...</div>
+            <div style="margin-top: 20px; font-size: 0.85em; color: #888; text-align: center;">
+                Real-time neural activity visualization
+            </div>
+        </div>
+        
+        <div class="product-info">
+            <div class="price-box">
+                <div class="price">$299</div>
+                <div class="price-note">Complete Build Package + Visualizer</div>
+            </div>
+            
+            <ul class="features">
+                <li>7-Region Neural Architecture (PFC, Hippocampus, Limbic, etc.)</li>
+                <li>Real-time OODA Loop (200ms cycles)</li>
+                <li>QMD Memory (Quantized Memory Distillation)</li>
+                <li>Immutable Safety Laws (Law Zero + Three Laws)</li>
+                <li>Live Brain Visualizer with Mandelbrot Background</li>
+                <li>Complete Build Manual (50+ pages)</li>
+                <li>$0/month operating cost (local inference)</li>
+                <li>ChromaDB Vector Memory Integration</li>
+            </ul>
+            
+            <a href="#payment" class="cta-button">Purchase AOS Brain</a>
+            
+            <div class="wallet-display">
+                Pay with ETH/USDC/USDT:<br>
+                0x2ce0c5D9aaD321d1Ea0ad02F02bde75A5fB0E3BE
+            </div>
+        </div>
+    </section>
+    
+    <section class="specs">
+        <div class="spec-card">
+            <h3>Neural Regions</h3>
+            <div class="spec-value">7</div>
+            <p>PFC, Hippocampus, Limbic, Cerebellum, Brainstem, Basal Ganglia, Thalamus</p>
+        </div>
+        
+        <div class="spec-card">
+            <h3>OODA Cycle Time</h3>
+            <div class="spec-value">200ms</div>
+            <p>Observe → Orient → Decide → Act → Learn</p>
+        </div>
+        
+        <div class="spec-card">
+            <h3>Memory System</h3>
+            <div class="spec-value">QMD</div>
+            <p>Quantized Memory Distillation with ChromaDB</p>
+        </div>
+        
+        <div class="spec-card">
+            <h3>Operating Cost</h3>
+            <div class="spec-value">$0</div>
+            <p>Per month with local Ollama inference</p>
+        </div>
+    </section>
+    
+    <footer>
+        <p>AOCROS Technologies © 2026 | Build your brain. Own your intelligence.</p>
+        <p style="margin-top: 10px; font-size: 0.85em;">
+            Questions? Contact: miles@performance-supply-depot.com
+        </p>
+    </footer>
+    
+    <script>
+        // Simulate live brain activity
+        const phases = ['OBSERVE', 'ORIENT', 'DECIDE', 'ACT', 'LEARN'];
+        let currentPhase = 0;
+        
+        function updatePhase() {
+            const indicator = document.getElementById('phaseIndicator');
+            indicator.textContent = `OODA: ${phases[currentPhase]}`;
+            currentPhase = (currentPhase + 1) % phases.length;
+        }
+        
+        setInterval(updatePhase, 1000);
+        
+        // Animate nodes randomly
+        const nodes = document.querySelectorAll('.node');
+        nodes.forEach(node => {
+            setInterval(() => {
+                const hue = Math.random() > 0.5 ? '#00f0ff' : '#ff00aa';
+                node.style.background = hue;
+                node.style.boxShadow = `0 0 20px ${hue}`;
+            }, 2000 + Math.random() * 2000);
+        });
+    </script>
+</body>
+</html>

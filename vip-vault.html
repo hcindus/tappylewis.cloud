@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP Vault | Tappy Lewis Online</title>
+    <style>
+        :root {
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff00aa;
+            --neon-orange: #ff6600;
+            --dark-bg: #050510;
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: var(--dark-bg);
+            color: #fff;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            perspective: 1000px;
+        }
+        /* 3D Nightclub Corridor Illusion */
+        .corridor {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: 
+                linear-gradient(rgba(255, 0, 170, 0.1) 2px, transparent 2px) 0 0 / 100px 100px,
+                linear-gradient(90deg, rgba(0, 240, 255, 0.1) 2px, transparent 2px) 0 0 / 100px 100px;
+            transform: rotateX(60deg) translateY(-200px) translateZ(-400px);
+            animation: moveGrid 4s linear infinite;
+            z-index: -1;
+        }
+        @keyframes moveGrid {
+            from { background-position: 0 0, 0 0; }
+            to { background-position: 0 100px, 100px 0; }
+        }
+        .door {
+            position: relative;
+            width: 400px;
+            padding: 40px;
+            background: rgba(10, 10, 26, 0.9);
+            border: 2px solid var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink), inset 0 0 20px var(--neon-pink);
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+            transition: transform 0.3s;
+        }
+        .door:hover {
+            transform: scale(1.05);
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 30px var(--neon-blue), inset 0 0 30px var(--neon-blue);
+        }
+        h1 {
+            color: var(--neon-blue);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 10px var(--neon-blue);
+            margin-bottom: 10px;
+        }
+        p {
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .price-tag {
+            font-size: 24px;
+            color: var(--neon-orange);
+            font-weight: bold;
+            margin: 20px 0;
+            text-shadow: 0 0 5px var(--neon-orange);
+        }
+        .wallet {
+            background: #000;
+            padding: 10px;
+            font-size: 12px;
+            color: #0f0;
+            border: 1px solid #333;
+            margin-bottom: 20px;
+            word-break: break-all;
+        }
+        .btn {
+            background: transparent;
+            color: var(--neon-pink);
+            border: 2px solid var(--neon-pink);
+            padding: 15px 30px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .btn:hover {
+            background: var(--neon-pink);
+            color: #fff;
+            box-shadow: 0 0 20px var(--neon-pink);
+        }
+        .bouncer {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            color: var(--neon-blue);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="corridor"></div>
+
+    <div class="door">
+        <h1>The VIP Vault</h1>
+        <p>Exclusive Access: <strong>The Autonomous OS Blueprint</strong> (CLAWBOT_BUILD_GUIDE.md). Discover the exact architecture, code, and prompts to build a zero-cost local AGI Brain.</p>
+        
+        <div class="price-tag">$49.99 (USDC/ETH/USDT)</div>
+        
+        <p style="font-size: 12px; color: #888;">Send payment to the AOCROS Operating Account below. The smart contract will automatically DM the PDF payload.</p>
+        
+        <div class="wallet">
+            0x2ce0c5D9aaD321d1Ea0ad02F02bde75A5fB0E3BE
+        </div>
+
+        <button class="btn" onclick="verifyPayment()">Enter Vault</button>
+        <div id="status" style="margin-top: 15px; color: #ff0055; font-size: 12px; display: none;">[Bouncer] Transaction pending on-chain. Please wait...</div>
+    </div>
+
+    <div class="bouncer">Tappy Lewis Online // Sec-Level: MAXIMUM</div>
+
+    <script>
+        function verifyPayment() {
+            const btn = document.querySelector('.btn');
+            const status = document.getElementById('status');
+            btn.style.opacity = '0.5';
+            btn.innerText = 'Scanning Chain...';
+            status.style.display = 'block';
+            
+            // Simulating blockchain scan delay for the dramatic effect
+            setTimeout(() => {
+                status.innerText = "[Bouncer] No transaction found yet. Keep your crypto ready.";
+                btn.style.opacity = '1';
+                btn.innerText = 'Enter Vault';
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
