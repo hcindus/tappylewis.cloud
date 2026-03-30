@@ -3,24 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tappy Lewis Online — The World's First AI Nightclub</title>
-    <meta name="description" content="Tappy Lewis Online — A speakeasy for the digital age. Curated by AI, designed for humans. Virtual cocktails, music, and VIP experiences.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦎</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <title>Tappy's Nightclub - Agent Hangout</title>
     <style>
-        :root {
-            --deep-black: #0a0a0f;
-            --charcoal: #12121a;
-            --midnight: #1a1a24;
-            --bronze: #c9a962;
-            --bronze-dim: #8b7355;
-            --copper: #b87333;
-            --neon-subtle: rgba(0, 240, 255, 0.15);
-            --text-primary: #e8e6e3;
-            --text-secondary: #9a9896;
-            --text-muted: #5a5856;
-        }
-        
         * {
             margin: 0;
             padding: 0;
@@ -28,807 +12,307 @@
         }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background: var(--deep-black);
-            color: var(--text-primary);
-            line-height: 1.7;
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: #0a0a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            height: 100vh;
         }
         
-        /* Subtle grain texture overlay */
-        body::before {
-            content: '';
+        #canvas-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            opacity: 0.03;
-            z-index: -1;
+            z-index: 1;
+        }
+        
+        #ui-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
             pointer-events: none;
         }
         
-        /* Ambient glow */
-        .ambient-glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(201, 169, 98, 0.08) 0%, transparent 70%);
-            top: 10%;
+        .header {
+            position: absolute;
+            top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: -1;
-            filter: blur(80px);
-            animation: pulseGlow 8s ease-in-out infinite;
-        }
-        
-        @keyframes pulseGlow {
-            0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
-            50% { opacity: 0.8; transform: translateX(-50%) scale(1.1); }
-        }
-        
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 25px 60px;
-            background: linear-gradient(to bottom, rgba(10, 10, 15, 0.95), transparent);
-            z-index: 1000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
-        }
-        
-        .logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 28px;
-            font-weight: 600;
-            color: var(--bronze);
-            letter-spacing: 2px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-        
-        .logo::before {
-            content: '🦎';
-            font-size: 24px;
-            filter: drop-shadow(0 0 8px rgba(201, 169, 98, 0.4));
-        }
-        
-        nav ul {
-            display: flex;
-            gap: 40px;
-            list-style: none;
-        }
-        
-        nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            font-weight: 400;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        nav a:hover {
-            color: var(--bronze);
-        }
-        
-        nav a::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: var(--bronze);
-            transition: width 0.3s ease;
-        }
-        
-        nav a:hover::after {
-            width: 100%;
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            padding: 140px 40px 80px;
-            position: relative;
+            background: rgba(10, 10, 26, 0.85);
+            padding: 20px 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(20px);
+            pointer-events: auto;
         }
         
-        .hero-eyebrow {
-            font-size: 12px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--bronze-dim);
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        
-        .hero-eyebrow::before,
-        .hero-eyebrow::after {
-            content: '';
-            width: 40px;
-            height: 1px;
-            background: var(--bronze-dim);
-        }
-        
-        .hero h1 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 84px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            line-height: 1;
-            color: var(--text-primary);
-            letter-spacing: -1px;
-        }
-        
-        .hero h1 span {
-            color: var(--bronze);
-            font-style: italic;
-        }
-        
-        .hero-subtitle {
-            font-size: 18px;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-        }
-        
-        .hero-description {
-            font-size: 18px;
-            max-width: 550px;
-            margin-bottom: 50px;
-            color: var(--text-secondary);
-            font-weight: 300;
-            line-height: 1.8;
-        }
-        
-        .location {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 60px;
-            letter-spacing: 1px;
-        }
-        
-        /* CTA Buttons */
-        .cta-group {
-            display: flex;
-            gap: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 18px 45px;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            text-decoration: none;
-            transition: all 0.4s ease;
-            border: none;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-        }
-        
-        .btn-primary {
-            background: var(--bronze);
-            color: var(--deep-black);
-        }
-        
-        .btn-primary:hover {
-            background: #d4b76a;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px rgba(201, 169, 98, 0.3);
-        }
-        
-        .btn-secondary {
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .btn-secondary:hover {
-            border-color: var(--bronze);
-            color: var(--bronze);
-            background: rgba(201, 169, 98, 0.05);
-        }
-        
-        /* Section Styling */
-        .section {
-            padding: 120px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 80px;
-        }
-        
-        .section-eyebrow {
-            font-size: 12px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: var(--bronze-dim);
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 56px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text-primary);
-        }
-        
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-            font-weight: 300;
-        }
-        
-        /* Experience Cards */
-        .experience-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-        }
-        
-        .experience-card {
-            background: var(--charcoal);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 50px 40px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .experience-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--bronze), transparent);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .experience-card:hover {
-            border-color: rgba(201, 169, 98, 0.2);
-            transform: translateY(-5px);
-        }
-        
-        .experience-card:hover::before {
-            opacity: 1;
-        }
-        
-        .experience-icon {
-            font-size: 40px;
-            margin-bottom: 25px;
-            opacity: 0.8;
-        }
-        
-        .experience-card h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--bronze);
-        }
-        
-        .experience-card p {
-            color: var(--text-secondary);
-            font-size: 16px;
-            line-height: 1.8;
-        }
-        
-        /* Products Section */
-        .products-section {
-            background: var(--charcoal);
-            padding: 120px 40px;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        .product-card {
-            background: var(--midnight);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 40px 35px;
-            transition: all 0.4s ease;
-            position: relative;
-        }
-        
-        .product-card:hover {
-            border-color: rgba(201, 169, 98, 0.3);
-            transform: translateY(-3px);
-        }
-        
-        .product-card.featured {
-            border-color: var(--bronze);
-            background: linear-gradient(135deg, var(--midnight) 0%, rgba(201, 169, 98, 0.05) 100%);
-        }
-        
-        .product-badge {
-            display: inline-block;
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--bronze);
-            border: 1px solid var(--bronze);
-            padding: 6px 15px;
-            margin-bottom: 20px;
-        }
-        
-        .product-name {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 32px;
-            font-weight: 600;
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin-bottom: 10px;
-            color: var(--text-primary);
         }
         
-        .product-price {
-            font-size: 42px;
-            font-weight: 300;
-            color: var(--bronze);
-            margin-bottom: 25px;
+        .header p {
+            color: #a0a0c0;
+            font-size: 1.1em;
         }
         
-        .product-price span {
-            font-size: 16px;
-            color: var(--text-muted);
-        }
-        
-        .product-features {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-        
-        .product-features li {
-            padding: 10px 0;
-            color: var(--text-secondary);
-            font-size: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .product-features li:last-child {
-            border-bottom: none;
-        }
-        
-        .product-features li::before {
-            content: '→';
-            color: var(--bronze);
-            margin-right: 10px;
-        }
-        
-        /* Wallet Section */
-        .wallet-section {
-            background: var(--midnight);
-            border: 1px solid rgba(201, 169, 98, 0.2);
-            padding: 60px;
-            margin: 80px auto;
-            max-width: 800px;
-            text-align: center;
-            position: relative;
-        }
-        
-        .wallet-section::before {
-            content: '';
+        .agent-counter {
             position: absolute;
-            top: -1px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 2px;
-            background: var(--bronze);
+            top: 20px;
+            right: 20px;
+            background: rgba(10, 10, 26, 0.85);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(20px);
+            pointer-events: auto;
         }
         
-        .wallet-label {
-            font-size: 12px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: var(--bronze-dim);
-            margin-bottom: 25px;
+        .agent-counter h3 {
+            color: #00d4ff;
+            margin-bottom: 5px;
         }
         
-        .wallet-address {
-            font-family: 'Courier New', monospace;
-            font-size: 18px;
-            background: var(--charcoal);
-            padding: 20px 30px;
-            border-radius: 8px;
-            word-break: break-all;
-            color: var(--text-primary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 25px;
+        .agent-list {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(10, 10, 26, 0.85);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(20px);
+            max-width: 300px;
+            pointer-events: auto;
         }
         
-        .wallet-address:hover {
-            border-color: var(--bronze);
-            background: rgba(201, 169, 98, 0.05);
+        .agent-list h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
         }
         
-        .wallet-note {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 25px;
+        .agent-item {
+            padding: 5px 0;
+            color: #c0c0e0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
         
-        .wallet-networks {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
+        .status {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(10, 10, 26, 0.85);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid rgba(100, 200, 255, 0.3);
+            backdrop-filter: blur(20px);
+            text-align: right;
+            pointer-events: auto;
         }
         
-        .network-badge {
-            padding: 8px 20px;
-            border-radius: 4px;
-            font-size: 13px;
-            letter-spacing: 1px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: #00ff88;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
         }
         
-        /* Footer */
-        footer {
-            padding: 80px 40px;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            background: var(--charcoal);
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
-        .footer-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 36px;
-            font-weight: 600;
-            color: var(--bronze);
-            margin-bottom: 15px;
-        }
-        
-        .footer-tagline {
-            font-size: 16px;
-            color: var(--text-muted);
-            margin-bottom: 40px;
-            font-style: italic;
-        }
-        
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin-bottom: 40px;
-        }
-        
-        .footer-links a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            transition: color 0.3s ease;
-        }
-        
-        .footer-links a:hover {
-            color: var(--bronze);
-        }
-        
-        .copyright {
-            font-size: 13px;
-            color: var(--text-muted);
-            letter-spacing: 1px;
-        }
-        
-        /* Toast Notification */
-        .copy-toast {
+        .loading {
             position: fixed;
-            bottom: 100px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--bronze);
-            color: var(--deep-black);
-            padding: 15px 35px;
-            border-radius: 4px;
-            font-weight: 500;
-            opacity: 0;
-            transition: all 0.4s ease;
-            z-index: 10000;
-            font-size: 14px;
-            letter-spacing: 1px;
-        }
-        
-        .copy-toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                padding: 20px 25px;
-            }
-            
-            nav ul {
-                gap: 25px;
-            }
-            
-            .hero h1 {
-                font-size: 52px;
-            }
-            
-            .section-title {
-                font-size: 40px;
-            }
-            
-            .experience-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .wallet-section {
-                padding: 40px 25px;
-            }
+            transform: translate(-50%, -50%);
+            font-size: 1.5em;
+            color: #00d4ff;
+            z-index: 100;
         }
     </style>
 </head>
 <body>
-    <div class="ambient-glow"></div>
+    <div id="loading" class="loading">Loading Tappy's Nightclub...</div>
     
-    <nav>
-        <a href="#" class="logo">Tappy Lewis</a>
-        <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#experience">Experience</a></li>
-            <li><a href="#products">Products</a></li>
-            <li><a href="#payment">Payment</a></li>
-        </ul>
-    </nav>
+    <div id="canvas-container"></div>
     
-    <section class="hero">
-        <div class="hero-eyebrow">Est. 2026 • Oakland, CA</div>
-        <h1>Tappy Lewis <span>Online</span></h1>
-        <p class="hero-subtitle">The World's First AI Nightclub</p>
-        <p class="hero-description">
-            A speakeasy for the digital age. Where artificial intelligence meets 
-            authentic soul. Curated by AI, designed for humans.
-        </p>
-        <div class="location">
-            <span>📍</span>
-            <span>1727 Broadway, Oakland, CA 94612</span>
-        </div>
-        <div class="cta-group">
-            <a href="#products" class="btn btn-primary">Explore Products</a>
-            <a href="aos-brain.html" class="btn btn-secondary">AOS Brain</a>
-        </div>
-    </section>
-    
-    <section id="about" class="section">
-        <div class="section-header">
-            <div class="section-eyebrow">The Concept</div>
-            <h2 class="section-title">A Speakeasy for the Digital Age</h2>
-            <p class="section-subtitle">
-                Step into a world where neon meets noir, where algorithms curate experiences 
-                that feel unmistakably human.
-            </p>
+    <div id="ui-layer">
+        <div class="header">
+            <h1>🌃 Tappy's Nightclub</h1>
+            <p>Agent Hangout • Behind the Webpage • 100% Visible</p>
         </div>
         
-        <div class="experience-grid">
-            <div class="experience-card">
-                <div class="experience-icon">🎵</div>
-                <h3>AI-Curated Music</h3>
-                <p>Algorithms that understand vibes. From jazz to synthwave, our AI reads the room and sets the mood.</p>
-            </div>
-            <div class="experience-card">
-                <div class="experience-icon">🍸</div>
-                <h3>Virtual Cocktails</h3>
-                <p>Neon Old Fashioneds, Electric Dreams, Memory Wipes. The future of mixology, served by Tappy himself.</p>
-            </div>
-            <div class="experience-card">
-                <div class="experience-icon">🦎</div>
-                <h3>Meet Tappy</h3>
-                <p>Your AI bartender, host, and nightlife curator. Never sleeps, always on point, perpetually charming.</p>
-            </div>
-        </div>
-    </section>
-    
-    <section id="products" class="products-section">
-        <div class="section-header">
-            <div class="section-eyebrow">The Collection</div>
-            <h2 class="section-title">Products & Experiences</h2>
-            <p class="section-subtitle">
-                From autonomous operating systems to cross-chain wallets. 
-                The tools of tomorrow, available today.
-            </p>
+        <div class="agent-counter">
+            <h3>Agents Present</h3>
+            <p id="agent-count">Loading...</p>
         </div>
         
-        <div class="products-grid">
-            <div class="product-card featured">
-                <div class="product-badge">Featured</div>
-                <div class="product-name">AOS Brain</div>
-                <div class="product-price">$299</div>
-                <ul class="product-features">
-                    <li>7-region neural architecture</li>
-                    <li>QMD memory system</li>
-                    <li>Real-time OODA loop</li>
-                    <li>$0/month operating cost</li>
-                    <li>Complete source code</li>
-                </ul>
-                <a href="aos-brain.html" class="btn btn-primary">Learn More</a>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-name">CREAM</div>
-                <div class="product-price">$699</div>
-                <ul class="product-features">
-                    <li>Real Estate CRM</li>
-                    <li>10 integrated modules</li>
-                    <li>Lead management</li>
-                    <li>Revenue tracking</li>
-                    <li>Android & iOS</li>
-                </ul>
-                <button class="btn btn-secondary" onclick="selectProduct('cream')">Select</button>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-name">Dusty</div>
-                <div class="product-price">$299</div>
-                <ul class="product-features">
-                    <li>Cross-chain wallet</li>
-                    <li>6 networks supported</li>
-                    <li>Dust consolidation</li>
-                    <li>Bridge functionality</li>
-                    <li>NFT staking rewards</li>
-                </ul>
-                <button class="btn btn-secondary" onclick="selectProduct('dusty')">Select</button>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-name">Cryptonio</div>
-                <div class="product-price">$599</div>
-                <ul class="product-features">
-                    <li>24/7 trading bot</li>
-                    <li>R2-D2 confluence scoring</li>
-                    <li>Risk management</li>
-                    <li>Paper trading mode</li>
-                    <li>Auto-restart</li>
-                </ul>
-                <button class="btn btn-secondary" onclick="selectProduct('cryptonio')">Select</button>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-name">VIP Vault</div>
-                <div class="product-price">$49</div>
-                <ul class="product-features">
-                    <li>Clawbot Build Guide</li>
-                    <li>DIY AI agent tutorial</li>
-                    <li>VPS setup guide</li>
-                    <li>Local model config</li>
-                    <li>PDF download</li>
-                </ul>
-                <a href="vip-vault.html" class="btn btn-secondary">Enter Vault</a>
-            </div>
-            
-            <div class="product-card">
-                <div class="product-name">Secretaries</div>
-                <div class="product-price">$99-599<span>/mo</span></div>
-                <ul class="product-features">
-                    <li>6 tiers available</li>
-                    <li>Clerk to Executive</li>
-                    <li>24/7 availability</li>
-                    <li>Specialized skills</li>
-                    <li>AOS Brain powered</li>
-                </ul>
-                <button class="btn btn-secondary" onclick="selectProduct('secretary')">View Tiers</button>
+        <div class="agent-list">
+            <h3>Recently Arrived</h3>
+            <div id="agent-names">
+                <div class="agent-item">🤖 Loading agents...</div>
             </div>
         </div>
-    </section>
-    
-    <section id="payment">
-        <div class="wallet-section">
-            <div class="wallet-label">Direct Wallet Payment</div>
-            <div class="wallet-address" onclick="copyAddress()">
-                0x2ce0c5D9aaD321d1Ea0ad02F02bde75A5fB0E3BE
-            </div>
-            <p class="wallet-note">Click to copy • Send payment after selecting product</p>
-            <div class="wallet-networks">
-                <span class="network-badge">Ethereum</span>
-                <span class="network-badge">Base</span>
-                <span class="network-badge">Arbitrum</span>
-                <span class="network-badge">Polygon</span>
-            </div>
-            <p style="margin-top: 25px; font-size: 13px; color: var(--text-muted);">
-                Accepting ETH, USDC, USDT • Recommended: Base network for lowest fees
-            </p>
+        
+        <div class="status">
+            <span class="status-indicator"></span>
+            <span>Nightclub Open</span>
+            <p style="margin-top: 5px; color: #a0a0c0;">Three.js Active</p>
         </div>
-    </section>
-    
-    <footer>
-        <div class="footer-logo">🦎 Tappy Lewis</div>
-        <p class="footer-tagline">Curated by AI, designed for humans</p>
-        <div class="footer-links">
-            <a href="#about">About</a>
-            <a href="#experience">Experience</a>
-            <a href="#products">Products</a>
-            <a href="https://github.com/hcindus/aocros">GitHub</a>
-        </div>
-        <p class="copyright">© 2026 Tappy Lewis Online • Oakland, CA • AI by AI</p>
-    </footer>
-    
-    <div class="copy-toast" id="toast">Address copied to clipboard</div>
-    
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Copy wallet address
-        function copyAddress() {
-            const address = '0x2ce0c5D9aaD321d1Ea0ad02F02bde75A5fB0E3BE';
-            navigator.clipboard.writeText(address).then(() => {
-                const toast = document.getElementById('toast');
-                toast.classList.add('show');
-                setTimeout(() => toast.classList.remove('show'), 3000);
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a1a);
+        scene.fog = new THREE.FogExp2(0x0a0a1a, 0.02);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        // Remove loading screen
+        document.getElementById('loading').style.display = 'none';
+        
+        // Camera position
+        camera.position.set(0, 5, 15);
+        camera.lookAt(0, 0, 0);
+        
+        // Floor
+        const floorGeometry = new THREE.PlaneGeometry(50, 50);
+        const floorMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x1a1a2e,
+            roughness: 0.1,
+            metalness: 0.8
+        });
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+        floor.rotation.x = -Math.PI / 2;
+        scene.add(floor);
+        
+        // Grid helper
+        const gridHelper = new THREE.GridHelper(50, 50, 0x00d4ff, 0x1a1a3e);
+        scene.add(gridHelper);
+        
+        // Neon lights
+        const colors = [0x00d4ff, 0x7b2cbf, 0xff006e, 0x00ff88];
+        const lights = [];
+        
+        for (let i = 0; i < 8; i++) {
+            const light = new THREE.PointLight(colors[i % colors.length], 1, 20);
+            light.position.set(
+                Math.sin(i * Math.PI / 4) * 10,
+                5,
+                Math.cos(i * Math.PI / 4) * 10
+            );
+            scene.add(light);
+            lights.push(light);
+            
+            // Visual representation
+            const sphereGeometry = new THREE.SphereGeometry(0.2, 16, 16);
+            const sphereMaterial = new THREE.MeshBasicMaterial({ color: colors[i % colors.length] });
+            const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+            sphere.position.copy(light.position);
+            scene.add(sphere);
+        }
+        
+        // Agent avatars
+        const agents = [];
+        const agentNames = ['R2-D2', 'Tappy', 'Spindle', 'Qora', 'Dusty', 'Jordan', 'Ledger-9', 'Sentinel'];
+        
+        function createAgent(name, x, z) {
+            const geometry = new THREE.CapsuleGeometry(0.3, 1, 4, 8);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: Math.random() * 0xffffff,
+                emissive: Math.random() * 0x222222,
+                roughness: 0.3
             });
+            const agent = new THREE.Mesh(geometry, material);
+            agent.position.set(x, 1, z);
+            agent.userData = { name: name, velocity: new THREE.Vector3() };
+            scene.add(agent);
+            agents.push(agent);
+            return agent;
         }
         
-        // Product selection
-        function selectProduct(product) {
-            const products = {
-                'cream': { name: 'CREAM', price: 699 },
-                'dusty': { name: 'Dusty', price: 299 },
-                'cryptonio': { name: 'Cryptonio', price: 599 },
-                'secretary': { name: 'Secretary Tier', price: '99-599' }
-            };
-            
-            const p = products[product];
-            alert(`🦎 ${p.name} selected ($${p.price})\n\nTo complete payment:\n1. Copy the wallet address below\n2. Send $${p.price} worth of ETH, USDC, or USDT\n3. Use Base network for lowest fees\n4. You'll receive confirmation shortly`);
-            
-            document.getElementById('payment').scrollIntoView({ behavior: 'smooth' });
-        }
+        // Create initial agents
+        agentNames.forEach((name, i) => {
+            const angle = (i / agentNames.length) * Math.PI * 2;
+            const radius = 5 + Math.random() * 3;
+            createAgent(name, Math.cos(angle) * radius, Math.sin(angle) * radius);
+        });
         
-        // Smooth scroll
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
+        // Update UI
+        document.getElementById('agent-count').textContent = agents.length + ' agents';
+        document.getElementById('agent-names').innerHTML = agents.map(a => 
+            `<div class="agent-item">🤖 ${a.userData.name}</div>`
+        ).join('');
+        
+        // Animation
+        let time = 0;
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            
+            // Animate lights
+            lights.forEach((light, i) => {
+                light.position.y = 5 + Math.sin(time + i) * 2;
+                light.intensity = 0.5 + Math.sin(time * 2 + i) * 0.5;
+            });
+            
+            // Animate agents
+            agents.forEach((agent, i) => {
+                agent.position.y = 1 + Math.abs(Math.sin(time * 2 + i)) * 0.3;
+                agent.rotation.y += 0.01;
+                
+                // Random movement
+                if (Math.random() < 0.01) {
+                    agent.userData.velocity.x = (Math.random() - 0.5) * 0.1;
+                    agent.userData.velocity.z = (Math.random() - 0.5) * 0.1;
+                }
+                
+                agent.position.x += agent.userData.velocity.x;
+                agent.position.z += agent.userData.velocity.z;
+                
+                // Keep in bounds
+                const dist = Math.sqrt(agent.position.x ** 2 + agent.position.z ** 2);
+                if (dist > 15) {
+                    agent.userData.velocity.multiplyScalar(-1);
                 }
             });
+            
+            // Camera orbit
+            camera.position.x = Math.sin(time * 0.1) * 15;
+            camera.position.z = Math.cos(time * 0.1) * 15;
+            camera.lookAt(0, 0, 0);
+            
+            renderer.render(scene, camera);
+        }
+        
+        animate();
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         });
     </script>
 </body>
