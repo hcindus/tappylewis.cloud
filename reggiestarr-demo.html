@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReggieStarr RS-79 — Interactive POS Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0a0a1a 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Header */
+        header {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed;
+            width: 100%;
+            background: rgba(10,10,26,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+        nav { display: flex; justify-content: space-between; align-items: center; }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: #ff6b35; }
+        .cta-btn {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #0a0a1a;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255,107,53,0.3);
+        }
+        
+        /* Main Layout */
+        .demo-container {
+            padding: 120px 0 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        @media (max-width: 1024px) {
+            .demo-container { grid-template-columns: 1fr; }
+        }
+        
+        /* POS Terminal */
+        .pos-terminal {
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 24px;
+            padding: 30px;
+            border: 2px solid rgba(255,107,53,0.3);
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .terminal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .terminal-status {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .terminal-brand {
+            font-size: 14px;
+            color: #ff6b35;
+            font-weight: 700;
+        }
+        
+        /* Display Screen */
+        .display-screen {
+            background: linear-gradient(180deg, #0a0a1a 0%, #151525 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,107,53,0.2);
+            min-height: 280px;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            border-bottom: 1px dashed rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .receipt-header h3 {
+            font-size: 16px;
+            color: #ff6b35;
+            margin-bottom: 5px;
+        }
+        
+        .receipt-header p {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .receipt-items {
+            max-height: 150px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px dotted rgba(255,255,255,0.1);
+        }
+        
+        .receipt-totals {
+            border-top: 2px solid rgba(255,107,53,0.3);
+            padding-top: 15px;
+        }
+        
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .total-line.grand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,107,53,0.3);
+        }
+        
+        /* Quick Items */
+        .quick-items {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .quick-item {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+        }
+        
+        .quick-item:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+        }
+        
+        .quick-item .emoji { font-size: 20px; display: block; margin-bottom: 5px; }
+        
+        /* Keypad */
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .key {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 18px 10px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        
+        .key:hover { 
+            background: rgba(255,255,255,0.2); 
+            transform: translateY(-2px);
+        }
+        
+        .key:active { transform: translateY(0); }
+        
+        .key.fn { 
+            background: rgba(255,107,53,0.2); 
+            border-color: rgba(255,107,53,0.3);
+            color: #ff6b35;
+            font-size: 12px;
+        }
+        
+        .key.fn:hover { background: rgba(255,107,53,0.3); }
+        
+        .key.enter { 
+            background: linear-gradient(135deg, #ff6b35, #f7931e); 
+            color: #0a0a1a; 
+            font-weight: 700;
+            grid-row: span 2;
+        }
+        
+        .key.enter:hover {
+            box-shadow: 0 5px 20px rgba(255,107,53,0.4);
+        }
+        
+        .key.pay {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #0a0a1a;
+            font-weight: 700;
+        }
+        
+        /* Product Gallery */
+        .product-showcase {
+            padding: 20px 0;
+        }
+        
+        .showcase-header {
+            margin-bottom: 30px;
+        }
+        
+        .showcase-header h2 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .showcase-header p {
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+        }
+        
+        /* Gallery Tabs */
+        .gallery-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+        
+        .gallery-tab {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.7);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .gallery-tab.active, .gallery-tab:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+            color: #fff;
+        }
+        
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255,107,53,0.1);
+        }
+        
+        .gallery-image {
+            height: 200px;
+            background: linear-gradient(135deg, #1a1a2a, #2a2a3a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+        }
+        
+        .gallery-image::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.5);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .gallery-info {
+            padding: 20px;
+        }
+        
+        .gallery-info h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .gallery-info p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* Feature Walkthrough */
+        .walkthrough {
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .walkthrough h3 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .walkthrough-step {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .walkthrough-step:hover {
+            background: rgba(255,107,53,0.1);
+        }
+        
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #0a0a1a;
+            flex-shrink: 0;
+        }
+        
+        .step-content h4 {
+            margin-bottom: 5px;
+        }
+        
+        .step-content p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        /* Specs Panel */
+        .specs-panel {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .spec-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+        }
+        
+        .spec-item .value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ff6b35;
+        }
+        
+        .spec-item .label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            margin-top: 5px;
+        }
+        
+        /* Payment Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-overlay.active { display: flex; }
+        
+        .modal {
+            background: linear-gradient(145deg, #2a2a3a, #1a1a2a);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            border: 2px solid rgba(255,107,53,0.3);
+            text-align: center;
+        }
+        
+        .modal h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .modal .amount {
+            font-size: 48px;
+            font-weight: 700;
+            color: #ff6b35;
+            margin: 20px 0;
+        }
+        
+        .payment-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .payment-option {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .payment-option:hover {
+            background: rgba(255,107,53,0.2);
+            border-color: #ff6b35;
+        }
+        
+        .payment-option .icon { font-size: 24px; display: block; margin-bottom: 5px; }
+        .payment-option .label { font-size: 12px; }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            color: #0a0a1a;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 2000;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        /* Tour Highlight */
+        .tour-highlight {
+            position: relative;
+            animation: highlight 2s ease-in-out infinite;
+        }
+        
+        @keyframes highlight {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.4); }
+            50% { box-shadow: 0 0 20px 5px rgba(255,107,53,0.4); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .demo-container { padding-top: 100px; }
+            .nav-links { display: none; }
+            .specs-panel { grid-template-columns: 1fr; }
+            .gallery-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🖥️ ReggieStarr RS-79</div>
+            <div class="nav-links">
+                <a href="#terminal">Live Demo</a>
+                <a href="#gallery">Hardware</a>
+                <a href="#features">Features</a>
+            </div>
+            <button class="cta-btn" onclick="startTour()">🎯 Start Guided Tour</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <div class="demo-container">
+            <!-- Interactive POS Terminal -->
+            <div id="terminal">
+                <div class="pos-terminal" id="pos-terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-status">
+                            <div class="status-dot"></div>
+                            <span style="font-size: 12px; color: rgba(255,255,255,0.6);">ONLINE</span>
+                        </div>
+                        <div class="terminal-brand">RS-79 TERMINAL</div>
+                    </div>
+                    
+                    <div class="display-screen" id="display-screen">
+                        <div class="receipt-header">
+                            <h3>🍔 BURGER JOINT</h3>
+                            <p>123 Main St • (555) 123-4567<br>Demo Transaction</p>
+                        </div>
+                        <div class="receipt-items" id="receipt-items">
+                            <!-- Items will be added here -->
+                        </div>
+                        <div class="receipt-totals" id="receipt-totals" style="display: none;">
+                            <div class="total-line">
+                                <span>Subtotal:</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="total-line">
+                                <span>Tax (8.5%):</span>
+                                <span id="tax">$0.00</span>
+                            </div>
+                            <div class="total-line grand">
+                                <span>TOTAL:</span>
+                                <span id="total">$0.00</span>
+                            </div>
+                        </div>
+                        <div id="empty-state" style="text-align: center; color: rgba(255,255,255,0.4); padding: 40px 0;">
+                            <div style="font-size: 48px; margin-bottom: 10px;">🛒</div>
+                            <p>Tap items or keys to start</p>
+                        </div>
+                    </div>
+                    
+                    <div class="quick-items" id="quick-items">
+                        <div class="quick-item" onclick="addItem('Burger', 8.99, '🍔')">
+                            <span class="emoji">🍔</span>
+                            <div>Burger<br>$8.99</div>
+                        </div>
+                        <div class="quick-item" onclick="addItem('Fries', 3.99, '🍟')">
+                            <span class="emoji">🍟</span>
+                            <div>Fries<br>$3.99</div>
+                        </div>
+                        <div class="quick-item" onclick="addItem('Soda', 2.49, '🥤')">
+                            <span class="emoji">🥤</span>
+                            <div>Soda<br>$2.49</div>
+                        </div>
+                        <div class="quick-item" onclick="addItem('Shake', 4.99, '🥤')">
+                            <span class="emoji">🥤</span>
+                            <div>Shake<br>$4.99</div>
+                        </div>
+                    </div>
+                    
+                    <div class="keypad" id="keypad">
+                        <button class="key" onclick="pressKey('7')">7</button>
+                        <button class="key" onclick="pressKey('8')">8</button>
+                        <button class="key" onclick="pressKey('9')">9</button>
+                        <button class="key fn" onclick="clearTransaction()">CLR</button>
+                        <button class="key" onclick="pressKey('4')">4</button>
+                        <button class="key" onclick="pressKey('5')">5</button>
+                        <button class="key" onclick="pressKey('6')">6</button>
+                        <button class="key fn" onclick="voidLast()">VOID</button>
+                        <button class="key" onclick="pressKey('1')">1</button>
+                        <button class="key" onclick="pressKey('2')">2</button>
+                        <button class="key" onclick="pressKey('3')">3</button>
+                        <button class="key fn" onclick="applyDiscount()">DISC</button>
+                        <button class="key" onclick="pressKey('0')">0</button>
+                        <button class="key" onclick="pressKey('00')">00</button>
+                        <button class="key" onclick="pressKey('.')">.</button>
+                        <button class="key enter" onclick="processPayment()">
+                            PAY
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="specs-panel">
+                    <div class="spec-item">
+                        <div class="value">14"</div>
+                        <div class="label">Touch Display</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="value">&lt;2s</div>
+                        <div class="label">Boot Time</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="value">8hr</div>
+                        <div class="label">Battery Backup</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Showcase -->
+            <div class="product-showcase" id="gallery">
+                <div class="showcase-header">
+                    <h2>Hardware Gallery</h2>
+                    <p>The RS-79 — Professional-grade POS hardware built for demanding environments</p>
+                </div>
+                
+                <div class="gallery-tabs">
+                    <button class="gallery-tab active" onclick="switchTab('hardware')">🏗️ Hardware</button>
+                    <button class="gallery-tab" onclick="switchTab('features')">⚙️ Features</button>
+                    <button class="gallery-tab" onclick="switchTab('interface')">💻 Interface</button>
+                </div>
+                
+                <div class="gallery-grid" id="gallery-content">
+                    <div class="gallery-item">
+                        <div class="gallery-image" data-label="Front View">🖥️</div>
+                        <div class="gallery-info">
+                            <h4>All-in-One Terminal</h4>
+                            <p>14" touchscreen, built-in receipt printer, cash drawer connection</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-image" data-label="Side Profile">📐</div>
+                        <div class="gallery-info">
+                            <h4>Compact Design</h4>
+                            <p>12.5" × 15" × 8" footprint fits any counter</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-image" data-label="Ports">🔌</div>
+                        <div class="gallery-info">
+                            <h4>Connectivity</h4>
+                            <p>4× USB, Ethernet, WiFi 6, Bluetooth 5.0</p>
+                        </div>
+                    </div>
+                    <div class="gallery-item">
+                        <div class="gallery-image" data-label="Internals">⚙️</div>
+                        <div class="gallery-info">
+                            <h4>RPi 5 Powered</h4>
+                            <p>2.4GHz quad-core, 8GB RAM, 256GB SSD</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="walkthrough" id="features">
+                    <h3>🎯 Feature Walkthrough</h3>
+                    
+                    <div class="walkthrough-step" onclick="highlightFeature('multi-currency')">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>Multi-Currency Support</h4>
+                            <p>Accept USD, EUR, GBP, BTC, and more. Real-time conversion with crypto QR codes.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="walkthrough-step" onclick="highlightFeature('kitchen')">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>Kitchen Display System</h4>
+                            <p>Orders sent directly to kitchen screen. No lost tickets, real-time updates.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="walkthrough-step" onclick="highlightFeature('inventory')">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>Smart Inventory</h4>
+                            <p>Auto-decrement stock, low-stock alerts, ingredient-level tracking.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="walkthrough-step" onclick="highlightFeature('reports')">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4>Analytics & Reports</h4>
+                            <p>Daily summaries, tax reports, top products, export to Excel/PDF.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal">
+            <h3>💳 Complete Payment</h3>
+            <div class="amount" id="modal-amount">$0.00</div>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 20px;">Select payment method</p>
+            <div class="payment-options">
+                <div class="payment-option" onclick="completePayment('Cash')">
+                    <span class="icon">💵</span>
+                    <span class="label">Cash</span>
+                </div>
+                <div class="payment-option" onclick="completePayment('Credit')">
+                    <span class="icon">💳</span>
+                    <span class="label">Credit</span>
+                </div>
+                <div class="payment-option" onclick="completePayment('Debit')">
+                    <span class="icon">🏦</span>
+                    <span class="label">Debit</span>
+                </div>
+                <div class="payment-option" onclick="completePayment('Crypto')">
+                    <span class="icon">₿</span>
+                    <span class="label">Crypto</span>
+                </div>
+            </div>
+            <button class="cta-btn" style="margin-top: 20px; width: 100%;" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Transaction State
+        let transaction = {
+            items: [],
+            subtotal: 0,
+            tax: 0,
+            total: 0,
+            inputBuffer: ''
+        };
+        
+        const TAX_RATE = 0.085;
+        
+        // Add item to transaction
+        function addItem(name, price, emoji = '') {
+            const quantity = transaction.inputBuffer ? parseFloat(transaction.inputBuffer) : 1;
+            const itemTotal = price * quantity;
+            
+            const item = {
+                id: Date.now(),
+                name: emoji + ' ' + name,
+                quantity: quantity,
+                price: price,
+                total: itemTotal
+            };
+            
+            transaction.items.push(item);
+            transaction.inputBuffer = '';
+            updateDisplay();
+            showToast(`Added ${quantity}× ${name}`);
+        }
+        
+        // Update display
+        function updateDisplay() {
+            const itemsContainer = document.getElementById('receipt-items');
+            const totalsContainer = document.getElementById('receipt-totals');
+            const emptyState = document.getElementById('empty-state');
+            
+            if (transaction.items.length === 0) {
+                itemsContainer.innerHTML = '';
+                totalsContainer.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            emptyState.style.display = 'none';
+            totalsContainer.style.display = 'block';
+            
+            // Calculate totals
+            transaction.subtotal = transaction.items.reduce((sum, item) => sum + item.total, 0);
+            transaction.tax = transaction.subtotal * TAX_RATE;
+            transaction.total = transaction.subtotal + transaction.tax;
+            
+            // Render items
+            itemsContainer.innerHTML = transaction.items.map(item => `
+                <div class="receipt-item">
+                    <span>${item.quantity}× ${item.name}</span>
+                    <span>$${item.total.toFixed(2)}</span>
+                </div>
+            `).join('');
+            
+            // Update totals
+            document.getElementById('subtotal').textContent = '$' + transaction.subtotal.toFixed(2);
+            document.getElementById('tax').textContent = '$' + transaction.tax.toFixed(2);
+            document.getElementById('total').textContent = '$' + transaction.total.toFixed(2);
+        }
+        
+        // Key press handler
+        function pressKey(key) {
+            if (transaction.inputBuffer.length < 8) {
+                transaction.inputBuffer += key;
+                showToast('Input: ' + transaction.inputBuffer);
+            }
+        }
+        
+        // Clear transaction
+        function clearTransaction() {
+            transaction = {
+                items: [],
+                subtotal: 0,
+                tax: 0,
+                total: 0,
+                inputBuffer: ''
+            };
+            updateDisplay();
+            showToast('Transaction cleared');
+        }
+        
+        // Void last item
+        function voidLast() {
+            if (transaction.items.length > 0) {
+                const removed = transaction.items.pop();
+                updateDisplay();
+                showToast('Removed: ' + removed.name);
+            }
+        }
+        
+        // Apply discount
+        function applyDiscount() {
+            if (transaction.subtotal > 0) {
+                const discount = transaction.subtotal * 0.10; // 10% discount
+                transaction.subtotal -= discount;
+                updateDisplay();
+                showToast('10% discount applied');
+            }
+        }
+        
+        // Process payment
+        function processPayment() {
+            if (transaction.total <= 0) {
+                showToast('Add items first');
+                return;
+            }
+            document.getElementById('modal-amount').textContent = '$' + transaction.total.toFixed(2);
+            document.getElementById('payment-modal').classList.add('active');
+        }
+        
+        // Complete payment
+        function completePayment(method) {
+            document.getElementById('payment-modal').classList.remove('active');
+            showToast(`✅ Payment complete! (${method})`);
+            
+            // Print receipt animation
+            setTimeout(() => {
+                clearTransaction();
+                showToast('🧾 Receipt printed');
+            }, 1500);
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('payment-modal').classList.remove('active');
+        }
+        
+        // Show toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+        
+        // Switch gallery tab
+        function switchTab(tab) {
+            document.querySelectorAll('.gallery-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const content = document.getElementById('gallery-content');
+            
+            const data = {
+                hardware: [
+                    { icon: '🖥️', label: 'Front View', title: 'All-in-One Terminal', desc: '14" touchscreen, built-in receipt printer' },
+                    { icon: '📐', label: 'Side Profile', title: 'Compact Design', desc: '12.5" × 15" × 8" footprint' },
+                    { icon: '🔌', label: 'Ports', title: 'Connectivity', desc: '4× USB, Ethernet, WiFi 6, Bluetooth' },
+                    { icon: '⚙️', label: 'Internals', title: 'RPi 5 Powered', desc: '2.4GHz quad-core, 8GB RAM, 256GB SSD' }
+                ],
+                features: [
+                    { icon: '💱', label: 'Multi-Currency', title: 'Global Payments', desc: 'USD, EUR, GBP, BTC, ETH support' },
+                    { icon: '📋', label: 'KDS', title: 'Kitchen Display', desc: 'Real-time order routing to kitchen' },
+                    { icon: '📊', label: 'Analytics', title: 'Smart Reporting', desc: 'Sales trends, inventory, forecasting' },
+                    { icon: '☁️', label: 'Cloud', title: 'Cloud Sync', desc: 'Offline mode + automatic backup' }
+                ],
+                interface: [
+                    { icon: '🎨', label: 'UI', title: 'Intuitive Design', desc: 'Training time under 10 minutes' },
+                    { icon: '🌍', label: 'Languages', title: '8 Languages', desc: 'EN, ES, FR, DE, CN, JP, AR, PT' },
+                    { icon: '🔒', label: 'Security', title: 'Secure Payments', desc: 'EMV compliant, encrypted storage' },
+                    { icon: '⚡', label: 'Speed', title: 'Lightning Fast', desc: '&lt;2 second transaction time' }
+                ]
+            };
+            
+            content.innerHTML = data[tab].map(item => `
+                <div class="gallery-item">
+                    <div class="gallery-image" data-label="${item.label}">${item.icon}</div>
+                    <div class="gallery-info">
+                        <h4>${item.title}</h4>
+                        <p>${item.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Highlight feature
+        function highlightFeature(feature) {
+            const messages = {
+                'multi-currency': '💱 Supports 20+ currencies + crypto payments',
+                'kitchen': '📋 Orders route instantly to kitchen display',
+                'inventory': '📊 Stock auto-updates with every sale',
+                'reports': '📈 Export sales data to Excel or PDF'
+            };
+            showToast(messages[feature]);
+        }
+        
+        // Guided Tour
+        let tourStep = 0;
+        const tourSteps = [
+            { element: 'pos-terminal', message: 'This is the RS-79 terminal interface' },
+            { element: 'display-screen', message: 'Receipt displays here in real-time' },
+            { element: 'quick-items', message: 'Quick-access buttons for popular items' },
+            { element: 'keypad', message: 'Full keypad with PLU, discount, and payment functions' }
+        ];
+        
+        function startTour() {
+            tourStep = 0;
+            nextTourStep();
+        }
+        
+        function nextTourStep() {
+            if (tourStep > 0) {
+                const prev = document.getElementById(tourSteps[tourStep - 1].element);
+                if (prev) prev.classList.remove('tour-highlight');
+            }
+            
+            if (tourStep < tourSteps.length) {
+                const step = tourSteps[tourStep];
+                const element = document.getElementById(step.element);
+                element.classList.add('tour-highlight');
+                element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                showToast(`🎯 ${step.message}`);
+                tourStep++;
+                setTimeout(nextTourStep, 3000);
+            } else {
+                showToast('✅ Tour complete! Try the demo yourself.');
+            }
+        }
+        
+        // Demo transaction on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                addItem('Demo Burger', 8.99, '🍔');
+                addItem('Fries', 3.99, '🍟');
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

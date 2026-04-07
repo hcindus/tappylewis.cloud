@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptonio — AI Crypto Trading Bot | Performance Supply Depot</title>
+    <style>
+        :root {
+            --bg-dark: #0a0a1a;
+            --neon-cyan: #00f3ff;
+            --neon-purple: #8b5cf6;
+            --neon-green: #00ff88;
+            --neon-amber: #f59e0b;
+            --neon-red: #ff4757;
+            --text: #e5e5e5;
+            --text-muted: #a0a0a0;
+            --card-bg: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover { color: var(--neon-cyan); }
+
+        .hero {
+            padding: 140px 40px 60px;
+            text-align: center;
+            background: radial-gradient(ellipse at top, rgba(0, 243, 255, 0.1) 0%, transparent 50%);
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        .total-value {
+            font-size: 72px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+
+        .value-label {
+            font-size: 16px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .last-updated {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 20px;
+        }
+
+        .exchange-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin: 40px 0;
+        }
+
+        .tab {
+            padding: 12px 32px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .tab.active {
+            background: rgba(0, 243, 255, 0.15);
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .tab.inactive {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .tab.error {
+            background: rgba(255, 71, 87, 0.1);
+            border-color: var(--neon-red);
+            color: var(--neon-red);
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px 80px;
+        }
+
+        .exchange-section {
+            margin-bottom: 60px;
+        }
+
+        .exchange-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .exchange-name {
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .exchange-badge {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-live {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--neon-green);
+        }
+
+        .badge-error {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--neon-red);
+        }
+
+        .assets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .asset-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 243, 255, 0.3);
+        }
+
+        .asset-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .coin-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .btc-icon { background: rgba(247, 147, 26, 0.2); color: #f7931a; }
+        .eth-icon { background: rgba(98, 126, 234, 0.2); color: #627eea; }
+        .xrp-icon { background: rgba(0, 0, 0, 0.5); border: 2px solid #23292f; color: #fff; }
+        .doge-icon { background: rgba(195, 145, 63, 0.2); color: #c3913f; }
+        .usdt-icon { background: rgba(38, 161, 123, 0.2); color: #26a17b; }
+        .usdc-icon { background: rgba(39, 117, 202, 0.2); color: #2775ca; }
+        .ltc-icon { background: rgba(52, 93, 157, 0.2); color: #345d9d; }
+        .bch-icon { background: rgba(141, 195, 81, 0.2); color: #8dc351; }
+        .shib-icon { background: rgba(254, 1, 84, 0.2); color: #fe0154; }
+        .etc-icon { background: rgba(60, 183, 133, 0.2); color: #3cb785; }
+        .uni-icon { background: rgba(255, 43, 88, 0.2); color: #ff2b58; }
+        .aave-icon { background: rgba(162, 90, 210, 0.2); color: #a25ad2; }
+        .mana-icon { background: rgba(255, 93, 53, 0.2); color: #ff3d35; }
+        .trx-icon { background: rgba(239, 9, 50, 0.2); color: #ef0932; }
+        .xlm-icon { background: rgba(0, 0, 0, 0.5); border: 2px solid #000; color: #14b6e8; }
+        .snx-icon { background: rgba(0, 0, 0, 0.5); border: 2px solid #00d1ff; color: #00d1ff; }
+        .ape-icon { background: rgba(0, 134, 255, 0.2); color: #0086ff; }
+        .vtho-icon { background: rgba(0, 170, 255, 0.2); color: #00aaff; }
+        .kava-icon { background: rgba(255, 79, 0, 0.2); color: #ff4f00; }
+
+        .coin-info h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .coin-info span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .balance-value {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            font-family: monospace;
+        }
+
+        .balance-usd {
+            font-size: 16px;
+            color: var(--text-muted);
+        }
+
+        .summary-bar {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 40px;
+            background: rgba(0, 243, 255, 0.05);
+            border-top: 1px solid rgba(0, 243, 255, 0.1);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.1);
+            margin-bottom: 60px;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .error-message {
+            background: rgba(255, 71, 87, 0.1);
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            color: var(--neon-red);
+        }
+
+        footer {
+            padding: 40px;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 40px; }
+            .total-value { font-size: 48px; }
+            .exchange-header { flex-direction: column; gap: 16px; }
+            .summary-bar { flex-direction: column; gap: 30px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">🎰 Cryptonio</div>
+        <nav class="nav-links">
+            <a href="#portfolio">Portfolio</a>
+            <a href="#exchanges">Exchanges</a>
+            <a href="http://tappylewis.cloud/cryptobot.html" target="_blank">Live Demo →</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Live Trading Portfolio</h1>
+        <p class="hero-subtitle">
+            Real-time holdings across connected exchanges. Automated trading by Cryptonio AI.
+        </p>
+        
+        <div class="value-label">Total Portfolio Value</div>
+        <div class="total-value" id="totalValue">$156.42</div>
+        
+        <div class="exchange-tabs">
+            <span class="tab active">✅ Binance US Primary</span>
+            <span class="tab active">✅ Binance US Secondary</span>
+            <span class="tab error">❌ Gemini (API Error)</span>
+        </div>
+        
+        <div class="last-updated">Last Updated: April 6, 2026 at 5:09 PM UTC</div>
+    </section>
+
+    <div class="main-content">
+        <div class="summary-bar">
+            <div class="summary-item">
+                <div class="summary-number">31</div>
+                <div class="summary-label">Total Assets</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-number">2</div>
+                <div class="summary-label">Active Exchanges</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-number">14</div>
+                <div class="summary-label">Unique Coins</div>
+            </div>
+        </div>
+
+        <!-- Binance US Primary -->
+        <section class="exchange-section">
+            <div class="exchange-header">
+                <div class="exchange-name">
+                    🟡 Binance US Primary
+                    <span class="exchange-badge badge-live">LIVE</span>
+                </div>
+                <div style="color: var(--text-muted);">14 Assets</div>
+            </div>
+            
+            <div class="assets-grid">
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon btc-icon">₿</div>
+                        <div class="coin-info">
+                            <h3>Bitcoin</h3>
+                            <span>BTC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.00037775</div>
+                    <div class="balance-usd">≈ $25.35 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon xrp-icon">X</div>
+                        <div class="coin-info">
+                            <h3>XRP</h3>
+                            <span>Ripple</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.05200000</div>
+                    <div class="balance-usd">≈ $0.03 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon usdt-icon">₮</div>
+                        <div class="coin-info">
+                            <h3>Tether</h3>
+                            <span>USDT</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">1.72231386</div>
+                    <div class="balance-usd">≈ $1.72 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon bch-icon">B</div>
+                        <div class="coin-info">
+                            <h3>Bitcoin Cash</h3>
+                            <span>BCH</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.08349149</div>
+                    <div class="balance-usd">≈ $21.70 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon ltc-icon">Ł</div>
+                        <div class="coin-info">
+                            <h3>Litecoin</h3>
+                            <span>LTC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">1.08534600</div>
+                    <div class="balance-usd">≈ $85.54 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon etc-icon">E</div>
+                        <div class="coin-info">
+                            <h3>Ethereum Classic</h3>
+                            <span>ETC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.28038000</div>
+                    <div class="balance-usd">≈ $5.46 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon doge-icon">D</div>
+                        <div class="coin-info">
+                            <h3>Dogecoin</h3>
+                            <span>DOGE</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">255.40855336</div>
+                    <div class="balance-usd">≈ $30.65 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon usdc-icon">U</div>
+                        <div class="coin-info">
+                            <h3>USD Coin</h3>
+                            <span>USDC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.98278336</div>
+                    <div class="balance-usd">≈ $0.98 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon mana-icon">M</div>
+                        <div class="coin-info">
+                            <h3>Decentraland</h3>
+                            <span>MANA</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">10.71400000</div>
+                    <div class="balance-usd">≈ $3.54 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon uni-icon">U</div>
+                        <div class="coin-info">
+                            <h3>Uniswap</h3>
+                            <span>UNI</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">3.62154000</div>
+                    <div class="balance-usd">≈ $27.40 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon aave-icon">A</div>
+                        <div class="coin-info">
+                            <h3>Aave</h3>
+                            <span>AAVE</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.00694000</div>
+                    <div class="balance-usd">≈ $1.29 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon shib-icon">S</div>
+                        <div class="coin-info">
+                            <h3>Shiba Inu</h3>
+                            <span>SHIB</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">3253533.02</div>
+                    <div class="balance-usd">≈ $0.07 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon trx-icon">T</div>
+                        <div class="coin-info">
+                            <h3>TRON</h3>
+                            <span>TRX</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">1.36202348</div>
+                    <div class="balance-usd">≈ $0.18 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon vtho-icon">V</div>
+                        <div class="coin-info">
+                            <h3>VeThor</h3>
+                            <span>VTHO</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">1412.41221065</div>
+                    <div class="balance-usd">≈ $0.02 USD</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Binance US Secondary -->
+        <section class="exchange-section">
+            <div class="exchange-header">
+                <div class="exchange-name">
+                    🟡 Binance US Secondary
+                    <span class="exchange-badge badge-live">LIVE</span>
+                </div>
+                <div style="color: var(--text-muted);">17 Assets</div>
+            </div>
+            
+            <div class="assets-grid">
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon btc-icon">₿</div>
+                        <div class="coin-info">
+                            <h3>Bitcoin</h3>
+                            <span>BTC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.00113918</div>
+                    <div class="balance-usd">≈ $76.46 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon xrp-icon">X</div>
+                        <div class="coin-info">
+                            <h3>XRP</h3>
+                            <span>Ripple</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">15.79690000</div>
+                    <div class="balance-usd">≈ $9.16 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon usdt-icon">₮</div>
+                        <div class="coin-info">
+                            <h3>Tether</h3>
+                            <span>USDT</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">28.44572587</div>
+                    <div class="balance-usd">≈ $28.45 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon bch-icon">B</div>
+                        <div class="coin-info">
+                            <h3>Bitcoin Cash</h3>
+                            <span>BCH</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.00493950</div>
+                    <div class="balance-usd">≈ $1.28 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon ltc-icon">Ł</div>
+                        <div class="coin-info">
+                            <h3>Litecoin</h3>
+                            <span>LTC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.09352944</div>
+                    <div class="balance-usd">≈ $7.37 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon xlm-icon">X</div>
+                        <div class="coin-info">
+                            <h3>Stellar</h3>
+                            <span>XLM</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">2.86750000</div>
+                    <div class="balance-usd">≈ $0.36 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon doge-icon">D</div>
+                        <div class="coin-info">
+                            <h3>Dogecoin</h3>
+                            <span>DOGE</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">12.95850000</div>
+                    <div class="balance-usd">≈ $1.56 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon usdc-icon">U</div>
+                        <div class="coin-info">
+                            <h3>USD Coin</h3>
+                            <span>USDC</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">15.83800000</div>
+                    <div class="balance-usd">≈ $15.84 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon uni-icon">U</div>
+                        <div class="coin-info">
+                            <h3>Uniswap</h3>
+                            <span>UNI</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">2.58829500</div>
+                    <div class="balance-usd">≈ $19.57 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon aave-icon">A</div>
+                        <div class="coin-info">
+                            <h3>Aave</h3>
+                            <span>AAVE</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.01786200</div>
+                    <div class="balance-usd">≈ $3.32 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon shib-icon">S</div>
+                        <div class="coin-info">
+                            <h3>Shiba Inu</h3>
+                            <span>SHIB</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">594076.33</div>
+                    <div class="balance-usd">≈ $0.01 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon snx-icon">S</div>
+                        <div class="coin-info">
+                            <h3>Synthetix</h3>
+                            <span>SNX</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">1.69335000</div>
+                    <div class="balance-usd">≈ $3.08 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon ape-icon">A</div>
+                        <div class="coin-info">
+                            <h3>ApeCoin</h3>
+                            <span>APE</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">12.12212147</div>
+                    <div class="balance-usd">≈ $10.89 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon vtho-icon">V</div>
+                        <div class="coin-info">
+                            <h3>VeThor</h3>
+                            <span>VTHO</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">19.24866336</div>
+                    <div class="balance-usd">≈ $0.00 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon kava-icon">K</div>
+                        <div class="coin-info">
+                            <h3>Kava</h3>
+                            <span>KAVA</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">5.47800000</div>
+                    <div class="balance-usd">≈ $2.40 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon" style="background: rgba(128,128,128,0.2); color: #888;">N</div>
+                        <div class="coin-info">
+                            <h3>Nobody</h3>
+                            <span>NOBODY</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">0.00513068</div>
+                    <div class="balance-usd">≈ $0.00 USD</div>
+                </div>
+
+                <div class="asset-card">
+                    <div class="asset-header">
+                        <div class="coin-icon" style="background: rgba(128,128,128,0.2); color: #888;">A</div>
+                        <div class="coin-info">
+                            <h3>Alchemy Pay</h3>
+                            <span>ACH</span>
+                        </div>
+                    </div>
+                    <div class="balance-value">93.73050000</div>
+                    <div class="balance-usd">≈ $0.11 USD</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gemini Section -->
+        <section class="exchange-section">
+            <div class="exchange-header">
+                <div class="exchange-name">
+                    🔵 Gemini
+                    <span class="exchange-badge badge-error">CONNECTION ERROR</span>
+                </div>
+            </div>
+            
+            <div class="error-message">
+                <strong>API Key Invalid</strong><br><br>
+                The Gemini API credentials are expired or invalid. Please update the API key in the vault to enable live data. Error: "InvalidApiKey"
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2026 Cryptonio — Performance Supply Depot LLC. Real-time data from Binance US API.</p>
+        <p>Last sync: April 6, 2026 17:09 UTC | <a href="http://tappylewis.cloud/cryptobot.html">Live Trading Demo</a> | <a href="mailto:miles@myl0nr0s.cloud">Contact</a></p>
+    </footer>
+</body>
+</html>
