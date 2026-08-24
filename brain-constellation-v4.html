@@ -241,6 +241,16 @@ let entityGroup = new THREE.Group();
 scene.add(entityGroup);
 let entityMeshes = [];
 
+// Map each category to a brain region (index into REGIONS) so every
+// outside entity visibly connects to something *inside* the brain.
+const CATEGORY_REGION = {
+  'Commerce':         5, // Basal Ganglia  (Act — transactions/execution)
+  'Software':         4, // Prefrontal Cortex (Decide — planning/build)
+  'Games':            6, // Cerebellum     (Act — coordination/play)
+  'Data & Infra':     2, // Hippocampus    (Orient — memory/storage)
+  'Sites & Platforms':0, // Visual Cortex  (Observe — presentation)
+};
+
 function hexToColor(hex){
   const s = String(hex).replace('#','');
   return parseInt(s, 16);
@@ -272,11 +282,15 @@ function buildConstellation(entities, categories){
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map:glowTexture(color), transparent:true, opacity:0.5, depthWrite:false }));
     halo.scale.set(2.6,2.6,1); mesh.add(halo);
     const label = makeLabel(e.name, e.sub); label.position.set(0,1.1,0); mesh.add(label);
-    const dir = pos.clone().normalize();
-    const inner = dir.clone().multiplyScalar(12);
-    const tGeo = new THREE.BufferGeometry().setFromPoints([pos, inner]);
-    const tLine = new THREE.Line(tGeo, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.14 }));
+    // tether to the specific brain region this category maps to (inside the brain)
+    const regionIdx = CATEGORY_REGION[e.category] ?? 1; // default Thalamus
+    const regionPos = regionVectors[regionIdx];
+    const tGeo = new THREE.BufferGeometry().setFromPoints([pos, regionPos]);
+    const tLine = new THREE.Line(tGeo, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.28 }));
     entityGroup.add(tLine);
+    // small marker at the region end so the landing point is visible
+    const tip = new THREE.Sprite(new THREE.SpriteMaterial({ map:glowTexture(color), transparent:true, opacity:0.7, depthWrite:false }));
+    tip.position.copy(regionPos); tip.scale.set(1.2,1.2,1); entityGroup.add(tip);
     entityMeshes.push(mesh);
   });
 }
