@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 AOS Brain — Composite (Regions + Live Traffic)</title>
+<style>
+  html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#04040c; font-family:-apple-system,'Segoe UI',Roboto,sans-serif; }
+  #canvas { display:block; }
+
+  /* HUD — top left: live telemetry */
+  #hud { position:fixed; top:14px; left:14px; color:#9fb8d8; font-size:12px; z-index:10; line-height:1.55; pointer-events:none; }
+  #hud h1 { font-size:15px; color:#e8f0ff; margin:0 0 4px; letter-spacing:.5px; }
+  #hud .dim { color:#5b7290; font-size:10px; }
+  #hud .tick { color:#ffd740; font-family:ui-monospace,monospace; font-weight:600; }
+  #hud .phase { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+  .ph-observe { background:#4fc3f7; } .ph-orient { background:#9c6ade; } .ph-decide { background:#ffd740; } .ph-act { background:#66bb6a; }
+
+  /* HUD — bottom left: organs + pipeline */
+  #organs { position:fixed; bottom:14px; left:14px; color:#8aa3c4; font-size:11px; z-index:10; line-height:1.7; pointer-events:none; }
+  #organs b { color:#cfe0f5; }
+  .state-clean{color:#00ff88;} .state-purify{color:#ffd740;} .state-toxic{color:#ff5c5c;}
+  .state-filter{color:#4fc3f7;} .state-reabsorb{color:#ffa500;} .state-excrete{color:#9c6ade;}
+  .state-inhale{color:#4fc3f7;} .state-exhale{color:#66bb6a;}
+  .state-baseline{color:#8aa3c4;} .state-secreting{color:#ffd740;}
+
+  /* Traffic legend / region activity — top right */
+  #traffic { position:fixed; top:14px; right:14px; color:#8aa3c4; font-size:10px; z-index:10; pointer-events:none; background:rgba(4,4,12,0.6); padding:10px 12px; border-radius:8px; border:1px solid rgba(79,195,247,0.2); }
+  #traffic h2 { font-size:11px; color:#cfe0f5; margin:0 0 6px; letter-spacing:.5px; }
+  #traffic .row { display:flex; justify-content:space-between; gap:14px; line-height:1.6; }
+  #traffic .bar { width:60px; height:5px; background:rgba(255,255,255,0.08); border-radius:3px; overflow:hidden; display:inline-block; vertical-align:middle; margin-left:6px; }
+  #traffic .bar i { display:block; height:100%; background:#4fc3f7; width:0%; transition:width .4s; }
+
+  .legend { position:fixed; bottom:14px; right:14px; color:#8aa3c4; font-size:10px; z-index:10; line-height:1.6; pointer-events:none; }
+  .legend .o { color:#ffd740; } .legend .r { color:#ff5c5c; }
+  a.back { position:fixed; top:14px; left:50%; transform:translateX(-50%); color:#8aa3c4; font-size:11px; text-decoration:none; z-index:11; padding:6px 14px; border:1px solid #2a4a6a; border-radius:16px; }
+  a.back:hover { color:#fff; border-color:#4fc3f7; }
+</style>
+</head>
+<body>
+<div id="canvas"></div>
+
+<div id="hud">
+  <h1>🧠 AOS Brain — Composite</h1>
+  <div class="dim">drag to orbit · scroll to zoom</div>
+  <div style="margin-top:8px">
+    <span class="dim">TICK</span> <span class="tick" id="tick">—</span><br>
+    <span class="dim">PHASE</span> <span id="phase"><span class="phase ph-observe"></span>—</span><br>
+    <span class="dim">SIGNAL</span> <span id="signal">—</span><br>
+    <span class="dim">UPTIME</span> <span id="uptime">—</span>
+  </div>
+</div>
+
+<div id="traffic">
+  <h2>⚡ LIVE REGION TRAFFIC <span class="dim">(counts/sec)</span></h2>
+  <div id="traffic-rows"></div>
+</div>
+
+<div id="organs">
+  <b>ORGANS</b><br>
+  <span id="lungs">🫁 Lungs —</span><br>
+  <span id="liver">🫘 Liver —</span><br>
+  <span id="kidneys">🫀 Kidneys —</span><br>
+  <span id="thyroid">🧪 Thyroid —</span>
+</div>
+
+<div class="legend"><span class="o">●</span> pulse = real traffic · <span class="r">●</span> node = region</div>
+<a class="back" href="/">← Back to AGI Company</a>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ── Scene ──────────────────────────────────────────────
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x04040c, 0.008);
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(14, 9, 18);
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.getElementById('canvas').appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 6; controls.maxDistance = 60;
+controls.autoRotate = true; controls.autoRotateSpeed = 0.4;
+
+// Starfield
+const stars = new THREE.BufferGeometry(); const starPos=[];
+for (let i=0;i<600;i++){ const r=40+Math.random()*80, t=Math.random()*Math.PI*2, p=Math.acos(2*Math.random()-1);
+  starPos.push(r*Math.sin(p)*Math.cos(t), r*Math.sin(p)*Math.sin(t), r*Math.cos(p)); }
+stars.setAttribute('position', new THREE.Float32BufferAttribute(starPos,3));
+scene.add(new THREE.Points(stars, new THREE.PointsMaterial({color:0x4a5f80,size:0.12,sizeAttenuation:true,transparent:true,opacity:0.7})));
+
+// ── Regions (7 anatomical OODA regions → cortex.region_N) ──
+// cortex index, name, position, color, group
+const REGIONS = [
+  { cortex:'region_0', name:'Visual Cortex',   pos:[-6.5,3.5,-5], color:0x4fc3f7, group:'Observe' },
+  { cortex:'region_1', name:'Thalamus',        pos:[ 0,1.5, 0],   color:0x29b6f6, group:'Observe' },
+  { cortex:'region_2', name:'Hippocampus',     pos:[-5,-2, 2],    color:0x7e57c2, group:'Orient'  },
+  { cortex:'region_3', name:'Amygdala',        pos:[ 5,-2, 2],    color:0xef5350, group:'Orient'  },
+  { cortex:'region_4', name:'Prefrontal Cortex',pos:[0,4, 6],     color:0xffd740, group:'Decide'  },
+  { cortex:'region_5', name:'Basal Ganglia',   pos:[ 0,-4.5,0],   color:0x66bb6a, group:'Act'     },
+  { cortex:'region_6', name:'Cerebellum',      pos:[ 2.5,-3,-6],  color:0x26a69a, group:'Act'     },
+];
+const groupColors = { Observe:0x4fc3f7, Orient:0x9c6ade, Decide:0xffd740, Act:0x66bb6a };
+const phaseToGroup = { Observe:'Observe', Orient:'Orient', Decide:'Decide', Act:'Act' };
+
+// edges (OODA cycle + cross links)
+const EDGES = [[0,1],[1,2],[1,3],[2,4],[3,4],[4,5],[5,6],[6,1],[2,6],[3,5]];
+
+// nodes
+const nodes = REGIONS.map((r,i)=>{
+  const geo = new THREE.SphereGeometry(0.55, 32, 32);
+  const mat = new THREE.MeshStandardMaterial({ color:r.color, emissive:r.color, emissiveIntensity:0.4, roughness:0.25, metalness:0.1 });
+  const mesh = new THREE.Mesh(geo, mat); mesh.position.set(...r.pos); mesh.userData={r, i}; scene.add(mesh);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map:glowTexture(r.color), transparent:true, opacity:0.4, depthWrite:false }));
+  halo.scale.set(3.5,3.5,1); mesh.add(halo);
+  const label = makeLabel(r.name); label.position.set(0,1.2,0); mesh.add(label);
+  return mesh;
+});
+
+// edges lines
+const lineMat = new THREE.LineBasicMaterial({ color:0x2a4a6a, transparent:true, opacity:0.55 });
+const lines = EDGES.map(([a,b])=>{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...REGIONS[a].pos), new THREE.Vector3(...REGIONS[b].pos)]);
+  const line = new THREE.Line(geo, lineMat); scene.add(line);
+  return { a, b, start:new THREE.Vector3(...REGIONS[a].pos), end:new THREE.Vector3(...REGIONS[b].pos) };
+});
+
+// pulses (real traffic)
+const pulseGeo = new THREE.SphereGeometry(0.13, 12, 12);
+const pulses = [];
+lines.forEach((edge, ei)=>{
+  const n = 2 + (ei%2);
+  for (let j=0;j<n;j++){
+    const mat = new THREE.MeshBasicMaterial({ color:0xffe082, transparent:true, opacity:0.9 });
+    const m = new THREE.Mesh(pulseGeo, mat); m.visible=true; scene.add(m);
+    pulses.push({ mesh:m, start:edge.start.clone(), end:edge.end.clone(), t:(j/n)+Math.random()*0.1, speed:0.1, edge:ei, a:edge.a, b:edge.b });
+  }
+});
+
+// lights
+scene.add(new THREE.AmbientLight(0x304060, 1.4));
+const key = new THREE.DirectionalLight(0xffffff,1.2); key.position.set(10,15,10); scene.add(key);
+scene.add(new THREE.PointLight(0x4fc3f7, 30, 60)).position.set(-10,5,-10);
+
+// ── Helpers ─────────────────────────────────────────────
+function glowTexture(color){
+  const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
+  const grad=g.createRadialGradient(64,64,0,64,64,64);
+  grad.addColorStop(0,'#'+color.toString(16).padStart(6,'0')); grad.addColorStop(1,'transparent');
+  g.fillStyle=grad; g.fillRect(0,0,128,128); return new THREE.CanvasTexture(c);
+}
+function makeLabel(text){
+  const c=document.createElement('canvas'); c.width=512; c.height=96; const g=c.getContext('2d');
+  g.font='600 40px "Segoe UI", sans-serif'; g.textAlign='center'; g.textBaseline='middle';
+  g.shadowColor='rgba(0,0,0,.9)'; g.shadowBlur=8; g.fillStyle='#e8f0ff'; g.fillText(text,256,48);
+  const tex=new THREE.CanvasTexture(c); const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
+  sp.scale.set(4.2,0.79,1); return sp;
+}
+
+// ── Live data state ─────────────────────────────────────
+let prevCounts = {};       // cortex region_N -> last count
+let regionActivity = {};   // cortex region_N -> rolling counts/sec
+let lastPoll = performance.now();
+
+async function fetchBrainData(){
+  const urls = ['/brain/status', 'http://localhost:8080/api/status'];
+  let data = null;
+  for (const u of urls){
+    try { const r = await fetch(u); if(r.ok){ data = await r.json(); break; } } catch(e){}
+  }
+  if(!data || !data.brain) return;
+  const b = data.brain;
+  const now = performance.now();
+  const dt = Math.max((now - lastPoll)/1000, 0.1); lastPoll = now;
+
+  // HUD
+  document.getElementById('tick').textContent = b.tick ?? '—';
+  document.getElementById('signal').textContent = (b.signal_quality_20avg ?? 0).toFixed(3);
+  const ph = b.phase || 'Observe';
+  const phEl = document.getElementById('phase');
+  const phClass = 'ph-' + ph.toLowerCase();
+  phEl.innerHTML = `<span class="phase ${phClass}"></span>${ph}`;
+
+  // Uptime (from service timestamp vs a fixed boot guess — use tick rate as proxy)
+  // We don't have boot time exposed; show system memory instead.
+  if (data.system) {
+    document.getElementById('uptime').textContent = `mem ${(data.system.memory_percent||0).toFixed(1)}% · ${(data.system.memory_available_mb||0)} MB free`;
+  }
+
+  // Organs
+  setOrgan('lungs', b.lungs, `🫁 Lungs — ${b.lungs?.phase||'—'} · ${(b.lungs?.breath_rate||0).toFixed(2)}/s`);
+  setOrgan('liver', b.liver, `🫘 Liver — ${b.liver?.state||'—'} · ${b.liver?.filtered_total||0}`);
+  setOrgan('kidneys', b.kidneys, `🫀 Kidneys — ${b.kidneys?.state||'—'} · ${b.kidneys?.total_processed||0}`);
+  setOrgan('thyroid', b.thyroid, `🧪 Thyroid — ${b.thyroid?.state||'—'}`);
+
+  // Per-region traffic (counts/sec)
+  const perf = b.cortex?.performance || {};
+  for (const r of REGIONS){
+    const key = r.cortex;
+    const cnt = perf[key]?.count ?? 0;
+    const prev = prevCounts[key] ?? cnt;
+    const delta = Math.max(0, cnt - prev);
+    prevCounts[key] = cnt;
+    regionActivity[key] = delta / dt; // counts/sec
+  }
+
+  // Highlight active OODA phase group
+  const activeGroup = phaseToGroup[ph] || 'Observe';
+  nodes.forEach((mesh)=>{
+    const g = mesh.userData.r.group;
+    const active = g === activeGroup;
+    mesh.material.emissiveIntensity = active ? 1.1 : 0.4;
+  });
+
+  renderTrafficRows();
+}
+
+function setOrgan(id, obj, fallback){
+  const el = document.getElementById(id);
+  if (!obj){ el.textContent = fallback.split(' — ')[0] + ' —'; return; }
+  el.textContent = fallback;
+}
+
+function renderTrafficRows(){
+  const container = document.getElementById('traffic-rows');
+  const rows = REGIONS.map(r=>{
+    const act = regionActivity[r.cortex] || 0;
+    const pct = Math.min(100, Math.round(act * 4)); // scale so ~25 cps = full bar
+    return `<div class="row"><span>${r.name}</span><span>${act.toFixed(0)}<span class="bar"><i style="width:${pct}%;background:#${r.color.toString(16).padStart(6,'0')}"></i></span></span></div>`;
+  }).join('');
+  container.innerHTML = rows;
+}
+
+// ── Animation ───────────────────────────────────────────
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  // advance pulses; speed scales with edge's source-region activity
+  pulses.forEach(p=>{
+    const act = regionActivity[REGIONS[p.a].cortex] || 0;
+    const speed = 0.08 + Math.min(0.5, act * 0.02); // faster under load
+    p.t += speed * dt;
+    if (p.t > 1) p.t = 0;
+    p.mesh.position.lerpVectors(p.start, p.end, p.t);
+    const fade = Math.sin(p.t * Math.PI);
+    const intensity = 0.25 + 0.75 * fade * (0.3 + Math.min(1, act/30));
+    p.mesh.material.opacity = Math.min(1, intensity);
+    p.mesh.scale.setScalar(0.6 + 0.8*fade);
+  });
+
+  nodes.forEach((n,i)=>{ const s=1+Math.sin(clock.elapsedTime*2+i)*0.06; n.scale.setScalar(s); });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// ── Poll loop ───────────────────────────────────────────
+fetchBrainData();
+setInterval(fetchBrainData, 2000);
+
+addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+</script>
+</body>
+</html>

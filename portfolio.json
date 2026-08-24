@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "updated": "2026-08-24T19:05:00Z",
+  "categories": {
+    "Commerce": "#d69e2e",
+    "Software": "#4fc3f7",
+    "Games": "#66bb6a",
+    "Data & Infra": "#9c6ade",
+    "Sites & Platforms": "#ef5350"
+  },
+  "entities": [
+    { "name": "Performance Supply Depot", "category": "Commerce", "sub": "POS supplies & AI agents" },
+    { "name": "ACM Tech", "category": "Commerce", "sub": "Hardware vendor (acct 71152)" },
+    { "name": "ACN Tech", "category": "Commerce", "sub": "Ribbon & toner automation" },
+    { "name": "Capton Pouring Systems", "category": "Commerce", "sub": "Beverage portion control" },
+    { "name": "CREAM", "category": "Software", "sub": "Real estate agent mgmt" },
+    { "name": "DUSTY", "category": "Software", "sub": "Cross-chain crypto wallet" },
+    { "name": "Identity Platform", "category": "Software", "sub": "Cradle-to-grave identity" },
+    { "name": "CMP", "category": "Software", "sub": "Consent mgmt platform" },
+    { "name": "DepotChaos", "category": "Software", "sub": "Supply chain CRM" },
+    { "name": "ReggieStarr", "category": "Software", "sub": "POS system" },
+    { "name": "MilkMan Games", "category": "Games", "sub": "Game studio" },
+    { "name": "N\u2019og nog", "category": "Games", "sub": "Voxel universe explorer" },
+    { "name": "Solar Conquest", "category": "Games", "sub": "Space strategy" },
+    { "name": "DataDepot Intelligence", "category": "Data & Infra", "sub": "Data & scraping" },
+    { "name": "Dark Factory", "category": "Data & Infra", "sub": "Production orchestration" },
+    { "name": "myl0nr0s.cloud", "category": "Sites & Platforms", "sub": "Brain monitor" },
+    { "name": "tappylewis.cloud", "category": "Sites & Platforms", "sub": "Games & brain viz" },
+    { "name": "psdepot.com", "category": "Sites & Platforms", "sub": "Web storefront" }
+  ]
+}

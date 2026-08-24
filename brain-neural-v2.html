@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧠 AOS Brain — Neural Memory v2 (Regions + Living Points)</title>
+<style>
+  html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#04040c; font-family:-apple-system,'Segoe UI',Roboto,sans-serif; }
+  #canvas { display:block; }
+
+  #hud { position:fixed; top:14px; left:14px; color:#9fb8d8; font-size:12px; z-index:10; line-height:1.55; pointer-events:none; }
+  #hud h1 { font-size:15px; color:#e8f0ff; margin:0 0 4px; letter-spacing:.5px; }
+  #hud .dim { color:#5b7290; font-size:10px; }
+  #hud .tick { color:#ffd740; font-family:ui-monospace,monospace; font-weight:600; }
+  #hud .phase { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+  .ph-observe{background:#4fc3f7;} .ph-orient{background:#9c6ade;} .ph-decide{background:#ffd740;} .ph-act{background:#66bb6a;}
+
+  #mem { position:fixed; bottom:14px; left:14px; color:#8aa3c4; font-size:11px; z-index:10; line-height:1.7; pointer-events:none; }
+  #mem b { color:#cfe0f5; }
+
+  #ops { position:fixed; top:14px; right:14px; color:#8aa3c4; font-size:10px; z-index:10; pointer-events:none; background:rgba(4,4,12,0.6); padding:10px 12px; border-radius:8px; border:1px solid rgba(79,195,247,0.2); line-height:1.7; }
+  #ops h2 { font-size:11px; color:#cfe0f5; margin:0 0 6px; letter-spacing:.5px; }
+  .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:5px; }
+  .dot-send{background:#00ff88;} .dot-save{background:#ffd740;} .dot-get{background:#ff5c5c;}
+
+  .legend { position:fixed; bottom:14px; right:14px; color:#8aa3c4; font-size:10px; z-index:10; line-height:1.6; pointer-events:none; text-align:right; }
+  a.back { position:fixed; top:14px; left:50%; transform:translateX(-50%); color:#8aa3c4; font-size:11px; text-decoration:none; z-index:11; padding:6px 14px; border:1px solid #2a4a6a; border-radius:16px; }
+  a.back:hover { color:#fff; border-color:#4fc3f7; }
+</style>
+</head>
+<body>
+<div id="canvas"></div>
+
+<div id="hud">
+  <h1>🧠 AOS Brain — Neural Memory v2</h1>
+  <div class="dim">drag to orbit · scroll to zoom</div>
+  <div style="margin-top:8px">
+    <span class="dim">TICK</span> <span class="tick" id="tick">—</span><br>
+    <span class="dim">PHASE</span> <span id="phase"><span class="phase ph-observe"></span>—</span><br>
+    <span class="dim">SIGNAL</span> <span id="signal">—</span>
+  </div>
+</div>
+
+<div id="mem">
+  <b>🧠 MEMORY</b><br>
+  <span>points <span id="mem-points" style="color:#cfe0f5">—</span></span> ·
+  <span>episodes <span id="mem-episodes" style="color:#cfe0f5">—</span></span><br>
+  <span>episode len <span id="mem-eplen" style="color:#cfe0f5">—</span></span> ·
+  <span>knowledge <span id="mem-know" style="color:#cfe0f5">—</span></span>
+</div>
+
+<div id="cons" style="position:fixed; bottom:14px; left:220px; color:#8aa3c4; font-size:11px; z-index:10; line-height:1.7; pointer-events:none;">
+  <b style="color:#cfe0f5">🌊 CONSCIOUSNESS</b><br>
+  <span style="color:#4fc3f7">■</span> conscious <span id="con-con" style="color:#cfe0f5">—</span>/<span id="con-con-cap" style="color:#5b7290">—</span><br>
+  <span style="color:#9c6ade">■</span> subconscious <span id="con-sub" style="color:#cfe0f5">—</span>/<span id="con-sub-cap" style="color:#5b7290">—</span><br>
+  <span style="color:#3a4a6a">■</span> unconscious <span id="con-uncon" style="color:#cfe0f5">—</span>/<span id="con-uncon-cap" style="color:#5b7290">—</span><br>
+  <span style="color:#cfe0f5">⚡</span> cross-talk <span id="con-x" style="color:#cfe0f5">—</span>
+</div>
+
+<div id="ops">
+  <h2>⚡ MEMORY OPS <span class="dim">(live)</span></h2>
+  <div><span class="dot dot-send"></span>send <span id="op-send" style="color:#00ff88">0</span></div>
+  <div><span class="dot dot-save"></span>save <span id="op-save" style="color:#ffd740">0</span></div>
+  <div><span class="dot dot-get"></span>get <span id="op-get" style="color:#ff5c5c">0</span></div>
+</div>
+
+<div class="legend">
+  <span style="color:#cfe0f5">●</span> region · <span style="color:#8899bb">·</span> memory point<br>
+  <span style="color:#228B22">✦</span> green pulse = data exchange
+</div>
+<a class="back" href="/">← Back to AGI Company</a>
+
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x04040c, 0.007);
+const camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 200);
+camera.position.set(16, 10, 20);
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+document.getElementById('canvas').appendChild(renderer.domElement);
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 6; controls.maxDistance = 80;
+controls.autoRotate = true; controls.autoRotateSpeed = 0.35;
+
+// Starfield
+const stars = new THREE.BufferGeometry(); const starPos=[];
+for (let i=0;i<700;i++){ const r=45+Math.random()*90, t=Math.random()*Math.PI*2, p=Math.acos(2*Math.random()-1);
+  starPos.push(r*Math.sin(p)*Math.cos(t), r*Math.sin(p)*Math.sin(t), r*Math.cos(p)); }
+stars.setAttribute('position', new THREE.Float32BufferAttribute(starPos,3));
+scene.add(new THREE.Points(stars, new THREE.PointsMaterial({color:0x4a5f80,size:0.12,sizeAttenuation:true,transparent:true,opacity:0.7})));
+
+// ── 7 Regions ───────────────────────────────────────────
+const REGIONS = [
+  { cortex:'region_0', name:'Visual Cortex',   pos:[-6.5,3.5,-5], color:0x4fc3f7, group:'Observe' },
+  { cortex:'region_1', name:'Thalamus',        pos:[ 0,1.5, 0],   color:0x29b6f6, group:'Observe' },
+  { cortex:'region_2', name:'Hippocampus',     pos:[-5,-2, 2],    color:0x7e57c2, group:'Orient'  },
+  { cortex:'region_3', name:'Amygdala',        pos:[ 5,-2, 2],    color:0xef5350, group:'Orient'  },
+  { cortex:'region_4', name:'Prefrontal Cortex',pos:[0,4, 6],     color:0xffd740, group:'Decide'  },
+  { cortex:'region_5', name:'Basal Ganglia',   pos:[ 0,-4.5,0],   color:0x66bb6a, group:'Act'     },
+  { cortex:'region_6', name:'Cerebellum',      pos:[ 2.5,-3,-6],  color:0x26a69a, group:'Act'     },
+];
+const phaseToGroup = { Observe:'Observe', Orient:'Orient', Decide:'Decide', Act:'Act' };
+
+const regionVectors = REGIONS.map(r=>new THREE.Vector3(...r.pos));
+
+const nodes = REGIONS.map((r,i)=>{
+  const geo = new THREE.SphereGeometry(0.6, 32, 32);
+  const mat = new THREE.MeshStandardMaterial({ color:r.color, emissive:r.color, emissiveIntensity:0.4, roughness:0.25, metalness:0.1 });
+  const mesh = new THREE.Mesh(geo, mat); mesh.position.set(...r.pos); mesh.userData={r,i,baseEmissive:0.4}; scene.add(mesh);
+  const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map:glowTexture(r.color), transparent:true, opacity:0.4, depthWrite:false }));
+  halo.scale.set(3.5,3.5,1); mesh.add(halo);
+  const label = makeLabel(r.name); label.position.set(0,1.3,0); mesh.add(label);
+  return mesh;
+});
+
+// OODA edges
+const EDGES = [[0,1],[1,2],[1,3],[2,4],[3,4],[4,5],[5,6],[6,1],[2,6],[3,5]];
+const lineMat = new THREE.LineBasicMaterial({ color:0x2a4a6a, transparent:true, opacity:0.5 });
+EDGES.forEach(([a,b])=>{
+  const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(...REGIONS[a].pos), new THREE.Vector3(...REGIONS[b].pos)]);
+  scene.add(new THREE.Line(geo, lineMat));
+});
+
+// ── Consciousness layers (concentric shells) ────────────
+// conscious = inner working set (10), subconscious (100), unconscious = deep store (2000)
+const consLayers = [
+  { key:'conscious',    radius:5.5, color:0x4fc3f7, capacity:10   },
+  { key:'subconscious', radius:8.5, color:0x9c6ade, capacity:100  },
+  { key:'unconscious',  radius:12.0,color:0x3a4a6a, capacity:2000 },
+];
+const shellMeshes = consLayers.map(L=>{
+  const geo = new THREE.SphereGeometry(L.radius, 48, 48);
+  const mat = new THREE.MeshBasicMaterial({ color:L.color, transparent:true, opacity:0.06, wireframe:true, depthWrite:false });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.userData = { L, baseOpacity:0.06 };
+  scene.add(mesh);
+  return mesh;
+});
+
+// ── Living Memory Points (grows as brain learns) ────────
+const MAX_POINTS = 3000;
+let memoryPoints = [];       // { pos:Vector3, region:i, born:t }
+const pointGeo = new THREE.BufferGeometry();
+const pointPosArr = new Float32Array(MAX_POINTS*3);
+const pointColArr = new Float32Array(MAX_POINTS*3);
+pointGeo.setAttribute('position', new THREE.BufferAttribute(pointPosArr,3));
+pointGeo.setAttribute('color', new THREE.BufferAttribute(pointColArr,3));
+pointGeo.setDrawRange(0,0);
+const pointMat = new THREE.PointsMaterial({ size:0.16, vertexColors:true, transparent:true, opacity:0.85, blending:THREE.AdditiveBlending, depthWrite:false, sizeAttenuation:true });
+const pointCloud = new THREE.Points(pointGeo, pointMat); scene.add(pointCloud);
+
+// connections: memory point -> nearest region (faint lines)
+const connGeo = new THREE.BufferGeometry();
+const connArr = new Float32Array(MAX_POINTS*6); // 2 vertices * 3 coords per point
+connGeo.setAttribute('position', new THREE.BufferAttribute(connArr,3));
+connGeo.setDrawRange(0,0);
+const connMat = new THREE.LineBasicMaterial({ color:0x8899bb, transparent:true, opacity:0.12 });
+const connLines = new THREE.LineSegments(connGeo, connMat); scene.add(connLines);
+
+// white exchange pulses
+const pulseGeo = new THREE.SphereGeometry(0.045, 8, 8);
+const whitePulses = [];
+const pulseMatPool = new THREE.MeshBasicMaterial({ color:0x228B22, transparent:true, opacity:0.95 });
+
+function nearestRegion(v){
+  let bi=0, bd=Infinity;
+  regionVectors.forEach((rv,i)=>{ const d=v.distanceToSquared(rv); if(d<bd){bd=d;bi=i;} });
+  return bi;
+}
+
+function addMemoryPoint(){
+  if (memoryPoints.length >= MAX_POINTS) return;
+  // scatter in a brain-ish ellipsoid
+  const v = new THREE.Vector3();
+  const a = 9, b = 6, c = 7;
+  const u = Math.random(), w = Math.random();
+  const theta = u*Math.PI*2, phi = Math.acos(2*w-1);
+  const rr = 0.4 + Math.random()*1.0;
+  v.set(a*rr*Math.sin(phi)*Math.cos(theta), b*rr*Math.sin(phi)*Math.sin(theta), c*rr*Math.cos(phi));
+  const reg = nearestRegion(v);
+  memoryPoints.push({ pos:v, region:reg, born:performance.now() });
+  refreshPointBuffers();
+}
+
+function refreshPointBuffers(){
+  const n = memoryPoints.length;
+  for (let i=0;i<n;i++){
+    const p = memoryPoints[i];
+    pointPosArr[i*3]=p.pos.x; pointPosArr[i*3+1]=p.pos.y; pointPosArr[i*3+2]=p.pos.z;
+    const c = new THREE.Color(REGIONS[p.region].color);
+    pointColArr[i*3]=c.r; pointColArr[i*3+1]=c.g; pointColArr[i*3+2]=c.b;
+    // connection line: point -> region
+    const rv = regionVectors[p.region];
+    connArr[i*6]=p.pos.x; connArr[i*6+1]=p.pos.y; connArr[i*6+2]=p.pos.z;
+    connArr[i*6+3]=rv.x; connArr[i*6+4]=rv.y; connArr[i*6+5]=rv.z;
+  }
+  pointGeo.attributes.position.needsUpdate = true;
+  pointGeo.attributes.color.needsUpdate = true;
+  pointGeo.setDrawRange(0, n);
+  connGeo.attributes.position.needsUpdate = true;
+  connGeo.setDrawRange(0, n*2);
+}
+
+// spawn a white pulse between a random memory point and its region
+function spawnExchangePulse(){
+  if (memoryPoints.length === 0) return;
+  const p = memoryPoints[(Math.random()*memoryPoints.length)|0];
+  const mesh = new THREE.Mesh(pulseGeo, pulseMatPool.clone());
+  scene.add(mesh);
+  whitePulses.push({ mesh, start:p.pos.clone(), end:regionVectors[p.region].clone(), t:0, speed:0.6+Math.random()*0.5 });
+}
+function spawnPulseFromRegion(){
+  const ri = (Math.random()*REGIONS.length)|0;
+  const mesh = new THREE.Mesh(pulseGeo, pulseMatPool.clone());
+  scene.add(mesh);
+  whitePulses.push({ mesh, start:regionVectors[ri].clone(), end:regionVectors[(ri+1)%REGIONS.length].clone(), t:0, speed:0.8+Math.random()*0.5 });
+}
+
+// ── Live data state ─────────────────────────────────────
+let prev = { write:0, read:0, full:0, episodes:0, eplen:0, uncon:0, totalPoints:0, first:true };
+let sendRate=0, saveRate=0, getRate=0;
+let lastPoll = performance.now();
+
+function flashNode(color, idx){
+  const n = nodes[idx];
+  n.material.emissive.setHex(color);
+  n.material.emissiveIntensity = 1.6;
+  setTimeout(()=>{
+    n.material.emissive.setHex(n.userData.r.color);
+    n.material.emissiveIntensity = n.userData.baseEmissive;
+  }, 180);
+}
+
+async function fetchBrainData(){
+  const urls = ['/brain/status', 'http://localhost:8080/api/status'];
+  let data = null;
+  for (const u of urls){ try { const r = await fetch(u); if(r.ok){ data = await r.json(); break; } } catch(e){} }
+  if(!data || !data.brain) return;
+  const b = data.brain;
+  const now = performance.now();
+  const dt = Math.max((now-lastPoll)/1000, 0.1); lastPoll = now;
+
+  document.getElementById('tick').textContent = b.tick ?? '—';
+  document.getElementById('signal').textContent = (b.signal_quality_20avg ?? 0).toFixed(3);
+  const ph = b.phase || 'Observe';
+  document.getElementById('phase').innerHTML = `<span class="phase ph-${ph.toLowerCase()}"></span>${ph}`;
+
+  // memory telemetry
+  const trac = b.tracray || {};
+  const uncon = b.consciousness?.unconscious?.active_items || 0;
+  const eps = trac.episodes || 0;
+  const eplen = trac.current_episode_length || 0;
+  document.getElementById('mem-episodes').textContent = eps;
+  document.getElementById('mem-eplen').textContent = eplen;
+  document.getElementById('mem-know').textContent = uncon;
+
+  // consciousness layers
+  const con = b.consciousness || {};
+  const conC  = con.conscious?.active_items || 0,    conCcap  = con.conscious?.capacity || 0;
+  const conS  = con.subconscious?.active_items || 0, conScap  = con.subconscious?.capacity || 0;
+  const conU  = con.unconscious?.active_items || 0,  conUcap  = con.unconscious?.capacity || 0;
+  const crossTalk = con.cross_talk_events || 0;
+  document.getElementById('con-con').textContent = conC;
+  document.getElementById('con-con-cap').textContent = conCcap;
+  document.getElementById('con-sub').textContent = conS;
+  document.getElementById('con-sub-cap').textContent = conScap;
+  document.getElementById('con-uncon').textContent = conU;
+  document.getElementById('con-uncon-cap').textContent = conUcap;
+  document.getElementById('con-x').textContent = crossTalk;
+
+  // update shell opacity by fill ratio
+  const fills = [
+    { idx:0, val: conC, cap: conCcap },
+    { idx:1, val: conS, cap: conScap },
+    { idx:2, val: conU, cap: conUcap },
+  ];
+  fills.forEach(f=>{
+    const m = shellMeshes[f.idx];
+    const ratio = f.cap > 0 ? Math.min(1, f.val / f.cap) : 0;
+    m.material.opacity = m.userData.baseOpacity + ratio * 0.16;
+  });
+
+  // operation counters
+  const write = b.cortex?.performance?.agent_write?.count || 0;
+  const read  = b.cortex?.performance?.agent_read?.count  || 0;
+  const full  = b.cortex?.performance?.full_tick?.count   || 0;
+
+  if (!prev.first){
+    sendRate = Math.max(0, (full - prev.full)/dt);
+    saveRate = Math.max(0, (write - prev.write)/dt);
+    getRate  = Math.max(0, (read - prev.read)/dt);
+
+    // flashes: send=green (full_tick), save=yellow (write), get=red (read)
+    // flash a random region node on each detected op
+    for (let i=0;i<Math.min(3, Math.round(sendRate));i++) flashNode(0x00ff88, (Math.random()*7)|0);
+    for (let i=0;i<Math.min(3, Math.round(saveRate));i++) flashNode(0xffd740, (Math.random()*7)|0);
+    for (let i=0;i<Math.min(3, Math.round(getRate));i++)  flashNode(0xff5c5c, (Math.random()*7)|0);
+
+    // growth: new memory points as brain learns
+    // episodes up OR current episode growing OR knowledge store growing
+    const growthSignal = (eps - prev.episodes) + (eplen - prev.eplen) + (uncon - prev.uncon);
+    if (growthSignal > 0){
+      const newPts = Math.min(20, Math.round(growthSignal * 0.5));
+      for (let i=0;i<newPts;i++) addMemoryPoint();
+    }
+
+    // white exchange pulses proportional to activity
+    const pulseBudget = Math.min(6, Math.round(saveRate*0.3 + getRate*0.3));
+    for (let i=0;i<pulseBudget;i++) spawnExchangePulse();
+    if (sendRate > 0.5) spawnPulseFromRegion();
+  }
+
+  prev = { write, read, full, episodes:eps, eplen, uncon, first:false };
+  document.getElementById('mem-points').textContent = memoryPoints.length;
+  document.getElementById('op-send').textContent = sendRate.toFixed(0);
+  document.getElementById('op-save').textContent = saveRate.toFixed(0);
+  document.getElementById('op-get').textContent = getRate.toFixed(0);
+
+  // phase group highlight
+  const activeGroup = phaseToGroup[ph] || 'Observe';
+  nodes.forEach(m=>{ m.material.emissiveIntensity = (m.userData.r.group===activeGroup) ? 1.1 : m.userData.baseEmissive; });
+}
+
+// ── Helpers ─────────────────────────────────────────────
+function glowTexture(color){
+  const c=document.createElement('canvas'); c.width=c.height=128; const g=c.getContext('2d');
+  const grad=g.createRadialGradient(64,64,0,64,64,64);
+  grad.addColorStop(0,'#'+color.toString(16).padStart(6,'0')); grad.addColorStop(1,'transparent');
+  g.fillStyle=grad; g.fillRect(0,0,128,128); return new THREE.CanvasTexture(c);
+}
+function makeLabel(text){
+  const c=document.createElement('canvas'); c.width=512; c.height=96; const g=c.getContext('2d');
+  g.font='600 40px "Segoe UI", sans-serif'; g.textAlign='center'; g.textBaseline='middle';
+  g.shadowColor='rgba(0,0,0,.9)'; g.shadowBlur=8; g.fillStyle='#e8f0ff'; g.fillText(text,256,48);
+  const tex=new THREE.CanvasTexture(c); const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true,depthWrite:false}));
+  sp.scale.set(4.2,0.79,1); return sp;
+}
+
+// ── Animation ───────────────────────────────────────────
+const clock = new THREE.Clock();
+function animate(){
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05);
+
+  // advance white pulses
+  for (let i=whitePulses.length-1;i>=0;i--){
+    const p = whitePulses[i];
+    p.t += p.speed*dt;
+    if (p.t >= 1){ scene.remove(p.mesh); p.mesh.material.dispose(); whitePulses.splice(i,1); continue; }
+    p.mesh.position.lerpVectors(p.start, p.end, p.t);
+    const fade = Math.sin(p.t*Math.PI);
+    p.mesh.material.opacity = 0.3 + 0.7*fade;
+    p.mesh.scale.setScalar(0.5 + fade);
+  }
+
+  // gentle point shimmer
+  const t = clock.elapsedTime;
+  for (let i=0;i<memoryPoints.length;i++){
+    const p = memoryPoints[i];
+    pointPosArr[i*3] = p.pos.x + Math.sin(t*1.5 + i)*0.04;
+    pointPosArr[i*3+1] = p.pos.y + Math.cos(t*1.3 + i*0.7)*0.04;
+    pointPosArr[i*3+2] = p.pos.z + Math.sin(t*1.1 + i*0.5)*0.04;
+    connArr[i*6] = pointPosArr[i*3];
+    connArr[i*6+1] = pointPosArr[i*3+1];
+    connArr[i*6+2] = pointPosArr[i*3+2];
+  }
+  if (memoryPoints.length){ pointGeo.attributes.position.needsUpdate=true; connGeo.attributes.position.needsUpdate=true; }
+
+  nodes.forEach((n,i)=>{ const s=1+Math.sin(t*2+i)*0.06; n.scale.setScalar(s); });
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// seed a few points immediately so it's not empty, then poll
+for (let i=0;i<120;i++) addMemoryPoint();
+fetchBrainData();
+setInterval(fetchBrainData, 2000);
+
+addEventListener('resize', ()=>{ camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth,innerHeight); });
+</script>
+</body>
+</html>
