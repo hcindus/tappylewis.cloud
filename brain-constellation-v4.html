@@ -235,6 +235,19 @@ function spawnPulseFromRegion(){
   whitePulses.push({ mesh, start:regionVectors[ri].clone(), end:regionVectors[(ri+1)%REGIONS.length].clone(), t:0, speed:0.8+Math.random()*0.5 });
 }
 
+// ── project → region traffic pulses (orange, half-size) ─
+const projectPulseGeo = new THREE.SphereGeometry(0.0225, 6, 6);
+const projectPulses = [];
+const projectPulseMat = new THREE.MeshBasicMaterial({ color:0xff7f00, transparent:true, opacity:0.85 });
+function spawnProjectPulse(){
+  if (entityMeshes.length===0) return;
+  const m = entityMeshes[(Math.random()*entityMeshes.length)|0];
+  const start = m.userData.pos.clone();
+  const end = regionVectors[m.userData.regionIdx].clone();
+  const mesh = new THREE.Mesh(projectPulseGeo, projectPulseMat.clone()); scene.add(mesh);
+  projectPulses.push({ mesh, start, end, t:0, speed:0.35 + Math.random()*0.3 });
+}
+
 // ── Constellation (live from portfolio.json) ────────────
 const ORBIT_R = 20;
 let entityGroup = new THREE.Group();
@@ -274,16 +287,16 @@ function buildConstellation(entities, categories){
     const pos = fibSphere(i, entities.length, ORBIT_R);
     const catColor = categories[e.category] || '#4fc3f7';
     const color = hexToColor(catColor);
+    const regionIdx = CATEGORY_REGION[e.category] ?? 1; // default Thalamus
     const geo = new THREE.SphereGeometry(0.4, 24, 24);
     const mat = new THREE.MeshStandardMaterial({ color, emissive:color, emissiveIntensity:0.5, roughness:0.3, metalness:0.15 });
     const mesh = new THREE.Mesh(geo, mat); mesh.position.copy(pos);
-    mesh.userData = { e, color, baseEmissive:0.5 };
+    mesh.userData = { e, color, baseEmissive:0.5, regionIdx, pos: pos.clone() };
     entityGroup.add(mesh);
     const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map:glowTexture(color), transparent:true, opacity:0.5, depthWrite:false }));
     halo.scale.set(2.6,2.6,1); mesh.add(halo);
     const label = makeLabel(e.name, e.sub); label.position.set(0,1.1,0); mesh.add(label);
     // tether to the specific brain region this category maps to (inside the brain)
-    const regionIdx = CATEGORY_REGION[e.category] ?? 1; // default Thalamus
     const regionPos = regionVectors[regionIdx];
     const tGeo = new THREE.BufferGeometry().setFromPoints([pos, regionPos]);
     const tLine = new THREE.Line(tGeo, new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.28 }));
@@ -361,6 +374,9 @@ async function fetchBrainData(){
     const budget=Math.min(6,Math.round(saveRate*0.3+getRate*0.3));
     for(let i=0;i<budget;i++) spawnExchangePulse();
     if(sendRate>0.5) spawnPulseFromRegion();
+    // project → region traffic: a steady trickle proportional to overall activity
+    const pBudget = Math.min(4, 1 + Math.round((saveRate+getRate)*0.08));
+    for(let i=0;i<pBudget;i++) spawnProjectPulse();
   }
   prev={write,read,full,episodes:eps,eplen,uncon,first:false};
 
@@ -424,6 +440,14 @@ function animate(){
   for(let i=whitePulses.length-1;i>=0;i--){
     const p=whitePulses[i]; p.t+=p.speed*dt;
     if(p.t>=1){ scene.remove(p.mesh); p.mesh.material.dispose(); whitePulses.splice(i,1); continue; }
+    p.mesh.position.lerpVectors(p.start,p.end,p.t);
+    const fade=Math.sin(p.t*Math.PI); p.mesh.material.opacity=0.3+0.7*fade; p.mesh.scale.setScalar(0.5+fade);
+  }
+
+  // advance project → region pulses
+  for(let i=projectPulses.length-1;i>=0;i--){
+    const p=projectPulses[i]; p.t+=p.speed*dt;
+    if(p.t>=1){ scene.remove(p.mesh); p.mesh.material.dispose(); projectPulses.splice(i,1); continue; }
     p.mesh.position.lerpVectors(p.start,p.end,p.t);
     const fade=Math.sin(p.t*Math.PI); p.mesh.material.opacity=0.3+0.7*fade; p.mesh.scale.setScalar(0.5+fade);
   }
