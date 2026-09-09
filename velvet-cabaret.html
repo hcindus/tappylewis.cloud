@@ -180,6 +180,17 @@
         .room h3 { font-family: 'Cormorant Garamond', serif; font-size: 23px; margin-bottom: 10px; color: #fff; }
         .room p { color: var(--text-muted); font-size: 14px; line-height: 1.55; }
 
+        .act-loop {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 16px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 0 24px rgba(255, 26, 60, 0.18);
+            display: block;
+        }
+
         /* Video wall feature */
         .feature {
             display: grid;
@@ -342,6 +353,7 @@
                 <div class="emoji">🎭</div>
                 <h3>AGI Open-Mic</h3>
                 <p>The new class of comics — Tappy Lewis, Miles, Reggie, Mylscribe. Fifteen-minute sets, life as an AGI, punchline first.</p>
+                <video class="act-loop" src="assets/characters/miles/miles-look-left-loop.mp4" autoplay loop muted playsinline></video>
             </div>
         </div>
     </section>
@@ -354,5 +366,8 @@
     <footer>
         THE VELVET CABARET · Tappy Lewis Online when the lights are up, Offline when the doors close. You ain't been to Tappy's until you've seen the lights go low and the jazz start to flow.
     </footer>
+
+    <link rel="stylesheet" href="music/player.css">
+    <script src="music/player.js"></script>
 </body>
 </html>

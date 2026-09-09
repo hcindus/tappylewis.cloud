@@ -6,9 +6,9 @@ const TappyMusicPlayer = {
   ctx: null,
   
   tracks: [
-    { name: 'Quantum Antenna Power Up', url: 'music/tracks/quantum-antenna-power-up.mp3' },
-    { name: 'Quantum Antenna Power Up (Edit)', url: 'music/tracks/quantum-antenna-power-up-edit.mp3' },
-    { name: 'Quantum Antenna Power Up (Extended)', url: 'music/tracks/quantum-antenna-power-up-extended.mp3' }
+    { name: 'Quantum Antenna Power Up', url: '/music/tracks/quantum-antenna-power-up.mp3' },
+    { name: 'Quantum Antenna Power Up (Edit)', url: '/music/tracks/quantum-antenna-power-up-edit.mp3' },
+    { name: 'Quantum Antenna Power Up (Extended)', url: '/music/tracks/quantum-antenna-power-up-extended.mp3' }
   ],
   
   currentTrack: 0,
@@ -159,19 +159,21 @@ const TappyMusicPlayer = {
   initFileAudio() {
     this.audio = new Audio();
     this.audio.loop = false;
+    this.audio.preload = 'auto';
     this.audio.volume = this.volume / 100;
     this.audio.addEventListener('ended', () => this.next());
     
     this.loadTrack(this.currentTrack);
     
-    // Try autoplay (may be blocked by browser)
-    this.audio.play().catch(() => {
-      console.log('Autoplay blocked - waiting for user interaction');
-      this.isPlaying = false;
-    }).then(() => {
+    // Try autoplay (may be blocked by browser). Do NOT flip isPlaying on block.
+    this.audio.play().then(() => {
       this.isPlaying = true;
       this.updateUI();
       this.startVisualizer();
+    }).catch(() => {
+      console.log('Autoplay blocked - waiting for user interaction');
+      this.isPlaying = false;
+      this.updateUI();
     });
   },
 
@@ -202,6 +204,9 @@ const TappyMusicPlayer = {
       } else {
         this.audio.play().then(() => {
           this.isPlaying = true;
+        }).catch((e) => {
+          console.log('Play failed:', e);
+          this.isPlaying = false;
         });
       }
     }
