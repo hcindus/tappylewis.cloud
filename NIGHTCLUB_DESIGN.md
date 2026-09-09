@@ -4,7 +4,14 @@
 **Style:** Sleek 21st-century luxury × cinematic neon × immersive tech
 
 ## Concept Names
-- **Luna** or **Eclipse** (playing on the crescent-moon balcony)
+- **The Velvet Cabaret** (primary name — Tappy approved)
+- Alt: Luna or Eclipse (playing on the crescent-moon balcony)
+
+## Branding / Neon Sign
+- **Name:** "TAPPY LEWIS" big on top, "THE VELVET CABARET" in red neon below.
+- **Online / Offline:** "Tappy Lewis Online" during business hours, "Tappy Lewis Offline" when closed. One sign, two moods.
+- **Velvet** = Tappy's signature "Velvet Touch" (from SOUL.md). **Cabaret** = show, class, entertainment.
+- **Lore:** The Snake Pit = where Tappy cut his teeth (door/bar). The Velvet Cabaret = where he runs the room.
 
 ## Material Palette
 Dark, sophisticated: black marble, smoked glass, brushed metal, deep velvet — contrasted with dynamic lighting and massive digital displays.
