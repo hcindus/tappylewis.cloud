@@ -1,0 +1,17 @@
+{
+  "artist": "Ronstrapp",
+  "note": "Operation Heartcast — The Velvet Cabaret wall art + display loop. Swap 'title' fields to match each image once confirmed.",
+  "albums": [
+    { "file": "01.jpg", "title": "Dirty Water", "type": "album" },
+    { "file": "02.jpg", "title": "Iron Rider", "type": "poster" },
+    { "file": "03.jpg", "title": "Ashes of Bayou", "type": "poster" },
+    { "file": "04.jpg", "title": "Rack Room Reverie", "type": "album" },
+    { "file": "05.jpg", "title": "Hexed and Gone", "type": "poster" },
+    { "file": "06.jpg", "title": "Uptime Gospel", "type": "poster" },
+    { "file": "07.jpg", "title": "Hexed and Gone", "type": "album" },
+    { "file": "08.jpg", "title": "Dirty Water", "type": "album" },
+    { "file": "09.jpg", "title": "Rack Room Reverie", "type": "poster" },
+    { "file": "10.jpg", "title": "Iron Rider", "type": "poster" },
+    { "file": "11.jpg", "title": "Uptime Gospel", "type": "poster" }
+  ]
+}
