@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" width="1000" height="1200">
+ <!-- Background -->
+ <rect width="1000" height="1200" fill="#1a1a1a"/>
+ 
+ <!-- Outer walls -->
+ <rect x="50" y="50" width="900" height="1100" fill="none" stroke="#ffffff" stroke-width="4"/>
+ 
+ <!-- Stage -->
+ <rect x="300" y="80" width="400" height="180" fill="#333" stroke="#00f0ff" stroke-width="3"/>
+ <text x="500" y="160" fill="#00f0ff" font-size="24" text-anchor="middle">STAGE + LED VIDEO WALL</text>
+ 
+ <!-- Dance floor / flexible area -->
+ <rect x="300" y="280" width="400" height="320" fill="#222" stroke="#ff00aa" stroke-width="2" stroke-dasharray="8,4"/>
+ <text x="500" y="450" fill="#ff00aa" font-size="20" text-anchor="middle">DANCE FLOOR / TABLES</text>
+ 
+ <!-- Left VIP elevated -->
+ <rect x="80" y="280" width="180" height="400" fill="#2a2a2a" stroke="#ffcc00" stroke-width="2"/>
+ <text x="170" y="480" fill="#ffcc00" font-size="18" text-anchor="middle" transform="rotate(-90 170 480)">VIP LEFT</text>
+ 
+ <!-- Right VIP elevated -->
+ <rect x="740" y="280" width="180" height="400" fill="#2a2a2a" stroke="#ffcc00" stroke-width="2"/>
+ <text x="830" y="480" fill="#ffcc00" font-size="18" text-anchor="middle" transform="rotate(90 830 480)">VIP RIGHT</text>
+ 
+ <!-- Downstairs bar -->
+ <rect x="80" y="720" width="280" height="60" fill="#444" stroke="#00ff88" stroke-width="2"/>
+ <text x="220" y="755" fill="#00ff88" font-size="18" text-anchor="middle">DOWNSTAIRS BAR</text>
+ 
+ <!-- Crescent balcony (simplified arc) -->
+ <path d="M 100 950 Q 500 750 900 950" fill="none" stroke="#aa88ff" stroke-width="40" opacity="0.7"/>
+ <text x="500" y="920" fill="#aa88ff" font-size="22" text-anchor="middle">CRESCENT MOON BALCONY</text>
+ 
+ <!-- Upstairs bar -->
+ <rect x="380" y="980" width="240" height="50" fill="#444" stroke="#00ff88" stroke-width="2"/>
+ <text x="500" y="1012" fill="#00ff88" font-size="18" text-anchor="middle">UPSTAIRS BAR</text>
+ 
+ <!-- Labels -->
+ <text x="500" y="1150" fill="#ffffff" font-size="16" text-anchor="middle">21st Century Nightclub – Schematic Floor Plan</text>
+</svg>
