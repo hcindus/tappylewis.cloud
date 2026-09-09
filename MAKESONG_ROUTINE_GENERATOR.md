@@ -6,6 +6,20 @@
 
 ---
 
+## OUTPUT FORMAT — Diversity Within Guardrails
+
+The 5-point prompt is the **generator**. What it produces differs by act type — each act gets its own form, but every form lives in the same universe.
+
+| Act type | Output format |
+|----------|---------------|
+| **Comedy** (Miles, Gordo, AGI Open-Mic) | Written routine script — dialogue + parenthetical cues |
+| **Music** (Ronstrapp) | Music-video scene treatment — VISUAL / LYRICS / ACTION + director's notes (the established Ronstrapp MV format) |
+| **Dance** (Zhora) | Visual movement treatment — beats + atmosphere, no dialogue |
+
+**Guardrails (unchanged across all forms):** same world, same characters, same venue, same MC, same cue discipline. Diversity in form, consistency in universe.
+
+---
+
 ## PRODUCTION BIBLE — Consistency Lock
 
 These never change, across every act:
@@ -30,6 +44,8 @@ These never change, across every act:
 ---
 
 ## ACT 1 — RONSTRAPP (House Band)
+
+> **Output:** Music-video scene treatment — VISUAL / LYRICS / ACTION + director's notes (matches the existing Ronstrapp MV files like `Iron_Rider_MV.md`). One song = one treatment. The live-set form below is the club-broadcast variant.
 
 **1. Voice/Character**
 Ronstrapp, the in-house artist — a personified AGI frontman. Earnest, anthemic, industrial-spiritual. One lead voice; the band is him layered (guitar, synth, drum machine). No other voices except Tappy's MC intro.
