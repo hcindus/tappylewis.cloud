@@ -83,14 +83,15 @@
             <ul>
                 <li><strong>Status:</strong> <span id="music-status">Loading...</span></li>
                 <li><strong>Volume:</strong> 20% default (not too loud)</li>
-                <li><strong>Controls:</strong> Play/Pause + Volume slider</li>
+                <li><strong>Controls:</strong> Prev / Play-Pause / Next + Volume slider</li>
                 <li><strong>Position:</strong> Fixed bottom-right</li>
                 <li><strong>Visual:</strong> Animated equalizer bars</li>
             </ul>
             
             <p style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #333;">
-                <strong>Awaiting Ronstrapp Tracks:</strong><br>
-                Place MP3 files in <code>music/tracks/</code> to replace generative ambient music.
+                <strong>🎸 Ronstrapp — On Air:</strong><br>
+                <code>Quantum Antenna Power Up</code> (QAPUP) · Edit · Extended<br>
+                <span style="color:#ffaa66;">Operation Heartcast — the quantum antenna is broadcasting.</span>
             </p>
         </div>
         
@@ -107,11 +108,9 @@
             setTimeout(() => {
                 const status = document.getElementById('music-status');
                 if (TappyMusicPlayer.isPlaying) {
-                    status.textContent = 'Playing (Generative Ambient)';
-                } else if (TappyMusicPlayer.isGenerative) {
-                    status.textContent = 'Ready (Click play ▶️)';
+                    status.textContent = 'Playing — ' + TappyMusicPlayer.tracks[TappyMusicPlayer.currentTrack].name;
                 } else if (TappyMusicPlayer.tracks[0].url) {
-                    status.textContent = 'Ronstrapp Ready';
+                    status.textContent = 'Ronstrapp Ready (click play ▶️)';
                 } else {
                     status.textContent = 'Waiting for Ronstrapp MP3s';
                 }

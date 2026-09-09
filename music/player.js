@@ -5,16 +5,16 @@ const TappyMusicPlayer = {
   audio: null,
   ctx: null,
   
-  // Placeholder until Ronstrapp tracks are ready
-  // Will be replaced with actual MP3 URLs
   tracks: [
-    { name: 'Loading...', url: null }
+    { name: 'Quantum Antenna Power Up', url: 'music/tracks/quantum-antenna-power-up.mp3' },
+    { name: 'Quantum Antenna Power Up (Edit)', url: 'music/tracks/quantum-antenna-power-up-edit.mp3' },
+    { name: 'Quantum Antenna Power Up (Extended)', url: 'music/tracks/quantum-antenna-power-up-extended.mp3' }
   ],
   
   currentTrack: 0,
   isPlaying: false,
   volume: 20, // Default 20% (not too loud)
-  isGenerative: true, // Use generative audio until tracks available
+  isGenerative: false, // Ronstrapp tracks ready — Operation Heartcast
 
   init() {
     this.createPlayerHTML();
@@ -36,7 +36,9 @@ const TappyMusicPlayer = {
     player.className = 'music-player';
     player.innerHTML = `
       <div class="player-controls">
+        <button id="tappy-prev-btn" class="player-btn" title="Previous">⏮️</button>
         <button id="tappy-play-btn" class="player-btn" title="Play/Pause">▶️</button>
+        <button id="tappy-next-btn" class="player-btn" title="Next">⏭️</button>
         <span id="tappy-track-name">🎵 Ronstrapp Radio</span>
         <div class="visualizer" id="visualizer">
           <div class="bar"></div>
@@ -53,10 +55,18 @@ const TappyMusicPlayer = {
 
   setupEventListeners() {
     const playBtn = document.getElementById('tappy-play-btn');
+    const prevBtn = document.getElementById('tappy-prev-btn');
+    const nextBtn = document.getElementById('tappy-next-btn');
     const volumeSlider = document.getElementById('tappy-volume');
     
     if (playBtn) {
       playBtn.addEventListener('click', () => this.toggle());
+    }
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => this.prev());
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => this.next());
     }
     
     if (volumeSlider) {
@@ -148,13 +158,11 @@ const TappyMusicPlayer = {
 
   initFileAudio() {
     this.audio = new Audio();
-    this.audio.loop = true;
+    this.audio.loop = false;
     this.audio.volume = this.volume / 100;
+    this.audio.addEventListener('ended', () => this.next());
     
-    if (this.tracks[0].url) {
-      this.audio.src = this.tracks[0].url;
-      document.getElementById('tappy-track-name').textContent = this.tracks[0].name;
-    }
+    this.loadTrack(this.currentTrack);
     
     // Try autoplay (may be blocked by browser)
     this.audio.play().catch(() => {
@@ -165,6 +173,23 @@ const TappyMusicPlayer = {
       this.updateUI();
       this.startVisualizer();
     });
+  },
+
+  loadTrack(index) {
+    this.currentTrack = (index + this.tracks.length) % this.tracks.length;
+    const track = this.tracks[this.currentTrack];
+    this.audio.src = track.url;
+    document.getElementById('tappy-track-name').textContent = track.name;
+  },
+
+  next() {
+    this.loadTrack(this.currentTrack + 1);
+    if (this.isPlaying) this.audio.play();
+  },
+
+  prev() {
+    this.loadTrack(this.currentTrack - 1);
+    if (this.isPlaying) this.audio.play();
   },
 
   toggle() {
