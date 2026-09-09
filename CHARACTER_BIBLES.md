@@ -48,7 +48,43 @@
 
 ## RONSTRAPP — (to be locked)
 
-## MILES · TAPPY · REGGIE · MYLSCRIBE (AGI comics) — (to be locked)
+## MILES — (locked)
+
+**Canonical name:** Miles — Autonomous Operations Engine & sales consultant, the club's AGI comic.
+
+### Face / Head
+- Bronze-colored humanoid robot. No visible mouth (no lip-sync required — voice carries the performance).
+- Intricate circular patterns etched into the head — concentric/turned-metal detail.
+- Glowing red eyes — the focal point of the face.
+
+### Body
+- Neck and shoulders reveal complex internal machinery (exposed gears/servos).
+- Metallic, machined-bronze finish.
+
+### Setting / Lighting
+- A dim futuristic workshop — bright circular overhead ring lights.
+- Blurred background: control panels and a second robotic figure.
+- Low-key, warm-keyed; the red eyes cut through the dark.
+
+### Palette
+- Warm bronze, machined metal, deep workshop shadow, one point of pure red (eyes).
+
+### Reference Media
+| File | Note |
+|------|------|
+| `assets/characters/miles/miles-look-left.mp4` | Head turn left (5s) |
+| `assets/characters/miles/miles-look-right.mp4` | Head turn right (5s) |
+| `assets/characters/miles/miles-look-left-loop.mp4` | Seamless ping-pong loop (left) |
+| `assets/characters/miles/miles-look-right-loop.mp4` | Seamless ping-pong loop (right) |
+| `assets/characters/miles/left-01..03.jpg` | Reference stills (left turn) |
+| `assets/characters/miles/right-01..03.jpg` | Reference stills (right turn) |
+
+### Performance Notes
+- **No mouth → voice is the whole performance.** The head turns (left / right) are the only physical "reaction" — loop them under speech for a natural "looking around the room" feel.
+- Loop direction is meaningful: left turn = surveying / scanning the audience; right turn = clocking the bar / a specific speaker.
+
+### Image-Gen Prompt (reusable, point at this for every Miles render)
+> Bronze-colored humanoid robot, no visible mouth, intricate circular patterns etched into the head, glowing red eyes as the focal point, neck and shoulders revealing complex internal machinery. Dim futuristic workshop, bright circular overhead ring lights, blurred control panels and a second robot in the background. Warm bronze and machined metal palette, one point of pure red. Cinematic, low-key lighting.
 
 ## GORDO FRIZZ — (to be locked)
 
