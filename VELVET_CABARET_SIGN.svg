@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" width="1200" height="620">
+  <defs>
+    <filter id="glow-white" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="4" result="b1"/>
+      <feGaussianBlur stdDeviation="12" result="b2"/>
+      <feGaussianBlur stdDeviation="28" result="b3"/>
+      <feMerge>
+        <feMergeNode in="b3"/>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-cyan" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b1"/>
+      <feGaussianBlur stdDeviation="18" result="b2"/>
+      <feGaussianBlur stdDeviation="40" result="b3"/>
+      <feMerge>
+        <feMergeNode in="b3"/>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-red" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="b1"/>
+      <feGaussianBlur stdDeviation="14" result="b2"/>
+      <feGaussianBlur stdDeviation="30" result="b3"/>
+      <feMerge>
+        <feMergeNode in="b3"/>
+        <feMergeNode in="b2"/>
+        <feMergeNode in="b1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c0a12"/>
+      <stop offset="100%" stop-color="#050508"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background wall -->
+  <rect width="1200" height="620" fill="url(#wall)"/>
+
+  <!-- Subtle brick/grime texture hints -->
+  <g opacity="0.06" stroke="#ffffff" stroke-width="1">
+    <line x1="0" y1="120" x2="1200" y2="120"/>
+    <line x1="0" y1="240" x2="1200" y2="240"/>
+    <line x1="0" y1="360" x2="1200" y2="360"/>
+    <line x1="0" y1="480" x2="1200" y2="480"/>
+  </g>
+
+  <!-- TAPPY LEWIS — big on top, white/cyan -->
+  <text x="600" y="250" text-anchor="middle"
+        font-family="'Inter','Arial Black',sans-serif" font-weight="900"
+        font-size="130" letter-spacing="10"
+        fill="#eaf6ff" filter="url(#glow-cyan)">TAPPY LEWIS</text>
+
+  <!-- THE VELVET CABARET — red neon below -->
+  <text x="600" y="430" text-anchor="middle"
+        font-family="Georgia,'Times New Roman',serif" font-weight="700"
+        font-size="78" letter-spacing="6" font-style="italic"
+        fill="#ff1a3c" filter="url(#glow-red)">THE VELVET CABARET</text>
+
+  <!-- Thin decorative rule -->
+  <rect x="240" y="460" width="720" height="3" fill="#d4af37" opacity="0.6"/>
+
+  <!-- Small footer tag -->
+  <text x="600" y="520" text-anchor="middle"
+        font-family="'JetBrains Mono',monospace" font-size="20" letter-spacing="4"
+        fill="#9a958f">ONLINE WHEN THE LIGHTS ARE UP · OFFLINE WHEN THE DOORS CLOSE</text>
+</svg>
