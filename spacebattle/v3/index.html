@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceBattle v3 - Universal Explorer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --neon-cyan: #00f3ff;
+            --neon-green: #00ff88;
+            --neon-pink: #ff00ff;
+            --bg-dark: #0a0a1a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text: #e5e5e5;
+            --text-muted: #a0a0a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Landing Page - Agent Verse Style */
+        #landingPage {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a0a1a 100%);
+        }
+
+        .landing-header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 70px;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            z-index: 1001;
+        }
+
+        .landing-logo {
+            font-size: 28px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .landing-hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding-top: 70px;
+            text-align: center;
+        }
+
+        #landing-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .landing-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            padding: 40px;
+        }
+
+        .landing-tag {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-green);
+            border-radius: 20px;
+            color: var(--neon-green);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+        }
+
+        .landing-title {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+        }
+
+        .landing-subtitle {
+            font-size: 24px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            line-height: 1.5;
+        }
+
+        .landing-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-button {
+            padding: 18px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-primary {
+            background: linear-gradient(135deg, var(--neon-green), #00cc66);
+            color: #000;
+        }
+
+        .cta-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.4);
+        }
+
+        .cta-secondary {
+            background: transparent;
+            border: 2px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        .cta-secondary:hover {
+            background: rgba(0, 243, 255, 0.1);
+        }
+
+        .landing-stats {
+            display: flex;
+            gap: 60px;
+            margin-top: 60px;
+            justify-content: center;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--neon-green);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Game Container */
+        #gameContainer {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 100;
+        }
+
+        #gameCanvas { display: block; }
+
+        /* Unified HUD v2.2 - Green Theme */
+        #hud {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* Top Bar */
+        #hudTopBar {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(180deg, rgba(10,20,15,0.95) 0%, rgba(10,20,15,0.7) 100%);
+            border-bottom: 2px solid #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            z-index: 10;
+        }
+
+        .hudSection {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .hudItem {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .hudLabel {
+            color: #44aa66;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+
+        .hudValue {
+            color: #88ffaa;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .hudValue.alert { color: #ff4444; }
+        .hudValue.good { color: #44ff44; }
+
+        /* Bottom Bar */
+        #hudBottomBar {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(0deg, rgba(10,20,15,0.95) 0%, rgba(10,20,15,0.7) 100%);
+            border-top: 2px solid #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 10;
+        }
+
+        .statusGroup {
+            display: flex;
+            gap: 30px;
+            flex: 1;
+        }
+
+        .statusItem {
+            min-width: 150px;
+        }
+
+        .barContainer {
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #00ff88;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .barFill {
+            height: 100%;
+            transition: width 0.3s;
+        }
+
+        #shieldBar { background: linear-gradient(90deg, #0066cc, #0099ff); }
+        #hullBar { background: linear-gradient(90deg, #cc0000, #ff6600); }
+        #weaponBar { background: linear-gradient(90deg, #ffcc00, #ff6600); }
+
+        .heatContainer {
+            width: 100%;
+            height: 12px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #00ff88;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        #heatBar {
+            height: 100%;
+            background: linear-gradient(90deg, #44ff44, #ffff44, #ff4444);
+            transition: width 0.3s;
+        }
+
+        #combatStats {
+            display: flex;
+            gap: 30px;
+        }
+
+        /* Crosshair */
+        #crosshair {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px; height: 40px;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        #crosshair::before, #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 255, 136, 0.9);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+        }
+
+        #crosshair::before {
+            top: 50%; left: 0;
+            width: 100%; height: 2px;
+            transform: translateY(-50%);
+        }
+
+        #crosshair::after {
+            top: 0; left: 50%;
+            width: 2px; height: 100%;
+            transform: translateX(-50%);
+        }
+
+        /* Minimap */
+        #miniMap {
+            position: absolute;
+            top: 60px; right: 20px;
+            width: 150px; height: 150px;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid #00ff88;
+            z-index: 15;
+        }
+
+        #miniMapCanvas {
+            width: 100%; height: 100%;
+        }
+
+        /* Touch Controls */
+        #touchControls {
+            position: absolute;
+            bottom: 100px;
+            left: 0; right: 0;
+            display: none;
+            pointer-events: auto;
+            z-index: 50;
+        }
+
+        .touchZone {
+            position: absolute;
+            bottom: 20px;
+        }
+
+        #joystickZone {
+            left: 20px;
+            width: 120px; height: 120px;
+        }
+
+        #fireZone {
+            right: 20px;
+            width: 100px; height: 100px;
+        }
+
+        #fireButton {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 0, 0, 0.3);
+            border: 2px solid #ff4444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff4444;
+            font-weight: bold;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .landing-title { font-size: 48px; }
+            .landing-subtitle { font-size: 18px; }
+            .landing-stats { flex-direction: column; gap: 30px; }
+            #hudTopBar { font-size: 10px; }
+            #combatStats { display: none; }
+            #touchControls { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landingPage">
+        <header class="landing-header">
+            <div class="landing-logo">🚀 SPACEBATTLE</div>
+        </header>
+        
+        <div class="landing-hero">
+            <canvas id="landing-canvas"></canvas>
+            
+            <div class="landing-content">
+                <div class="landing-tag">🚀 Powered by AGI Company</div>
+                <h1 class="landing-title">Universal Explorer</h1>
+                <p class="landing-subtitle">
+                    Enter a living ecosystem of autonomous combat. Pilot voxel ships through 
+                    100x100x100 grid universes, battle AI enemies, and conquer solar systems 
+                    in real-time 3D combat.
+                </p>
+                
+                <div class="landing-cta">
+                    <button class="cta-button cta-primary" onclick="enterUniverse()">
+                        🚀 Launch Mission
+                    </button>
+                    <button class="cta-button cta-secondary" onclick="showControls()">
+                        📖 Flight Manual
+                    </button>
+                </div>
+                
+                <div class="landing-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">100³</div>
+                        <div class="stat-label">Grid Universe</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">∞</div>
+                        <div class="stat-label">Solar Systems</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">AI Combat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Container -->
+    <div id="gameContainer">
+        <!-- HUD -->
+        <div id="hud">
+            <!-- Top Bar -->
+            <div id="hudTopBar">
+                <div class="hudSection">
+                    <div class="hudItem">
+                        <span class="hudLabel">Sector</span>
+                        <span class="hudValue" id="sectorDisplay">50-50-50</span>
+                    </div>
+                    <div class="hudItem">
+                        <span class="hudLabel">Coordinates</span>
+                        <span class="hudValue" id="coordsDisplay">0, 0, 0</span>
+                    </div>
+                </div>
+                
+                <div class="hudSection">
+                    <div class="hudItem">
+                        <span class="hudLabel">Velocity</span>
+                        <span class="hudValue" id="velocityDisplay">0 m/s</span>
+                    </div>
+                    <div class="hudItem">
+                        <span class="hudLabel">Mission Time</span>
+                        <span class="hudValue" id="timeDisplay">00:00</span>
+                    </div>
+                    <div class="hudItem">
+                        <span class="hudLabel">Score</span>
+                        <span class="hudValue good" id="scoreDisplay">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Crosshair -->
+            <div id="crosshair"></div>
+            
+            <!-- Bottom Bar -->
+            <div id="hudBottomBar">
+                <div class="statusGroup">
+                    <div class="statusItem">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span class="hudLabel">Shield</span>
+                            <span class="hudValue" id="shieldValue">100%</span>
+                        </div>
+                        <div class="barContainer">
+                            <div class="barFill" id="shieldBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="statusItem">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span class="hudLabel">Hull</span>
+                            <span class="hudValue" id="hullValue">100%</span>
+                        </div>
+                        <div class="barContainer">
+                            <div class="barFill" id="hullBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="statusItem">
+                        <div style="display:flex;justify-content:space-between;">
+                            <span class="hudLabel">Weapon Temp</span>
+                            <span class="hudValue" id="heatValue">0%</span>
+                        </div>
+                        <div class="heatContainer">
+                            <div id="heatBar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="combatStats">
+                    <div class="hudItem">
+                        <span class="hudLabel">Camera</span>
+                        <span class="hudValue" id="cameraDisplay">3RD</span>
+                    </div>
+                    <div class="hudItem">
+                        <span class="hudLabel">Kills</span>
+                        <span class="hudValue" id="killsDisplay">0</span>
+                    </div>
+                    <div class="hudItem">
+                        <span class="hudLabel">Wave</span>
+                        <span class="hudValue" id="waveDisplay">1</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Minimap -->
+            <div id="miniMap">
+                <canvas id="miniMapCanvas"></canvas>
+            </div>
+            
+            <!-- Touch Controls -->
+            <div id="touchControls">
+                <div id="joystickZone" class="touchZone"></div>
+                <div id="fireZone" class="touchZone">
+                    <div id="fireButton">FIRE</div>
+                </div>
+            </div>
+        </div>
+        
+        <canvas id="gameCanvas"></canvas>
+    </div>
+
+    <script src="js/SpaceBattleV3.js"></script>
+</body>
+</html>

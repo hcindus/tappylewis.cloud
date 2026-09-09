@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpaceBattle v2.1 - Unified HUD</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            overflow: hidden; 
+            background: #000; 
+            font-family: 'Courier New', monospace;
+            user-select: none;
+        }
+        
+        #gameCanvas { display: block; }
+        
+        /* Bob Ross Palette Colors */
+        :root {
+            --thalo-blue: #0a1a2a;
+            --midnite-black: #0a0a0f;
+            --star-glow: rgba(0, 200, 255, 0.3);
+        }
+
+        /* Starfield Canvas for Menu Background */
+        #starfieldCanvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        /* Main Menu */
+        #mainMenu {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--thalo-blue) 0%, #0f1525 50%, var(--midnite-black) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            pointer-events: auto;
+        }
+        
+        #mainMenu h1 {
+            font-size: 6em;
+            background: linear-gradient(135deg, #00ff44, #44ff88, #00ff44);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 60px rgba(68, 255, 68, 0.6);
+            margin-bottom: 10px;
+            letter-spacing: 0.15em;
+            animation: gradient 3s ease infinite, pulse 2s infinite;
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        #mainMenu h2 {
+            font-size: 1.3em;
+            color: #44ff88;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            text-shadow: 0 0 20px rgba(68, 255, 136, 0.5);
+        }
+        
+        .menuButton {
+            width: 320px;
+            padding: 20px 40px;
+            margin: 12px;
+            background: rgba(68, 255, 100, 0.1);
+            border: 2px solid #44ff66;
+            color: #66ff88;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .menuButton:hover {
+            background: rgba(68, 255, 100, 0.3);
+            box-shadow: 0 0 40px rgba(68, 255, 100, 0.6);
+            transform: scale(1.05);
+        }
+        
+        /* Loading Screen */
+        #loading {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            color: #00ff88;
+        }
+        
+        #loading h2 {
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+        
+        #loadingBar {
+            width: 400px;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        #loadingProgress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00ff88, #44ffaa);
+            box-shadow: 0 0 20px #00ff88;
+            transition: width 0.2s;
+        }
+        
+        /* UNIFIED HUD v2.1 - Top and Bottom Bars */
+        #hud {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: none;
+            pointer-events: none;
+        }
+        
+        /* Top Bar - System Info & Navigation */
+        #hudTopBar {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(180deg, rgba(10,10,20,0.95) 0%, rgba(10,10,20,0.7) 100%);
+            border-bottom: 2px solid #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            z-index: 10;
+        }
+        
+        .hudSection {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+        
+        .hudItem {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .hudLabel {
+            color: #44aa66;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 1px;
+        }
+        
+        .hudValue {
+            color: #44ffaa;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .hudValue.alert { color: #ff4444; }
+        .hudValue.good { color: #44ff44; }
+        
+        /* System ID Panel */
+        #systemId {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 5px 15px;
+            background: rgba(0, 255, 136, 0.15);
+            border: 1px solid #00ff88;
+            border-radius: 4px;
+        }
+        
+        #systemName {
+            font-size: 16px;
+            color: #00ff88;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        
+        #starType {
+            font-size: 10px;
+            color: #44aa66;
+            text-transform: uppercase;
+        }
+        
+        /* Coordinates */
+        #coordsDisplay {
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        
+        /* Velocity */
+        #velocityDisplay {
+            min-width: 80px;
+        }
+        
+        /* Bottom Bar - Combat Status */
+        #hudBottomBar {
+            position: absolute;
+            bottom: 0; left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(0deg, rgba(10,10,20,0.95) 0%, rgba(10,10,20,0.7) 100%);
+            border-top: 2px solid #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            z-index: 10;
+        }
+        
+        /* Status Bars */
+        .statusGroup {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .statusItem {
+            display: flex;
+            flex-direction: column;
+            width: 150px;
+        }
+        
+        .barContainer {
+            width: 100%;
+            height: 10px;
+            background: #1a1a2e;
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        
+        .barFill {
+            height: 100%;
+            transition: width 0.2s ease;
+            border-radius: 4px;
+        }
+        
+        #shieldBar { 
+            background: linear-gradient(90deg, #0066cc, #0099ff);
+            box-shadow: 0 0 8px rgba(0, 153, 255, 0.5);
+        }
+        #hullBar { 
+            background: linear-gradient(90deg, #cc0000, #ff6600);
+            box-shadow: 0 0 8px rgba(255, 102, 0, 0.5);
+        }
+        #weaponBar {
+            background: linear-gradient(90deg, #ffaa00, #ffdd00);
+            box-shadow: 0 0 8px rgba(255, 221, 0, 0.3);
+        }
+        
+        /* Weapon Heat Indicator */
+        .heatContainer {
+            width: 100%;
+            height: 10px;
+            background: linear-gradient(90deg, #333 0%, #333 70%, #00ff88 70%, #00ff88 100%);
+            border-radius: 5px;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        
+        #heatBar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #44ff44, #ffff44, #ff4444);
+            transition: width 0.1s;
+        }
+        
+        /* Combat Stats */
+        #combatStats {
+            display: flex;
+            gap: 25px;
+            padding: 5px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 4px;
+        }
+        
+        /* Minimap - Bottom Right */
+        #miniMap {
+            position: absolute;
+            bottom: 70px;
+            right: 10px;
+            width: 180px;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #00ff88;
+            border-radius: 4px;
+            pointer-events: auto;
+            cursor: crosshair;
+            z-index: 20;
+        }
+        
+        #miniMap canvas {
+            width: 100%;
+            height: 100%;
+        }
+        
+        #mapToggle {
+            position: absolute;
+            bottom: 255px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(10,10,20,0.9);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+            font-size: 10px;
+            cursor: pointer;
+            pointer-events: auto;
+            z-index: 21;
+        }
+        
+        /* Crosshair - Center */
+        #crosshair {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        #crosshair::before, #crosshair::after {
+            content: '';
+            position: absolute;
+            background: rgba(0, 255, 136, 0.9);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.8);
+        }
+        
+        #crosshair::before {
+            width: 2px;
+            height: 20px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        #crosshair::after {
+            width: 20px;
+            height: 2px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Center Alert Area */
+        #alertArea {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 15;
+        }
+        
+        .alertText {
+            color: #ff4444;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .alertText.active {
+            opacity: 1;
+        }
+        
+        /* Touch Controls */
+        #touchControls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: none;
+            z-index: 30;
+        }
+        
+        .touchZone {
+            position: absolute;
+            pointer-events: auto;
+        }
+        
+        #joystickZone {
+            bottom: 70px;
+            left: 20px;
+            width: 140px;
+            height: 140px;
+        }
+        
+        #joystickBase {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: rgba(0, 255, 136, 0.15);
+            border: 2px solid rgba(0, 255, 136, 0.5);
+            border-radius: 50%;
+            top: 10px;
+            left: 10px;
+        }
+        
+        #joystickKnob {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 136, 0.8);
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            top: 45px;
+            left: 45px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.6);
+        }
+        
+        #fireZone {
+            bottom: 80px;
+            right: 200px;
+            width: 100px;
+            height: 100px;
+        }
+        
+        #fireButton {
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 68, 68, 0.3);
+            border: 3px solid rgba(255, 68, 68, 0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+        }
+        
+        #fireButton:active {
+            background: rgba(255, 68, 68, 0.6);
+            transform: scale(0.95);
+        }
+        
+        /* Game Over */
+        #gameOver {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 300;
+            color: #00ff88;
+        }
+        
+        #gameOver h1 {
+            font-size: 4em;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+        }
+        
+        .statsGrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        
+        .statBox {
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid #00ff88;
+            border-radius: 8px;
+        }
+        
+        .statValue {
+            font-size: 2.5em;
+            color: #44ffaa;
+            font-weight: bold;
+        }
+        
+        .statLabel {
+            font-size: 12px;
+            color: #44aa66;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+        
+        /* Scanlines */
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.05),
+                rgba(0, 0, 0, 0.05) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 50;
+        }
+        
+        /* Version Footer */
+        #versionFooter {
+            position: absolute;
+            bottom: 5px;
+            right: 200px;
+            font-size: 9px;
+            color: #444;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield Canvas for Menu Background -->
+    <canvas id="starfieldCanvas"></canvas>
+
+    <!-- Scanlines -->
+    <div class="scanlines"></div>
+
+    <!-- Main Menu -->
+    <div id="mainMenu">
+        <h1>SPACEBATTLE</h1>
+        <h2>v2.1 Unified HUD</h2>
+        <button class="menuButton" onclick="startGame()">Launch Mission</button>
+        <button class="menuButton" onclick="showControls()">Flight Controls</button>
+    </div>
+    
+    <!-- Loading -->
+    <div id="loading">
+        <h2>Initializing Universe...</h2>
+        <div id="loadingBar"><div id="loadingProgress"></div></div>
+    </div>
+    
+    <!-- HUD -->
+    <div id="hud">
+        <!-- Top Bar -->
+        <div id="hudTopBar">
+            <div class="hudSection">
+                <!-- System ID -->
+                <div id="systemId">
+                    <span id="systemName">SECTOR 50-50-50</span>
+                    <span id="starType">Yellow Dwarf</span>
+                </div>
+                
+                <!-- Coordinates -->
+                <div class="hudItem">
+                    <span class="hudLabel">Coordinates</span>
+                    <span class="hudValue" id="coordsDisplay">0, 0, 0</span>
+                </div>
+                
+                <!-- Grid Position -->
+                <div class="hudItem">
+                    <span class="hudLabel">Grid Cell</span>
+                    <span class="hudValue" id="gridDisplay">50,50,50</span>
+                </div>
+            </div>
+            
+            <div class="hudSection">
+                <!-- Velocity -->
+                <div class="hudItem">
+                    <span class="hudLabel">Velocity</span>
+                    <span class="hudValue" id="velocityDisplay">0 m/s</span>
+                </div>
+                
+                <!-- Mission Time -->
+                <div class="hudItem">
+                    <span class="hudLabel">Mission Time</span>
+                    <span class="hudValue" id="timeDisplay">00:00</span>
+                </div>
+                
+                <!-- Score -->
+                <div class="hudItem">
+                    <span class="hudLabel">Score</span>
+                    <span class="hudValue good" id="scoreDisplay">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Alert Area -->
+        <div id="alertArea">
+            <div class="alertText" id="alertText">WARNING: HULL CRITICAL</div>
+        </div>
+        
+        <!-- Crosshair -->
+        <div id="crosshair"></div>
+        
+        <!-- Bottom Bar -->
+        <div id="hudBottomBar">
+            <div class="statusGroup">
+                <!-- Shield -->
+                <div class="statusItem">
+                    <div style="display:flex;justify-content:space-between;">
+                        <span class="hudLabel">Shield</span>
+                        <span class="hudValue" id="shieldValue">100%</span>
+                    </div>
+                    <div class="barContainer">
+                        <div class="barFill" id="shieldBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                
+                <!-- Hull -->
+                <div class="statusItem">
+                    <div style="display:flex;justify-content:space-between;">
+                        <span class="hudLabel">Hull</span>
+                        <span class="hudValue" id="hullValue">100%</span>
+                    </div>
+                    <div class="barContainer">
+                        <div class="barFill" id="hullBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                
+                <!-- Weapon Heat -->
+                <div class="statusItem">
+                    <div style="display:flex;justify-content:space-between;">
+                        <span class="hudLabel">Weapon Temp</span>
+                        <span class="hudValue" id="heatValue">0%</span>
+                    </div>
+                    <div class="heatContainer">
+                        <div id="heatBar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="combatStats">
+                <div class="hudItem">
+                    <span class="hudLabel">Kills</span>
+                    <span class="hudValue" id="killsDisplay">0</span>
+                </div>
+                <div class="hudItem">
+                    <span class="hudLabel">Wave</span>
+                    <span class="hudValue" id="waveDisplay">1</span>
+                </div>
+                <div class="hudItem">
+                    <span class="hudLabel">Camera</span>
+                    <span class="hudValue" id="cameraDisplay">3RD</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Map Toggle -->
+        <div id="mapToggle" onclick="toggleMap()">[M] Map</div>
+        
+        <!-- Minimap -->
+        <div id="miniMap">
+            <canvas id="miniMapCanvas"></canvas>
+        </div>
+        
+        <!-- Version -->
+        <div id="versionFooter">SB v2.1</div>
+        
+        <!-- Touch Controls -->
+        <div id="touchControls">
+            <div id="joystickZone" class="touchZone">
+                <div id="joystickBase"></div>
+                <div id="joystickKnob"></div>
+            </div>
+            <div id="fireZone" class="touchZone">
+                <div id="fireButton">FIRE</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Game Over -->
+    <div id="gameOver">
+        <h1>Mission Complete</h1>
+        <div class="statsGrid">
+            <div class="statBox">
+                <div class="statValue" id="finalScore">0</div>
+                <div class="statLabel">Final Score</div>
+            </div>
+            <div class="statBox">
+                <div class="statValue" id="finalKills">0</div>
+                <div class="statLabel">Enemies Destroyed</div>
+            </div>
+            <div class="statBox">
+                <div class="statValue" id="finalTime">00:00</div>
+                <div class="statLabel">Mission Duration</div>
+            </div>
+        </div>
+        <button class="menuButton" onclick="restartGame()">Fly Again</button>
+        <button class="menuButton" onclick="returnToMenu()">Return to Base</button>
+    </div>
+    
+    <canvas id="gameCanvas"></canvas>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/SpaceBattle.js"></script>
+    
+    <script>
+    // Starfield Canvas for Menu Background
+    const starCanvas = document.getElementById('starfieldCanvas');
+    const starCtx = starCanvas.getContext('2d');
+    let starAnimationId = null;
+    
+    function resizeStarfield() {
+        starCanvas.width = window.innerWidth;
+        starCanvas.height = window.innerHeight;
+    }
+    resizeStarfield();
+    window.addEventListener('resize', resizeStarfield);
+    
+    // Create stars
+    const stars = [];
+    const numStars = 2000;
+    
+    for (let i = 0; i < numStars; i++) {
+        const temp = Math.random();
+        let color, size, alpha;
+        
+        if (temp < 0.7) {
+            // White/blue tinted stars (Thalo blue influence)
+            color = `rgba(${200 + Math.random() * 55}, ${220 + Math.random() * 35}, 255,`;
+            size = Math.random() * 1.5 + 0.5;
+            alpha = Math.random() * 0.6 + 0.4;
+        } else if (temp < 0.9) {
+            // Warm orange stars
+            color = `rgba(255, ${180 + Math.random() * 60}, ${100 + Math.random() * 100},`;
+            size = Math.random() * 2 + 1;
+            alpha = Math.random() * 0.7 + 0.3;
+        } else {
+            // Deep blue stars (Thalo blue)
+            color = `rgba(${80 + Math.random() * 40}, ${120 + Math.random() * 60}, 200,`;
+            size = Math.random() * 1.5 + 0.8;
+            alpha = Math.random() * 0.5 + 0.5;
+        }
+        
+        stars.push({
+            x: Math.random() * starCanvas.width,
+            y: Math.random() * starCanvas.height,
+            z: Math.random() * 1000,
+            size: size,
+            color: color,
+            alpha: alpha,
+            twinkle: Math.random() * Math.PI * 2,
+            twinkleSpeed: Math.random() * 0.02 + 0.01
+        });
+    }
+    
+    function animateStars() {
+        // Thalo blue gradient background (Bob Ross palette)
+        const gradient = starCtx.createRadialGradient(
+            starCanvas.width / 2, starCanvas.height / 2, 0,
+            starCanvas.width / 2, starCanvas.height / 2, starCanvas.width
+        );
+        gradient.addColorStop(0, '#0a1a2a');
+        gradient.addColorStop(0.5, '#0a0f1a');
+        gradient.addColorStop(1, '#05080c');
+        
+        starCtx.fillStyle = gradient;
+        starCtx.fillRect(0, 0, starCanvas.width, starCanvas.height);
+        
+        // Draw stars with twinkle
+        stars.forEach(star => {
+            star.twinkle += star.twinkleSpeed;
+            const twinkleAlpha = star.alpha * (0.7 + 0.3 * Math.sin(star.twinkle));
+            
+            starCtx.beginPath();
+            starCtx.arc(star.x, star.y, star.size * (0.8 + 0.4 * Math.sin(star.twinkle)), 0, Math.PI * 2);
+            starCtx.fillStyle = star.color + twinkleAlpha + ')';
+            starCtx.fill();
+            
+            // Glow for larger stars
+            if (star.size > 1.5) {
+                starCtx.beginPath();
+                starCtx.arc(star.x, star.y, star.size * 2, 0, Math.PI * 2);
+                starCtx.fillStyle = star.color + (twinkleAlpha * 0.2) + ')';
+                starCtx.fill();
+            }
+        });
+        
+        starAnimationId = requestAnimationFrame(animateStars);
+    }
+    
+    // Start starfield animation immediately
+    animateStars();
+    
+    // Stop starfield when game starts to save resources
+    window.addEventListener('gameStart', () => {
+        if (starAnimationId) {
+            cancelAnimationFrame(starAnimationId);
+            starAnimationId = null;
+        }
+        starCanvas.style.display = 'none';
+    });
+    
+    // Resume starfield when returning to menu
+    window.addEventListener('returnToMenu', () => {
+        starCanvas.style.display = 'block';
+        if (!starAnimationId) animateStars();
+    });
+    </script>
+</body>
+</html>

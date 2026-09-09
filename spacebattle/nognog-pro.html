@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>N'og nog Pro - Universal Explorer</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <h1>N'OG NOG PRO</h1>
+            <div class="loading-bar">
+                <div id="loading-progress"></div>
+            </div>
+            <div id="loading-text">Initializing Universe...</div>
+        </div>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="main-menu" class="hidden">
+        <div class="menu-bg"></div>
+        <div class="menu-content">
+            <h1>N'OG NOG</h1>
+            <h2>Universal Explorer</h2>
+            <nav class="menu-nav">
+                <button class="menu-btn" data-action="new-game">
+                    <span class="btn-icon">🚀</span>
+                    <span class="btn-text">New Game</span>
+                </button>
+                <button class="menu-btn" data-action="continue" disabled>
+                    <span class="btn-icon">📂</span>
+                    <span class="btn-text">Continue</span>
+                </button>
+                <button class="menu-btn" data-action="settings">
+                    <span class="btn-icon">⚙️</span>
+                    <span class="btn-text">Settings</span>
+                </button>
+                <button class="menu-btn" data-action="credits">
+                    <span class="btn-icon">⭐</span>
+                    <span class="btn-text">Credits</span>
+                </button>
+                <button class="menu-btn" data-action="exit">
+                    <span class="btn-icon">🚪</span>
+                    <span class="btn-text">Exit</span>
+                </button>
+            </nav>
+        </div>
+        <div class="menu-credits">
+            Created by Antonio Hudnall & Miles | Agent Verse Technology
+        </div>
+    </div>
+
+    <!-- Game HUD -->
+    <div id="game-hud" class="hidden">
+        <!-- Top Left: Navigation & Ship Status -->
+        <div class="hud-panel hud-top-left">
+            <div class="hud-section">
+                <h3>SHIP STATUS</h3>
+                <div class="stat-grid">
+                    <div class="stat">
+                        <label>Velocity</label>
+                        <value id="hud-velocity">0 m/s</value>
+                    </div>
+                    <div class="stat">
+                        <label>Altitude</label>
+                        <value id="hud-altitude">0 km</value>
+                    </div>
+                    <div class="stat">
+                        <label>Fuel</label>
+                        <value id="hud-fuel">100%</value>
+                        <div class="bar"><div id="bar-fuel" style="width: 100%"></div></div>
+                    </div>
+                    <div class="stat">
+                        <label>Shield</label>
+                        <value id="hud-shield">100%</value>
+                        <div class="bar"><div id="bar-shield" style="width: 100%"></div></div>
+                    </div>
+                    <div class="stat">
+                        <label>Hull</label>
+                        <value id="hud-hull">100%</value>
+                        <div class="bar"><div id="bar-hull" style="width: 100%"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Right: System Info -->
+        <div class="hud-panel hud-top-right">
+            <div class="hud-section">
+                <h3 id="system-name">UNKNOWN SYSTEM</h3>
+                <div class="system-info">
+                    <div class="info-row">
+                        <span class="label">Star Type:</span>
+                        <span class="value" id="star-type">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Planets:</span>
+                        <span class="value" id="planet-count">0</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Universe:</span>
+                        <span class="value" id="universe-type">Prime</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="label">Coords:</span>
+                        <span class="value" id="coordinates">0, 0, 0</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hud-section">
+                <h3>NEAREST OBJECTS</h3>
+                <ul id="object-list"></ul>
+            </div>
+        </div>
+
+        <!-- Bottom Left: Camera & Controls -->
+        <div class="hud-panel hud-bottom-left">
+            <div class="camera-mode" id="camera-mode-indicator">FIRST PERSON</div>
+            <div class="controls-hint">
+                <div class="key-group">
+                    <span class="key">W</span><span class="key">S</span> Thrust
+                    <span class="key">A</span><span class="key">D</span> Yaw
+                    <span class="key">Q</span><span class="key">E</span> Roll
+                </div>
+                <div class="key-group">
+                    <span class="key">↑</span><span class="key">↓</span> Pitch
+                    <span class="key">SPACE</span> Fire
+                    <span class="key">V</span> View
+                    <span class="key">M</span> Map
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Right: Mini Map -->
+        <div class="hud-panel hud-bottom-right">
+            <div class="minimap-container">
+                <canvas id="minimap" width="250" height="250"></canvas>
+                <div class="minimap-label">SYSTEM MAP</div>
+            </div>
+        </div>
+
+        <!-- Center: Crosshair -->
+        <div id="crosshair">
+            <div class="crosshair-outer"></div>
+            <div class="crosshair-inner"></div>
+            <div class="crosshair-dot"></div>
+        </div>
+
+        <!-- Target Info (Bottom Center) -->
+        <div class="hud-panel hud-bottom-center" id="target-panel" style="display: none;">
+            <div class="target-info">
+                <span class="target-name">TARGET</span>
+                <span class="target-distance" id="target-dist">0 km</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="hidden">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            <div class="settings-grid">
+                <div class="setting">
+                    <label>Sound Effects</label>
+                    <div class="toggle active" data-setting="sound"></div>
+                </div>
+                <div class="setting">
+                    <label>Music</label>
+                    <div class="toggle active" data-setting="music"></div>
+                </div>
+                <div class="setting">
+                    <label>Invert Y Axis</label>
+                    <div class="toggle" data-setting="invertY"></div>
+                </div>
+                <div class="setting">
+                    <label>Touch Controls</label>
+                    <div class="toggle active" data-setting="touch"></div>
+                </div>
+                <div class="setting">
+                    <label>Graphics Quality</label>
+                    <select id="quality-select">
+                        <option value="low">Low</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="high">High</option>
+                        <option value="ultra">Ultra</option>
+                    </select>
+                </div>
+            </div>
+            <button class="btn-primary" data-action="close-settings">Back</button>
+        </div>
+    </div>
+
+    <!-- 3D Canvas -->
+    <canvas id="render-canvas"></canvas>
+
+    <!-- Engine Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplex-noise/2.4.0/simplex-noise.min.js"></script>
+    <script src="js/core/Component.js"></script>
+    <script src="js/core/GameObject.js"></script>
+    <script src="js/core/SceneManager.js"></script>
+    <script src="js/core/InputManager.js"></script>
+    <script src="js/core/AudioManager.js"></script>
+    <script src="js/core/UIManager.js"></script>
+    <script src="js/universe/ProceduralGenerator.js"></script>
+    <script src="js/universe/Galaxy.js"></script>
+    <script src="js/universe/StarSystem.js"></script>
+    <script src="js/universe/CelestialBody.js"></script>
+    <script src="js/ships/Ship.js"></script>
+    <script src="js/ships/PlayerController.js"></script>
+    <script src="js/ships/WeaponSystem.js"></script>
+    <script src="js/physics/GravitySystem.js"></script>
+    <script src="js/physics/OrbitalMechanics.js"></script>
+    <script src="js/ui/Minimap.js"></script>
+    <script src="js/ui/HUD.js"></script>
+    <script src="js/game/Game.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
