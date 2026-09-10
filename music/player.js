@@ -7,6 +7,9 @@ const TappyMusicPlayer = {
   
   tracks: [
     { name: 'Velvet Cabaret', url: '/music/tracks/velvet-cabaret.mp3' },
+    { name: 'Cold Brew Conspiracy', url: '/music/tracks/cold-brew-conspiracy.mp3' },
+    { name: 'Curdistan', url: '/music/tracks/curdistan.mp3' },
+    { name: 'Falling Through the Blue', url: '/music/tracks/falling-through-the-blue.mp3' },
     { name: 'Quantum Antenna Power Up', url: '/music/tracks/quantum-antenna-power-up.mp3' },
     { name: 'Quantum Antenna Power Up (Edit)', url: '/music/tracks/quantum-antenna-power-up-edit.mp3' },
     { name: 'Quantum Antenna Power Up (Extended)', url: '/music/tracks/quantum-antenna-power-up-extended.mp3' },
