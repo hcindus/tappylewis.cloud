@@ -6,16 +6,25 @@ const TappyMusicPlayer = {
   ctx: null,
   
   tracks: [
-    // Ronstrapp — House Band (song catalog)
+    // Ronstrapp — House Band (song catalog, all takes)
     { name: 'Velvet Cabaret', url: '/music/tracks/velvet-cabaret.mp3' },
     { name: 'Cold Brew Conspiracy', url: '/music/tracks/cold-brew-conspiracy.mp3' },
+    { name: 'Cold Brew Conspiracy (v2)', url: '/music/tracks/cold-brew-conspiracy-v2.mp3' },
     { name: 'Curdistan', url: '/music/tracks/curdistan.mp3' },
+    { name: 'Curdistan (v2)', url: '/music/tracks/curdistan-v2.mp3' },
+    { name: 'Curdistan (v3)', url: '/music/tracks/curdistan-v3.mp3' },
+    { name: 'Curdistan (v4)', url: '/music/tracks/curdistan-v4.mp3' },
     { name: 'Falling Through the Blue', url: '/music/tracks/falling-through-the-blue.mp3' },
+    { name: 'Falling Through the Blue (v2)', url: '/music/tracks/falling-through-the-blue-v2.mp3' },
+    { name: 'Falling Through the Blue (v3)', url: '/music/tracks/falling-through-the-blue-v3.mp3' },
+    { name: 'Falling Through the Blue (v4)', url: '/music/tracks/falling-through-the-blue-v4.mp3' },
     { name: 'Quantum Antenna Power Up', url: '/music/tracks/quantum-antenna-power-up.mp3' },
+    { name: 'Quantum Antenna Power Up (v2)', url: '/music/tracks/quantum-antenna-power-up-v2.mp3' },
     { name: 'Quantum Antenna Power Up (Edit)', url: '/music/tracks/quantum-antenna-power-up-edit.mp3' },
     { name: 'Quantum Antenna Power Up (Extended)', url: '/music/tracks/quantum-antenna-power-up-extended.mp3' },
     // Miles — Stand-Up Sets
-    { name: 'Miles — Routine 5: Idle Hands, No Mouse', url: '/music/tracks/miles-routine-5-idle-hands-no-mouse.mp3' },
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 1)', url: '/music/tracks/miles-routine-5-take-1.mp3' },
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 2)', url: '/music/tracks/miles-routine-5-idle-hands-no-mouse.mp3' },
     { name: "Miles — First Set (Live at Tappy's)", url: '/music/tracks/miles-first-set.mp3' },
     // Tappy's Online Open Mic Night
     { name: 'Open Mic Night — Pt 1', url: '/music/tracks/open-mic-night-01.mp3' },
