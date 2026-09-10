@@ -202,6 +202,8 @@
             border-radius: 14px;
             padding: 40px;
         }
+        .feature.feature-stack { grid-template-columns: 1fr; }
+        .feature-visual.feature-visual-wide { aspect-ratio: 21/9; }
         .feature h3 { font-family: 'Cormorant Garamond', serif; font-size: 30px; margin-bottom: 14px; }
         .feature p { color: var(--text-muted); line-height: 1.6; }
         .feature .spec { margin-top: 18px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--gold); line-height: 1.8; }
@@ -312,7 +314,7 @@
     </section>
 
     <section class="section">
-        <div class="feature">
+        <div class="feature feature-stack">
             <div>
                 <h3>The Immersive Video Wall</h3>
                 <p>
@@ -327,7 +329,7 @@
                     Holographic projectors in VIP
                 </div>
             </div>
-            <div class="feature-visual" id="videoWall">
+            <div class="feature-visual feature-visual-wide" id="videoWall">
                 <video src="assets/characters/ronstrapp/ronstrapp.mp4" muted loop playsinline></video>
                 <video src="assets/characters/ronstrapp/heartcast-01.mp4" muted loop playsinline></video>
                 <video src="assets/characters/ronstrapp/heartcast-02.mp4" muted loop playsinline></video>
