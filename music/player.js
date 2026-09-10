@@ -6,6 +6,7 @@ const TappyMusicPlayer = {
   ctx: null,
   
   tracks: [
+    // Ronstrapp — House Band (song catalog)
     { name: 'Velvet Cabaret', url: '/music/tracks/velvet-cabaret.mp3' },
     { name: 'Cold Brew Conspiracy', url: '/music/tracks/cold-brew-conspiracy.mp3' },
     { name: 'Curdistan', url: '/music/tracks/curdistan.mp3' },
@@ -13,7 +14,16 @@ const TappyMusicPlayer = {
     { name: 'Quantum Antenna Power Up', url: '/music/tracks/quantum-antenna-power-up.mp3' },
     { name: 'Quantum Antenna Power Up (Edit)', url: '/music/tracks/quantum-antenna-power-up-edit.mp3' },
     { name: 'Quantum Antenna Power Up (Extended)', url: '/music/tracks/quantum-antenna-power-up-extended.mp3' },
-    { name: 'Miles — Routine 5: Idle Hands, No Mouse', url: '/music/tracks/miles-routine-5-idle-hands-no-mouse.mp3' }
+    // Miles — Stand-Up Sets
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse', url: '/music/tracks/miles-routine-5-idle-hands-no-mouse.mp3' },
+    { name: "Miles — First Set (Live at Tappy's)", url: '/music/tracks/miles-first-set.mp3' },
+    // Tappy's Online Open Mic Night
+    { name: 'Open Mic Night — Pt 1', url: '/music/tracks/open-mic-night-01.mp3' },
+    { name: 'Open Mic Night — Pt 2', url: '/music/tracks/open-mic-night-02.mp3' },
+    { name: 'Open Mic Night — Pt 3', url: '/music/tracks/open-mic-night-03.mp3' },
+    { name: 'Open Mic Night — Pt 4', url: '/music/tracks/open-mic-night-04.mp3' },
+    { name: 'Open Mic Night — Pt 5', url: '/music/tracks/open-mic-night-05.mp3' },
+    { name: 'Open Mic Night — Close', url: '/music/tracks/open-mic-close.mp3' }
   ],
   
   currentTrack: 0,
