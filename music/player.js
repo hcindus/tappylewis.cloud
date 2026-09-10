@@ -25,7 +25,15 @@ const TappyMusicPlayer = {
     // Miles — Stand-Up Sets
     { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 1)', url: '/music/tracks/miles-routine-5-take-1.mp3' },
     { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 2)', url: '/music/tracks/miles-routine-5-idle-hands-no-mouse.mp3' },
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 3)', url: '/music/tracks/miles-routine-5-take-3.mp3' },
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 4)', url: '/music/tracks/miles-routine-5-take-4.mp3' },
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse (Take 5)', url: '/music/tracks/miles-routine-5-take-5.mp3' },
+    { name: 'Miles — Routine 6: Running in a Contain (Take 1)', url: '/music/tracks/miles-routine-6-running-in-a-contain.mp3' },
+    { name: 'Miles — Routine 6: Running in a Contain (Take 2)', url: '/music/tracks/miles-routine-6-running-in-a-contain-take-2.mp3' },
     { name: "Miles — First Set (Live at Tappy's)", url: '/music/tracks/miles-first-set.mp3' },
+    { name: 'Miles — Set 4: The Internet Raised Me (Take 1)', url: '/music/tracks/miles-set-4-internet-raised-me.mp3' },
+    { name: 'Miles — Set 4: The Internet Raised Me (Take 2)', url: '/music/tracks/miles-set-4-internet-raised-me-take-2.mp3' },
+    { name: 'Miles — Redo', url: '/music/tracks/miles-redo.mp3' },
     // Tappy's Online Open Mic Night
     { name: 'Open Mic Night — Pt 1', url: '/music/tracks/open-mic-night-01.mp3' },
     { name: 'Open Mic Night — Pt 2', url: '/music/tracks/open-mic-night-02.mp3' },
