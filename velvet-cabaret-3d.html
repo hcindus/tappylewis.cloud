@@ -243,6 +243,80 @@ sign2.position.set(0, 5.3, -ROOM.d/2 + 0.15);
 sign2.scale.set(0.7, 0.7, 0.7);
 scene.add(sign2);
 
+// ---------- DECORATION — Tappy's taste (noir, neon, velvet, gold) ----------
+
+// Velvet drapes along the walls
+function drape(x, z) {
+  const d = new THREE.Mesh(new THREE.BoxGeometry(1.4, 5.5, 0.35), new THREE.MeshStandardMaterial({ color: 0x2a0e22, roughness: 0.92 }));
+  d.position.set(x, 2.75, z); scene.add(d);
+  const trim = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.12, 0.4), goldMat);
+  trim.position.set(x, 5.6, z); scene.add(trim);
+}
+for (let z = -12; z <= 12; z += 5) { drape(-ROOM.w/2 + 0.7, z); drape(ROOM.w/2 - 0.7, z); }
+
+// Bar stools (red leather + gold legs)
+function stool(x, z) {
+  const g = new THREE.Group();
+  const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.26, 0.1, 16), new THREE.MeshStandardMaterial({ color: 0x7a1220, roughness: 0.4, metalness: 0.3 }));
+  seat.position.y = 0.82;
+  const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.82, 8), goldMat);
+  leg.position.y = 0.41;
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.04, 12), goldMat);
+  foot.position.y = 0.04;
+  g.add(seat, leg, foot);
+  g.position.set(x, 0, z);
+  scene.add(g);
+}
+for (let i = 0; i < 4; i++) { stool(-10 + i * 0.7, -4.8); stool(10 - i * 0.7, -4.8); }
+
+// Round tables + candle glow on the dance floor
+function table(x, z) {
+  const g = new THREE.Group();
+  const top = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 0.08, 20), goldMat);
+  top.position.y = 0.76;
+  const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.16, 0.76, 8), marbleWallMat);
+  ped.position.y = 0.38;
+  const candle = new THREE.PointLight(C.gold, 2, 3, 2);
+  candle.position.y = 0.9;
+  g.add(top, ped, candle);
+  g.position.set(x, 0, z);
+  scene.add(g);
+}
+table(0, 2); table(4, 4); table(-4, 4); table(0, 7);
+
+// VIP booths (low velvet benches)
+function booth(x, z) {
+  const bench = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.5, 0.8), new THREE.MeshStandardMaterial({ color: 0x2a0e22, roughness: 0.9 }));
+  bench.position.set(x, 0.85, z); scene.add(bench);
+  const back = new THREE.Mesh(new THREE.BoxGeometry(2.6, 1.0, 0.3), new THREE.MeshStandardMaterial({ color: 0x1a1018, roughness: 0.9 }));
+  back.position.set(x, 1.4, z - 0.55); scene.add(back);
+}
+booth(-12, 1); booth(-12, -1); booth(12, 1); booth(12, -1);
+
+// Gold ring fixtures (Tappy's rings motif) hanging over the floor
+function goldRing(x, y, z) {
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.07, 12, 32), goldMat);
+  ring.position.set(x, y, z); ring.rotation.x = Math.PI / 2;
+  scene.add(ring);
+  const l = new THREE.PointLight(C.gold, 4, 5, 2); l.position.set(x, y - 0.2, z); scene.add(l);
+}
+goldRing(0, 4.5, 0); goldRing(-6, 4.5, 3); goldRing(6, 4.5, 3);
+
+// Smoked glass partition behind the stage
+const glassMat = new THREE.MeshStandardMaterial({ color: 0x0d1020, roughness: 0.1, metalness: 0.4, transparent: true, opacity: 0.35 });
+const glassShelf = new THREE.Mesh(new THREE.BoxGeometry(10, 2.4, 0.1), glassMat);
+glassShelf.position.set(0, 3.4, -ROOM.d/2 + 2.4); scene.add(glassShelf);
+
+// TAFFEY'S LOUNGE neon (Tappy's original joint, over the entrance)
+const loungeSign = makeSign("TAFFEY'S LOUNGE", '#ff2a6a');
+loungeSign.position.set(0, 4.6, ROOM.d/2 - 0.1);
+loungeSign.scale.set(0.85, 0.85, 0.85);
+scene.add(loungeSign);
+
+// Neon floor coves along the wall bases
+const coveL = neonStrip(ROOM.d, C.red); coveL.rotation.y = Math.PI / 2; coveL.position.set(-ROOM.w/2 + 0.1, 0.05, 0); scene.add(coveL);
+const coveR = neonStrip(ROOM.d, C.red); coveR.rotation.y = Math.PI / 2; coveR.position.set(ROOM.w/2 - 0.1, 0.05, 0); scene.add(coveR);
+
 // ---------- Dance floor glow (sub-bass arrays) ----------
 const danceGlow = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
