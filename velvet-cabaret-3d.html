@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Velvet Cabaret — 3D Walkthrough</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0810; }
+  body { font-family: 'Inter', system-ui, sans-serif; }
+  canvas { display: block; }
+
+  #overlay {
+    position: fixed; inset: 0; z-index: 10;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; cursor: pointer;
+    background: radial-gradient(ellipse at 50% 40%, rgba(255,26,60,0.10), transparent 60%), #0a0810;
+    color: #eae6e0; user-select: none;
+  }
+  #overlay h1 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(34px, 6vw, 72px); font-weight: 700; letter-spacing: 3px;
+    color: #fff;
+    text-shadow: 0 0 10px #00f3ff, 0 0 30px #00f3ff, 0 0 60px #ff1a3c;
+    animation: flicker 4s infinite;
+  }
+  #overlay .sub {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: clamp(20px, 3vw, 34px); letter-spacing: 6px; margin-top: 6px;
+    color: #fff; text-shadow: 0 0 8px #ff1a3c, 0 0 24px #ff1a3c;
+  }
+  #overlay .hint { margin-top: 42px; color: #d4af37; font-family: 'JetBrains Mono', monospace; font-size: 13px; letter-spacing: 2px; }
+  #overlay .keys { margin-top: 12px; color: #9a958f; font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 1px; }
+  @keyframes flicker { 0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:.55} 94%{opacity:1} 96%{opacity:.8} 97%{opacity:1} }
+
+  #hud {
+    position: fixed; bottom: 18px; left: 18px; z-index: 5;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px;
+    color: rgba(212,175,55,0.75); pointer-events: none;
+  }
+</style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<div id="overlay">
+  <h1>TAPPY LEWIS</h1>
+  <div class="sub">THE VELVET CABARET</div>
+  <div class="hint">CLICK TO ENTER</div>
+  <div class="keys">WASD — move &nbsp;·&nbsp; MOUSE — look &nbsp;·&nbsp; ESC — release</div>
+</div>
+<div id="hud">THE VELVET CABARET · 3D WALKTHROUGH</div>
+
+<script type="module">
+import * as THREE from 'three';
+import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js';
+
+// ---------- Palette ----------
+const C = {
+  marble: 0x14121a,
+  marbleFloor: 0x181520,
+  velvet: 0x1a1018,
+  velvetDeep: 0x120a12,
+  gold: 0xd4af37,
+  red: 0xff1a3c,
+  cyan: 0x00f3ff,
+  glass: 0x0d1020,
+};
+
+// ---------- Renderer / Scene / Camera ----------
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.15;
+document.body.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x08060d);
+scene.fog = new THREE.FogExp2(0x08060d, 0.035);
+
+const camera = new THREE.PerspectiveCamera(72, window.innerWidth / window.innerHeight, 0.1, 200);
+camera.position.set(0, 1.6, 12); // start near entrance, eye height
+
+const controls = new PointerLockControls(camera, renderer.domElement);
+
+// ---------- Lighting ----------
+const ambient = new THREE.AmbientLight(0x2a2030, 1.6);
+scene.add(ambient);
+
+const hemi = new THREE.HemisphereLight(0x4a3355, 0x0a0810, 0.6);
+scene.add(hemi);
+
+// Warm key light over the dance floor
+const keyLight = new THREE.PointLight(0xd4af37, 30, 40, 2);
+keyLight.position.set(0, 7, 0);
+keyLight.castShadow = true;
+scene.add(keyLight);
+
+// ---------- Materials ----------
+const marbleFloorMat = new THREE.MeshStandardMaterial({ color: C.marbleFloor, roughness: 0.15, metalness: 0.6 });
+const velvetMat = new THREE.MeshStandardMaterial({ color: C.velvet, roughness: 0.95, metalness: 0.0 });
+const marbleWallMat = new THREE.MeshStandardMaterial({ color: C.marble, roughness: 0.35, metalness: 0.3 });
+const goldMat = new THREE.MeshStandardMaterial({ color: C.gold, roughness: 0.3, metalness: 0.9, emissive: 0x3a2a05, emissiveIntensity: 0.3 });
+
+// ---------- Room shell ----------
+const ROOM = { w: 40, d: 30, h: 8 };
+
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(ROOM.w, ROOM.d), marbleFloorMat);
+floor.rotation.x = -Math.PI / 2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+const ceiling = new THREE.Mesh(new THREE.PlaneGeometry(ROOM.w, ROOM.d), velvetMat);
+ceiling.rotation.x = Math.PI / 2;
+ceiling.position.y = ROOM.h;
+scene.add(ceiling);
+
+function wall(w, h, mat) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
+  m.receiveShadow = true;
+  return m;
+}
+const backWall = wall(ROOM.w, ROOM.h, marbleWallMat); backWall.position.set(0, ROOM.h/2, -ROOM.d/2); scene.add(backWall);
+const leftWall = wall(ROOM.d, ROOM.h, velvetMat); leftWall.rotation.y = Math.PI/2; leftWall.position.set(-ROOM.w/2, ROOM.h/2, 0); scene.add(leftWall);
+const rightWall = wall(ROOM.d, ROOM.h, velvetMat); rightWall.rotation.y = -Math.PI/2; rightWall.position.set(ROOM.w/2, ROOM.h/2, 0); scene.add(rightWall);
+const frontWall = wall(ROOM.w, ROOM.h, velvetMat); frontWall.position.set(0, ROOM.h/2, ROOM.d/2); scene.add(frontWall);
+
+// ---------- The Stage (elevated 1.2m) ----------
+const stage = new THREE.Mesh(new THREE.BoxGeometry(14, 1.2, 7), goldMat);
+stage.position.set(0, 0.6, -ROOM.d/2 + 3.5);
+stage.castShadow = true; stage.receiveShadow = true;
+scene.add(stage);
+
+// ---------- LED Video Wall (curved, behind stage) ----------
+const ledCurve = new THREE.CylinderGeometry(12, 12, 6.5, 48, 1, true, Math.PI * 0.5, Math.PI); // open half-cylinder
+const ledMat = new THREE.MeshStandardMaterial({
+  color: 0x101018, roughness: 0.3, metalness: 0.2,
+  emissive: C.cyan, emissiveIntensity: 0.9,
+  side: THREE.DoubleSide,
+});
+const ledWall = new THREE.Mesh(ledCurve, ledMat);
+ledWall.position.set(0, 3.25, -ROOM.d/2 + 0.6);
+ledWall.rotation.y = Math.PI;
+scene.add(ledWall);
+
+// Floor LED glow strips along the stage edge
+function neonStrip(len, color) {
+  const mat = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: color, emissiveIntensity: 2.0, roughness: 0.5 });
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(len, 0.06, 0.06), mat);
+  return strip;
+}
+const stageGlow = neonStrip(15, C.cyan); stageGlow.position.set(0, 0.03, -ROOM.d/2 + 7.2); scene.add(stageGlow);
+
+// ---------- Crescent Balcony (rear + sides) ----------
+// Rear balcony platform (wraps the back)
+const balcony = new THREE.Mesh(new THREE.BoxGeometry(ROOM.w, 0.4, 6), marbleWallMat);
+balcony.position.set(0, 3.2, ROOM.d/2 - 3);
+balcony.castShadow = true; balcony.receiveShadow = true;
+scene.add(balcony);
+
+// Side balconies
+const balconyL = new THREE.Mesh(new THREE.BoxGeometry(3, 0.4, ROOM.d), marbleWallMat);
+balconyL.position.set(-ROOM.w/2 + 1.5, 3.2, 0);
+balconyL.castShadow = true; balconyL.receiveShadow = true;
+scene.add(balconyL);
+const balconyR = balconyL.clone(); balconyR.position.x = ROOM.w/2 - 1.5; scene.add(balconyR);
+
+// Neon handrails on the balcony (programmable LED coves)
+function handrail(x, z, len, color) {
+  const mat = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: color, emissiveIntensity: 2.2, roughness: 0.4 });
+  const rail = new THREE.Mesh(new THREE.BoxGeometry(len, 0.05, 0.05), mat);
+  rail.position.set(x, 3.9, z);
+  return rail;
+}
+scene.add(handrail(0, ROOM.d/2 - 3, ROOM.w, C.gold));
+scene.add(handrail(-ROOM.w/2 + 1.5, 0, ROOM.d, C.gold)); // left rail runs front-back — approximate
+scene.add(handrail(ROOM.w/2 - 1.5, 0, ROOM.d, C.gold));
+
+// ---------- VIP Wings (two steps up, left & right) ----------
+function vipWing(x) {
+  const wing = new THREE.Mesh(new THREE.BoxGeometry(7, 0.6, 6), new THREE.MeshStandardMaterial({ color: 0x241420, roughness: 0.4, metalness: 0.2 }));
+  wing.position.set(x, 0.3, 0);
+  wing.castShadow = true; wing.receiveShadow = true;
+  scene.add(wing);
+  // step
+  const step = new THREE.Mesh(new THREE.BoxGeometry(7, 0.3, 2), new THREE.MeshStandardMaterial({ color: 0x2a1826, roughness: 0.4 }));
+  step.position.set(x, 0.15, 4);
+  scene.add(step);
+  // gold trim
+  const trim = neonStrip(7, C.red); trim.position.set(x, 0.63, 0); scene.add(trim);
+  // holographic projector (glowing cone)
+  const holo = new THREE.Mesh(new THREE.ConeGeometry(0.25, 1.6, 12), new THREE.MeshBasicMaterial({ color: C.cyan, transparent: true, opacity: 0.35 }));
+  holo.position.set(x, 3.6, 0); holo.rotation.z = 0.3;
+  scene.add(holo);
+  const holoGlow = new THREE.PointLight(C.cyan, 8, 6, 2); holoGlow.position.set(x, 4, 0); scene.add(holoGlow);
+}
+vipWing(-12);
+vipWing(12);
+
+// ---------- Bars ----------
+function bar(x, z, rotY) {
+  const top = new THREE.Mesh(new THREE.BoxGeometry(8, 0.15, 1.6), goldMat);
+  top.position.set(x, 1.1, z); top.rotation.y = rotY; top.castShadow = true; scene.add(top);
+  const body = new THREE.Mesh(new THREE.BoxGeometry(8, 1.0, 1.3), new THREE.MeshStandardMaterial({ color: 0x1a1018, roughness: 0.6, metalness: 0.1 }));
+  body.position.set(x, 0.5, z); body.rotation.y = rotY; scene.add(body);
+  const glow = neonStrip(8, C.cyan); glow.position.set(x, 0.05, z); glow.rotation.y = rotY; scene.add(glow);
+}
+bar(-10, -6, 0);   // downstairs bar, left
+bar(10, -6, 0);    // second bar, right
+
+// ---------- Neon "TAPPY LEWIS" sign ----------
+function makeSign(text, color) {
+  const canvas = document.createElement('canvas');
+  canvas.width = 1024; canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  ctx.font = 'bold 120px Georgia, serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.shadowColor = color; ctx.shadowBlur = 30;
+  ctx.fillStyle = color;
+  ctx.fillText(text, 512, 128);
+  const tex = new THREE.CanvasTexture(canvas);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(10, 2.5), mat);
+  return sign;
+}
+const sign = makeSign('TAPPY LEWIS', '#ff1a3c');
+sign.position.set(0, 6.2, -ROOM.d/2 + 0.1);
+scene.add(sign);
+const sign2 = makeSign('THE VELVET CABARET', '#00f3ff');
+sign2.position.set(0, 5.3, -ROOM.d/2 + 0.15);
+sign2.scale.set(0.7, 0.7, 0.7);
+scene.add(sign2);
+
+// ---------- Dance floor glow (sub-bass arrays) ----------
+const danceGlow = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 10),
+  new THREE.MeshBasicMaterial({ color: C.red, transparent: true, opacity: 0.06 })
+);
+danceGlow.rotation.x = -Math.PI/2; danceGlow.position.y = 0.02;
+scene.add(danceGlow);
+
+// ---------- Movement state ----------
+const keys = {};
+document.addEventListener('keydown', e => keys[e.code] = true);
+document.addEventListener('keyup', e => keys[e.code] = false);
+
+const SPEED = 6.0;
+const velocity = new THREE.Vector3();
+const direction = new THREE.Vector3();
+
+function movePlayer(dt) {
+  direction.set(0, 0, 0);
+  const forward = (keys['KeyW'] ? 1 : 0) - (keys['KeyS'] ? 1 : 0);
+  const strafe  = (keys['KeyD'] ? 1 : 0) - (keys['KeyA'] ? 1 : 0);
+  // forward/back along camera look (flattened)
+  direction.z -= forward;
+  direction.x += strafe;
+  if (direction.lengthSq() > 0) direction.normalize();
+
+  // transform by camera yaw
+  const yaw = camera.rotation.y;
+  const sin = Math.sin(yaw), cos = Math.cos(yaw);
+  velocity.x = (direction.x * cos - direction.z * sin) * SPEED;
+  velocity.z = (direction.x * sin + direction.z * cos) * SPEED;
+
+  camera.position.x += velocity.x * dt;
+  camera.position.z += velocity.z * dt;
+
+  // clamp inside room
+  const bound = ROOM.w/2 - 1;
+  const dbound = ROOM.d/2 - 1;
+  camera.position.x = THREE.MathUtils.clamp(camera.position.x, -bound, bound);
+  camera.position.z = THREE.MathUtils.clamp(camera.position.z, -dbound, dbound);
+  camera.position.y = 1.6; // fixed eye height (no stairs yet)
+}
+
+// ---------- Enter overlay ----------
+const overlay = document.getElementById('overlay');
+overlay.addEventListener('click', () => {
+  controls.lock();
+});
+controls.addEventListener('lock', () => overlay.style.display = 'none');
+controls.addEventListener('unlock', () => overlay.style.display = 'flex');
+
+// ---------- Animation loop ----------
+const clock = new THREE.Clock();
+let ledHue = 0;
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.1);
+
+  if (controls.isLocked) movePlayer(dt);
+
+  // LED wall color cycling (cyan <-> red <-> gold)
+  ledHue = (ledHue + dt * 0.15) % 1;
+  const wallColor = new THREE.Color().setHSL((0.52 + Math.sin(ledHue * Math.PI * 2) * 0.1) % 1, 0.9, 0.55);
+  ledWall.material.emissive.copy(wallColor);
+  ledWall.material.emissiveIntensity = 0.7 + Math.sin(ledHue * Math.PI * 2) * 0.3;
+
+  // subtle key light pulse
+  keyLight.intensity = 28 + Math.sin(ledHue * Math.PI * 2) * 4;
+
+  renderer.render(scene, camera);
+}
+animate();
+
+// ---------- Resize ----------
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
