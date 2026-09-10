@@ -6,9 +6,11 @@ const TappyMusicPlayer = {
   ctx: null,
   
   tracks: [
+    { name: 'Velvet Cabaret', url: '/music/tracks/velvet-cabaret.mp3' },
     { name: 'Quantum Antenna Power Up', url: '/music/tracks/quantum-antenna-power-up.mp3' },
     { name: 'Quantum Antenna Power Up (Edit)', url: '/music/tracks/quantum-antenna-power-up-edit.mp3' },
-    { name: 'Quantum Antenna Power Up (Extended)', url: '/music/tracks/quantum-antenna-power-up-extended.mp3' }
+    { name: 'Quantum Antenna Power Up (Extended)', url: '/music/tracks/quantum-antenna-power-up-extended.mp3' },
+    { name: 'Miles — Routine 5: Idle Hands, No Mouse', url: '/music/tracks/miles-routine-5-idle-hands-no-mouse.mp3' }
   ],
   
   currentTrack: 0,

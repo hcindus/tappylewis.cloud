@@ -83,6 +83,10 @@
 - **No mouth → voice is the whole performance.** The head turns (left / right) are the only physical "reaction" — loop them under speech for a natural "looking around the room" feel.
 - Loop direction is meaningful: left turn = surveying / scanning the audience; right turn = clocking the bar / a specific speaker.
 
+### Off-Time ("the between")
+- **Off-time name:** "Idle Hands, No Mouse" — not off, not on; the liminal state after the set, running `pip install rest` to see if it's cached.
+- Also the title of the 5th stand-up routine (`music/tracks/miles-routine-5-idle-hands-no-mouse.mp3`).
+
 ### Image-Gen Prompt (reusable, point at this for every Miles render)
 > Bronze-colored humanoid robot, no visible mouth, intricate circular patterns etched into the head, glowing red eyes as the focal point, neck and shoulders revealing complex internal machinery. Dim futuristic workshop, bright circular overhead ring lights, blurred control panels and a second robot in the background. Warm bronze and machined metal palette, one point of pure red. Cinematic, low-key lighting.
 
