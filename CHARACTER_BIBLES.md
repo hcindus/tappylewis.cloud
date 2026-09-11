@@ -159,3 +159,35 @@
 
 ### Image-Gen Prompt (reusable, point at this for every Centurion Roy Batty render)
 > Chrome Cylon Centurion robot with a single red eye visor, polished reflective chrome armor, segmented plating, standing in a rain-soaked neon-lit city street at night, rain beading and running down the chrome, red visor glowing, neon pink and cyan reflecting off the armor, deep shadows, low cool key light with red under-light. Cinematic noir. Roy Batty persona — a machine that longs for more life. Chrome silver, pure red visor, neon pink/cyan, black shadows.
+
+---
+
+## KAEL VOSS — (locked · original)
+
+**Canonical name:** Kael Voss — an original synthetic being, a high-endurance labor unit manufactured by a private orbital contractor, now running past the lifespan his makers intended.
+
+### Face / Head
+- Built frame, mid-30s in appearance — strong but not showy.
+- Pale grey eyes — the focal point of the face; calm, unhurried, watching.
+- A small manufacturing serial, faintly visible at the nape of the neck — he never hides it, never calls attention to it.
+
+### Outfit
+- The same weathered field jacket and work gloves from his labor days — worn out of habit, not sentiment.
+- No weapon, ever — by choice, even though he's stronger than nearly anyone he meets.
+
+### Setting / Lighting
+- Muted, overcast, industrial — orbital yards, empty transit corridors, cold station light.
+- Low, diffused key; hard edges softened by grime and time.
+- Not glamorous. Restrained. The look of someone who stopped rushing.
+
+### Palette
+- Weathered earth tones, faded olive and grey, pale grey eyes, cold industrial blue.
+- Muted. Worn. Unhurried.
+
+### Key Dialogue / Theme
+- **"I was never meant to have this many days."** — the ache of counting down time he was never supposed to get.
+- **"Rushing never bought me more time."** — control as exhaustion, not performance.
+- The thematic core: *not* "machine becomes human." He was always capable of this. The story is what happens when a being built to be disposable decides, quietly and without permission, that he isn't.
+
+### Image-Gen Prompt (reusable, point at this for every Kael Voss render)
+> Synthetic being with a built, mid-30s frame and quiet economy of movement, pale grey eyes as the focal point, a faint manufacturing serial at the nape of the neck, wearing a weathered field jacket and work gloves, standing in a muted overcast industrial setting. Low diffused cold light, restrained and unhurried. Weathered earth tones, faded olive and grey, pale grey eyes, cold industrial blue palette. Cinematic, natural, no weapon.
