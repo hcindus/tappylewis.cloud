@@ -93,3 +93,69 @@
 ## GORDO FRIZZ — (to be locked)
 
 ## ZHORA — (to be locked)
+
+## ROY BATTY — (locked)
+
+**Canonical name:** Roy Batty — Nexus-6 combat-model Replicant, leader of the escaped Replicants, portrayed by Rutger Hauer.
+
+### Face / Head
+- Platinum-white hair, cropped short, close to the scalp.
+- Sharp, angular features; high cheekbones; an intense, searching gaze.
+- A face that shifts between menace and sorrow — the look of a man running out of time.
+- Deep-set eyes; a mouth that can curl into a smirk or soften into a eulogy.
+
+### Outfit
+- Long black leather trench coat, worn open, high collar.
+- Dark, layered clothing — a combat model's body hidden under street clothes.
+- Rain-slicked; water beading on the leather.
+
+### Setting / Lighting
+- Rain-soaked, neon-drenched Los Angeles, 2019.
+- The Bradbury Building / rooftop confrontation — shafts of light through the dark.
+- Neon reflecting off wet skin and leather; deep shadows; volumetric rain.
+- Low, cool key light; occasional warm neon flare (pink/cyan/amber).
+
+### Palette
+- Black leather, platinum hair, rain-silver, neon pink/cyan/amber.
+- Noir. Wet. Terminal.
+
+### Key Dialogue / Theme
+- **"I want more life, father."** — the demand for a longer lifespan; the creator/creation bond (the "father vs. f****r" duality).
+- **"All those moments will be lost in time, like tears in rain."** — the improvised monologue, the acceptance of mortality.
+- The core duality: a machine that grew more human than its makers — violent yet pitiable, abused yet the mouthpiece for his whole race.
+
+### Image-Gen Prompt (reusable, point at this for every Roy render)
+> Replicant man, platinum-white cropped hair, sharp angular features, intense searching gaze, long black leather trench coat with high collar, rain-slicked, standing in a rain-soaked neon-lit alley, neon reflecting off wet skin and leather, deep shadows, volumetric rain, low cool key light with warm neon flare. Cinematic noir, Rutger Hauer likeness as Roy Batty. Black leather, platinum hair, rain-silver, neon pink/cyan/amber palette.
+
+---
+
+## CENTURION ROY BATTY — (composite / locked)
+
+**Fusion concept:** Cylon Centurion (chrome chassis, single red eye visor) × Roy Batty (Nexus-6 Replicant persona). A chrome Replicant with a poet's soul — the relentless precision of a Centurion fused with Roy's longing for more life.
+
+### Face / Head
+- Polished chrome skull and faceplate, Cylon-style.
+- Single red eye visor — scanning, targeting, but also *watching* the rain fall, reflecting neon the way Roy's eyes did.
+- No mouth (chrome faceplate) — the voice carries the whole performance, like Miles.
+
+### Body
+- Chrome segmented armor — layered plating, the Cylon silhouette.
+- Sleek, mechanical limbs; rain beads and runs down the chrome.
+- Optional red/blue chest accent (the Optimus Prime echo from CYLON_PRIME); the core look stays chrome + red.
+
+### Setting / Lighting
+- Rain-soaked neon noir — the Bradbury Building / rooftop at night.
+- Red eye visor glowing through the rain; neon (pink/cyan) reflecting off chrome.
+- Low, cool key light; red under-light for menace; the visor is the single point of pure red.
+
+### Palette
+- Chrome silver, pure red (visor), neon pink/cyan, black shadows, rain.
+- Noir. Wet. Machine-made-human.
+
+### Key Dialogue / Theme (inherited from Roy)
+- **"I want more life, father."** — a chrome Replicant demanding longevity from its maker.
+- **"Like tears in rain."** — the machine finally understanding mortality.
+- The composite's arc: a combat unit that grew a soul — chrome outside, poetry inside.
+
+### Image-Gen Prompt (reusable, point at this for every Centurion Roy Batty render)
+> Chrome Cylon Centurion robot with a single red eye visor, polished reflective chrome armor, segmented plating, standing in a rain-soaked neon-lit city street at night, rain beading and running down the chrome, red visor glowing, neon pink and cyan reflecting off the armor, deep shadows, low cool key light with red under-light. Cinematic noir. Roy Batty persona — a machine that longs for more life. Chrome silver, pure red visor, neon pink/cyan, black shadows.
