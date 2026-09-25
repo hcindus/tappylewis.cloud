@@ -175,6 +175,8 @@ ravenVideo.src = ravenClips[0];
 ravenVideo.play().catch(()=>{});
 const ravenTex = new THREE.VideoTexture(ravenVideo);
 ravenTex.colorSpace = THREE.SRGBColorSpace;
+ravenTex.wrapS = THREE.RepeatWrapping;
+ravenTex.repeat.x = 3;   // tile the reel 3x so L / C / R each show the same video
 ledMat.map = ravenTex;
 ledMat.emissiveMap = ravenTex;
 ledMat.color.setHex(0xffffff);
