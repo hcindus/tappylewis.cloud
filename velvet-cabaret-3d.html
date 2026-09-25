@@ -346,6 +346,48 @@ scene.add(loungeSign);
 const coveL = neonStrip(ROOM.d, C.red); coveL.rotation.y = Math.PI / 2; coveL.position.set(-ROOM.w/2 + 0.1, 0.05, 0); scene.add(coveL);
 const coveR = neonStrip(ROOM.d, C.red); coveR.rotation.y = Math.PI / 2; coveR.position.set(ROOM.w/2 - 0.1, 0.05, 0); scene.add(coveR);
 
+
+// ---------- RONSTRAPP POSTERS (Operation Heartcast wall art) ----------
+const texLoader = new THREE.TextureLoader();
+const posters = [
+  { file: '01.jpg', x: -19.4, z: -12, rotY:  Math.PI/2 },   // left wall
+  { file: '02.jpg', x: -19.4, z: -8,  rotY:  Math.PI/2 },
+  { file: '03.jpg', x: -19.4, z: -4,  rotY:  Math.PI/2 },
+  { file: '04.jpg', x: -19.4, z:  0,  rotY:  Math.PI/2 },
+  { file: '05.jpg', x: -19.4, z:  4,  rotY:  Math.PI/2 },
+  { file: '06.jpg', x: -19.4, z:  8,  rotY:  Math.PI/2 },
+  { file: '07.jpg', x:  19.4, z: -10, rotY: -Math.PI/2 },   // right wall
+  { file: '08.jpg', x:  19.4, z: -5,  rotY: -Math.PI/2 },
+  { file: '09.jpg', x:  19.4, z:  0,  rotY: -Math.PI/2 },
+  { file: '10.jpg', x:  19.4, z:  5,  rotY: -Math.PI/2 },
+  { file: '11.jpg', x:  19.4, z:  10, rotY: -Math.PI/2 },
+];
+
+posters.forEach(p => {
+  const tex = texLoader.load(`assets/album-art/${p.file}`);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  const poster = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.7, 2.3),
+    new THREE.MeshStandardMaterial({ map: tex, roughness: 0.5, metalness: 0.1 })
+  );
+  poster.position.set(p.x, 3.4, p.z);
+  poster.rotation.y = p.rotY;
+  poster.receiveShadow = true;
+  scene.add(poster);
+
+  // gold frame (slightly larger plane behind the poster)
+  const frame = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.9, 2.5),
+    new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.25, metalness: 0.85 })
+  );
+  frame.position.set(p.x, 3.4, p.z);
+  frame.rotation.y = p.rotY;
+  const nx = Math.sin(p.rotY), nz = Math.cos(p.rotY);
+  frame.position.x -= nx * 0.03;
+  frame.position.z -= nz * 0.03;
+  scene.add(frame);
+});
+
 // ---------- Dance floor glow (sub-bass arrays) ----------
 const danceGlow = new THREE.Mesh(
   new THREE.PlaneGeometry(10, 10),
