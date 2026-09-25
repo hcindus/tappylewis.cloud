@@ -48,6 +48,8 @@
   }
 }
 </script>
+  <link rel="stylesheet" href="music/player.css">
+  <script src="music/player.js"></script>
 </head>
 <body>
 
@@ -57,7 +59,7 @@
   <div class="hint">CLICK TO ENTER</div>
   <div class="keys">WASD — move &nbsp;·&nbsp; MOUSE — look &nbsp;·&nbsp; ESC — release</div>
 </div>
-<div id="hud">THE VELVET CABARET · 3D WALKTHROUGH</div>
+<div id="hud">THE VELVET CABARET · WASD move · MOUSE look · L lights · ESC release</div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -472,6 +474,10 @@ const keys = {};
 document.addEventListener('keydown', e => keys[e.code] = true);
 document.addEventListener('keyup', e => keys[e.code] = false);
 
+// Lights toggle — "L" (the lights go low, the show begins)
+let lightsLow = false;
+document.addEventListener('keydown', e => { if (e.code === 'KeyL') lightsLow = !lightsLow; });
+
 const SPEED = 6.0;
 const velocity = new THREE.Vector3();
 const direction = new THREE.Vector3();
@@ -527,7 +533,8 @@ function animate() {
   // (LED wall now plays Raven's video reel)
 
   // subtle key light pulse
-  keyLight.intensity = 28 + Math.sin(ledHue * Math.PI * 2) * 4;
+  keyLight.intensity = lightsLow ? 4 : (28 + Math.sin(ledHue * Math.PI * 2) * 4);
+  ambient.intensity = lightsLow ? 0.5 : 1.6;
 
 
   directRaven(dt);
