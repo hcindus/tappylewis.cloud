@@ -380,25 +380,33 @@ ravenSpot.position.set(0, 6.5, -9);
 ravenSpot.target.position.set(0, 1.5, -11.5);
 scene.add(ravenSpot, ravenSpot.target);
 
-// ===== Raven walks the dance floor (autonomous) =====
-const walk = { center: new THREE.Vector3(0, 0, -3), radius: 4, angle: 0, speed: 0.35 };
-const SWING = 0.30;   // leg swing amplitude (m)
-const LIFT = 0.11;    // foot lift (m)
+// ===== Raven directs her own steps (autonomous wandering) =====
+// She chooses her own destinations from points of interest, walks, idles, then decides again.
+const ravenMind = {
+  mode: 'idle',            // 'idle' | 'walk'
+  pos: new THREE.Vector3(0, 0, -3),
+  target: new THREE.Vector3(0, 0, -3),
+  heading: 0,
+  idleTime: 0,
+  idleFor: 2.5,
+  speed: 1.3,              // m/s
+};
+const ravenPOIs = [
+  new THREE.Vector3(0, 0, -10),   // stage apron
+  new THREE.Vector3(0, 0, 0),     // dance floor center
+  new THREE.Vector3(-9, 0, -6),   // left bar
+  new THREE.Vector3(9, 0, -6),    // right bar
+  new THREE.Vector3(5, 0, 4),     // table row
+  new THREE.Vector3(-5, 0, 4),    // table row
+  new THREE.Vector3(0, 0, 8),     // near entrance
+];
+const SWING = 0.30, LIFT = 0.11;
 
-function walkRaven(dt) {
-  walk.angle += walk.speed * dt;
-  raven.group.position.set(
-    walk.center.x + Math.cos(walk.angle) * walk.radius,
-    0,
-    walk.center.z + Math.sin(walk.angle) * walk.radius
-  );
-  raven.group.rotation.y = -walk.angle;   // face the direction of travel
-
-  const t = performance.now() / 1000 * 3.0;   // gait cadence
+function setLegs(L, R) {
   const arr = raven.bodyAttr.array;
   const bi = {}; raven.bodyKeys.forEach((k,i)=> bi[k]=i);
   [['L_ankle','L_knee'],['R_ankle','R_knee']].forEach((leg, li)=>{
-    const s = Math.sin(t + li * Math.PI);   // legs alternate
+    const s = li === 0 ? L : R;
     leg.forEach((k)=>{
       const rest = RAVEN.body[k];
       const isAnkle = k.endsWith('ankle');
@@ -410,6 +418,38 @@ function walkRaven(dt) {
     });
   });
   raven.bodyAttr.needsUpdate = true;
+}
+
+function directRaven(dt) {
+  const m = ravenMind;
+  if (m.mode === 'idle') {
+    m.idleTime += dt;
+    if (m.idleTime >= m.idleFor) {
+      // decide: pick a destination that isn't where she already is
+      const opts = ravenPOIs.filter(p => p.distanceTo(m.pos) > 1.5);
+      m.target.copy(opts[Math.floor(Math.random() * opts.length)]);
+      m.mode = 'walk';
+    }
+    setLegs(0, 0);   // standing still
+  } else {
+    const dir = m.target.clone().sub(m.pos);
+    const dist = dir.length();
+    if (dist < 0.35) {
+      // arrived — pause and choose again later
+      m.mode = 'idle';
+      m.idleTime = 0;
+      m.idleFor = 2 + Math.random() * 4;
+      setLegs(0, 0);
+    } else {
+      dir.normalize();
+      m.pos.addScaledVector(dir, m.speed * dt);
+      m.heading = Math.atan2(dir.x, dir.z);   // face travel direction
+      const t = performance.now() / 1000 * 4.0;
+      setLegs(Math.sin(t), Math.sin(t + Math.PI));
+    }
+  }
+  raven.group.position.copy(m.pos);
+  raven.group.rotation.y = m.heading;
 }
 
 
@@ -476,7 +516,7 @@ function animate() {
   keyLight.intensity = 28 + Math.sin(ledHue * Math.PI * 2) * 4;
 
 
-  walkRaven(dt);
+  directRaven(dt);
   // Raven expression cycle
   ravenState.phase += dt;
   if (ravenState.phase >= 4.5) { ravenState.phase = 0; ravenState.idx = (ravenState.idx+1) % ravenExprs.length; }
