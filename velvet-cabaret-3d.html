@@ -59,7 +59,7 @@
   <div class="hint">CLICK TO ENTER</div>
   <div class="keys">WASD — move &nbsp;·&nbsp; MOUSE — look &nbsp;·&nbsp; ESC — release</div>
 </div>
-<div id="hud">THE VELVET CABARET · WASD move · MOUSE look · L lights · ESC release</div>
+<div id="hud">WASD move · MOUSE look · M music · N/B tracks · L lights · ESC release</div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -487,9 +487,15 @@ const keys = {};
 document.addEventListener('keydown', e => keys[e.code] = true);
 document.addEventListener('keyup', e => keys[e.code] = false);
 
-// Lights toggle — "L" (the lights go low, the show begins)
+// Keyboard controls — work while moving (pointer-lock keeps the mouse for looking)
+// L = lights · M = music play/pause · N = next track · B = previous track
 let lightsLow = false;
-document.addEventListener('keydown', e => { if (e.code === 'KeyL') lightsLow = !lightsLow; });
+document.addEventListener('keydown', e => {
+  if (e.code === 'KeyL') lightsLow = !lightsLow;
+  if (e.code === 'KeyM' && window.TappyMusicPlayer) window.TappyMusicPlayer.toggle();
+  if (e.code === 'KeyN' && window.TappyMusicPlayer) window.TappyMusicPlayer.next();
+  if (e.code === 'KeyB' && window.TappyMusicPlayer) window.TappyMusicPlayer.prev();
+});
 
 const SPEED = 6.0;
 const velocity = new THREE.Vector3();
