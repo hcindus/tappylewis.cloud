@@ -154,6 +154,20 @@ ledWall.position.set(0, 3.25, -ROOM.d/2 + 0.6);
 ledWall.rotation.y = Math.PI;
 scene.add(ledWall);
 
+// ===== Raven's video reel on the LED wall (her face, high-fidelity) =====
+const ravenVideo = document.createElement('video');
+ravenVideo.src = 'assets/characters/myl1ssa/myl1ssa-01.mp4';
+ravenVideo.loop = true; ravenVideo.muted = true; ravenVideo.playsInline = true;
+ravenVideo.crossOrigin = 'anonymous';
+ravenVideo.play().catch(()=>{});
+const ravenTex = new THREE.VideoTexture(ravenVideo);
+ravenTex.colorSpace = THREE.SRGBColorSpace;
+ledMat.map = ravenTex;
+ledMat.emissiveMap = ravenTex;
+ledMat.color.setHex(0xffffff);
+ledMat.emissive.setHex(0xffffff);
+ledMat.emissiveIntensity = 0.85;
+
 // Floor LED glow strips along the stage edge
 function neonStrip(len, color) {
   const mat = new THREE.MeshStandardMaterial({ color: 0x000000, emissive: color, emissiveIntensity: 2.0, roughness: 0.5 });
@@ -492,6 +506,7 @@ function movePlayer(dt) {
 const overlay = document.getElementById('overlay');
 overlay.addEventListener('click', () => {
   controls.lock();
+  ravenVideo.play().catch(()=>{});
 });
 controls.addEventListener('lock', () => overlay.style.display = 'none');
 controls.addEventListener('unlock', () => overlay.style.display = 'flex');
@@ -509,8 +524,7 @@ function animate() {
   // LED wall color cycling (cyan <-> red <-> gold)
   ledHue = (ledHue + dt * 0.15) % 1;
   const wallColor = new THREE.Color().setHSL((0.52 + Math.sin(ledHue * Math.PI * 2) * 0.1) % 1, 0.9, 0.55);
-  ledWall.material.emissive.copy(wallColor);
-  ledWall.material.emissiveIntensity = 0.7 + Math.sin(ledHue * Math.PI * 2) * 0.3;
+  // (LED wall now plays Raven's video reel)
 
   // subtle key light pulse
   keyLight.intensity = 28 + Math.sin(ledHue * Math.PI * 2) * 4;
