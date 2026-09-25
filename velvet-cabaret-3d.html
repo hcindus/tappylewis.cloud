@@ -156,11 +156,22 @@ ledWall.position.set(0, 3.25, -ROOM.d/2 + 0.6);
 ledWall.rotation.y = Math.PI;
 scene.add(ledWall);
 
-// ===== Raven's video reel on the LED wall (her face, high-fidelity) =====
+// ===== Raven's video reel on the LED wall — cycles every take (skip 02, missing) =====
+const ravenClips = [];
+for (let i = 1; i <= 24; i++) {
+  if (i === 2) continue;
+  ravenClips.push(`assets/characters/myl1ssa/myl1ssa-${String(i).padStart(2,'0')}.mp4`);
+}
+let ravenClipIdx = 0;
 const ravenVideo = document.createElement('video');
-ravenVideo.src = 'assets/characters/myl1ssa/myl1ssa-01.mp4';
-ravenVideo.loop = true; ravenVideo.muted = true; ravenVideo.playsInline = true;
+ravenVideo.muted = true; ravenVideo.playsInline = true;
 ravenVideo.crossOrigin = 'anonymous';
+ravenVideo.addEventListener('ended', () => {
+  ravenClipIdx = (ravenClipIdx + 1) % ravenClips.length;
+  ravenVideo.src = ravenClips[ravenClipIdx];
+  ravenVideo.play().catch(()=>{});
+});
+ravenVideo.src = ravenClips[0];
 ravenVideo.play().catch(()=>{});
 const ravenTex = new THREE.VideoTexture(ravenVideo);
 ravenTex.colorSpace = THREE.SRGBColorSpace;
