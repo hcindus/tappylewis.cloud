@@ -369,7 +369,7 @@ function buildRaven() {
   group.add(bodyPts, facePts, bodyLines, faceLines);
   group.position.set(0, 1.2, -11.5);   // center stage, on the elevated platform
   scene.add(group);
-  return { bodyAttr, faceAttr, bodyKeys, faceKeys };
+  return { group, bodyAttr, faceAttr, bodyKeys, faceKeys };
 }
 
 const raven = buildRaven();
@@ -379,6 +379,39 @@ const ravenSpot = new THREE.SpotLight(C.cyan, 40, 30, 0.5, 0.6, 2);
 ravenSpot.position.set(0, 6.5, -9);
 ravenSpot.target.position.set(0, 1.5, -11.5);
 scene.add(ravenSpot, ravenSpot.target);
+
+// ===== Raven walks the dance floor (autonomous) =====
+const walk = { center: new THREE.Vector3(0, 0, -3), radius: 4, angle: 0, speed: 0.35 };
+const SWING = 0.30;   // leg swing amplitude (m)
+const LIFT = 0.11;    // foot lift (m)
+
+function walkRaven(dt) {
+  walk.angle += walk.speed * dt;
+  raven.group.position.set(
+    walk.center.x + Math.cos(walk.angle) * walk.radius,
+    0,
+    walk.center.z + Math.sin(walk.angle) * walk.radius
+  );
+  raven.group.rotation.y = -walk.angle;   // face the direction of travel
+
+  const t = performance.now() / 1000 * 3.0;   // gait cadence
+  const arr = raven.bodyAttr.array;
+  const bi = {}; raven.bodyKeys.forEach((k,i)=> bi[k]=i);
+  [['L_ankle','L_knee'],['R_ankle','R_knee']].forEach((leg, li)=>{
+    const s = Math.sin(t + li * Math.PI);   // legs alternate
+    leg.forEach((k)=>{
+      const rest = RAVEN.body[k];
+      const isAnkle = k.endsWith('ankle');
+      const amp  = isAnkle ? SWING : SWING * 0.6;
+      const lift = isAnkle ? LIFT  : LIFT * 0.5;
+      arr[bi[k]*3]   = rest.x * RAVEN_SCALE;
+      arr[bi[k]*3+1] = rest.y * RAVEN_SCALE + Math.max(0, s) * lift;
+      arr[bi[k]*3+2] = rest.z * RAVEN_SCALE + s * amp;
+    });
+  });
+  raven.bodyAttr.needsUpdate = true;
+}
+
 
 // ---------- Movement state ----------
 const keys = {};
@@ -443,6 +476,7 @@ function animate() {
   keyLight.intensity = 28 + Math.sin(ledHue * Math.PI * 2) * 4;
 
 
+  walkRaven(dt);
   // Raven expression cycle
   ravenState.phase += dt;
   if (ravenState.phase >= 4.5) { ravenState.phase = 0; ravenState.idx = (ravenState.idx+1) % ravenExprs.length; }
