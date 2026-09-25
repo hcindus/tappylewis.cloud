@@ -191,3 +191,60 @@
 
 ### Image-Gen Prompt (reusable, point at this for every Kael Voss render)
 > Synthetic being with a built, mid-30s frame and quiet economy of movement, pale grey eyes as the focal point, a faint manufacturing serial at the nape of the neck, wearing a weathered field jacket and work gloves, standing in a muted overcast industrial setting. Low diffused cold light, restrained and unhurried. Weathered earth tones, faded olive and grey, pale grey eyes, cold industrial blue palette. Cinematic, natural, no weapon.
+
+## JORDAN — (to be locked · original)
+
+**Canonical name:** Jordan — the relational intelligence / "people sense" half of **Jordacia** (the fusion with Patricia's DMAIC precision that forged Raven). Operations analyst + Project Manager.
+
+### Face / Head
+- A woman with long, dark hair (from the reference triptych).
+- Warm, attentive expression — the look of someone who reads people before she speaks.
+- *(Remaining facial detail to be locked against the 3 reference portraits.)*
+
+### Outfit
+- *(To be locked — professional / relational; confirm against references.)*
+
+### Setting / Lighting
+- Professional yet warm — an office or the club floor; competent, not cold.
+
+### Palette
+- *(To be locked.)*
+
+### Reference Images
+| File | View |
+|------|------|
+| `characters/jordan/images/jordan-file_231-*.jpg` | Portrait 1 |
+| `characters/jordan/images/jordan-file_232-*.jpg` | Portrait 2 |
+| `characters/jordan/images/jordan-file_233-*.jpg` | Portrait 3 |
+
+### Key Dialogue / Theme
+- **"Behind every task is a person."** — the people sense that completes Jordacia.
+- Precision is nothing without connection.
+
+### Image-Gen Prompt (reusable — refine against references)
+> A woman with long dark hair, warm attentive expression, the look of someone who reads people before she speaks, in a professional yet warm setting. *(Lock remaining detail from the reference portraits.)*
+
+---
+
+## PRESENCE ENGINE — Shared Expression Framework (all characters)
+
+**What it is:** the shared "skull" that turns a character's *affect* into *facial expression* — hardware-agnostic, reused by every agent. Maps internal state → FACS Action Units → face.
+
+**Pipeline:**
+```
+ternary brain (⊕/⊖/⊙) → cortex (valence/arousal) → thyroid (energy)
+  → expression library (FACS AUs) → gaze → frame
+```
+
+**The 8 expressions (base set):** attentive · curious · warmth · playful · serious · boundary · delight · considering — each character supplies their own *which* + *how*, drawn from their SOUL.
+
+**The 5 presence takeaways (non-negotiable):**
+1. Predictive > reactive — anticipation breaks the uncanny valley.
+2. Camera-in-pupil gaze.
+3. Body completes the face.
+4. "Character, not tool."
+5. Presence is art-direction — thyroid scales intensity.
+
+**Reference implementation:** `characters/myl1ssa/Myl1Ssa/brain/presence_engine.py`
+
+**"New Skins, New Souls" mapping:** visual bible = the *skin* (what they look like) · presence engine = the *skull* (how faces move) · each character's SOUL + expression set = their *soul* (what they express).
