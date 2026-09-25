@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raven — Live | The Velvet Cabaret</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --gold: #d4af37; --gold-light: #f5e7b2; --marble: #14121a; --velvet: #1a1018;
+        --cyan: #00f3ff; --red: #ff1a3c; --text: #eae6e0; --muted: #9a958f;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:radial-gradient(ellipse at 50% 30%, #1d1626 0%, var(--marble) 55%, #0a0810 100%); color:var(--text); min-height:100vh; overflow:hidden; }
+    .header { position:fixed; top:0; left:0; right:0; height:64px; background:rgba(10,8,14,.92); backdrop-filter:blur(18px); border-bottom:1px solid rgba(212,175,55,.25); display:flex; align-items:center; justify-content:space-between; padding:0 26px; z-index:100; }
+    .logo { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700; letter-spacing:1px; background:linear-gradient(135deg,var(--gold),var(--gold-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; text-decoration:none; }
+    .nav a { color:var(--muted); text-decoration:none; font-weight:500; font-size:13px; margin-left:18px; }
+    .nav a:hover, .nav a.active { color:var(--gold); }
+    #stage { position:fixed; inset:0; }
+    .hud { position:fixed; left:28px; bottom:28px; z-index:50; pointer-events:none; }
+    .hud .name { font-family:'Cormorant Garamond',serif; font-size:40px; font-weight:700; background:linear-gradient(135deg,var(--gold),var(--gold-light)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .hud .expr { font-family:'JetBrains Mono',monospace; font-size:13px; letter-spacing:2px; color:var(--cyan); text-transform:uppercase; margin-top:4px; }
+    .hud .lead { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-top:6px; }
+    .hud .lead b { color:var(--red); }
+    .tag { position:fixed; top:84px; left:28px; z-index:50; font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:3px; color:var(--muted); text-transform:uppercase; }
+</style>
+</head>
+<body>
+<div class="header">
+    <a href="index.html" class="logo">Tappy Lewis</a>
+    <div class="nav">
+        <a href="velvet-cabaret.html">Velvet Cabaret</a>
+        <a href="raven.html">Raven Reel</a>
+        <a href="raven-live.html" class="active">Raven Live</a>
+        <a href="nightclub.html">Snake Pit</a>
+    </div>
+</div>
+
+<div id="stage"></div>
+<div class="tag">Myl1Ssa.R8s · presence engine · point-cloud rig</div>
+<div class="hud">
+    <div class="name">Raven</div>
+    <div class="expr" id="expr">attentive</div>
+    <div class="lead" id="lead"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const DATA = {"body": {"L_ankle": {"x": -12, "y": 0, "z": 0}, "R_ankle": {"x": 12, "y": 0, "z": 0}, "L_knee": {"x": -14, "y": 45, "z": 2}, "R_knee": {"x": 14, "y": 45, "z": 2}, "L_hip": {"x": -18, "y": 90, "z": 0}, "R_hip": {"x": 18, "y": 90, "z": 0}, "pelvis": {"x": 0, "y": 92, "z": 0}, "waist": {"x": 0, "y": 110, "z": 0}, "L_bust": {"x": -16, "y": 128, "z": 8}, "R_bust": {"x": 16, "y": 128, "z": 8}, "chest": {"x": 0, "y": 130, "z": 3}, "L_shoulder": {"x": -20, "y": 145, "z": 0}, "R_shoulder": {"x": 20, "y": 145, "z": 0}, "neck": {"x": 0, "y": 155, "z": 0}, "head": {"x": 0, "y": 169, "z": 0}, "L_ear": {"x": -8, "y": 165, "z": 0}, "R_ear": {"x": 8, "y": 165, "z": 0}, "L_elbow": {"x": -28, "y": 125, "z": 5}, "R_elbow": {"x": 28, "y": 125, "z": 5}, "L_wrist": {"x": -32, "y": 100, "z": 10}, "R_wrist": {"x": 32, "y": 100, "z": 10}}, "face": {"top_head": {"x": 0.0, "y": 12.0, "z": 0.0}, "forehead": {"x": 0.0, "y": 9.0, "z": 1.0}, "L_temple": {"x": -7.5, "y": 5.0, "z": 1.0}, "R_temple": {"x": 7.5, "y": 5.0, "z": 1.0}, "L_brow_outer": {"x": -5.0, "y": 3.2, "z": 3.5}, "L_brow_arch": {"x": -3.2, "y": 4.0, "z": 4.0}, "L_brow_inner": {"x": -1.5, "y": 3.5, "z": 4.2}, "R_brow_inner": {"x": 1.5, "y": 3.5, "z": 4.2}, "R_brow_arch": {"x": 3.2, "y": 4.0, "z": 4.0}, "R_brow_outer": {"x": 5.0, "y": 3.2, "z": 3.5}, "L_eye_outer": {"x": -4.2, "y": 1.5, "z": 4.5}, "L_pupil": {"x": -3.0, "y": 1.5, "z": 5.0}, "L_eye_inner": {"x": -1.8, "y": 1.5, "z": 4.8}, "R_eye_inner": {"x": 1.8, "y": 1.5, "z": 4.8}, "R_pupil": {"x": 3.0, "y": 1.5, "z": 5.0}, "R_eye_outer": {"x": 4.2, "y": 1.5, "z": 4.5}, "nose_bridge": {"x": 0.0, "y": 1.0, "z": 5.2}, "nose_tip": {"x": 0.0, "y": -1.5, "z": 6.5}, "L_nostril": {"x": -1.2, "y": -2.2, "z": 5.0}, "R_nostril": {"x": 1.2, "y": -2.2, "z": 5.0}, "L_cheek": {"x": -6.8, "y": -1.0, "z": 4.0}, "R_cheek": {"x": 6.8, "y": -1.0, "z": 4.0}, "L_ear": {"x": -7.8, "y": 0.0, "z": 0.0}, "R_ear": {"x": 7.8, "y": 0.0, "z": 0.0}, "upper_lip": {"x": 0.0, "y": -4.8, "z": 4.8}, "mouth_center": {"x": 0.0, "y": -5.6, "z": 4.6}, "L_mouth_corner": {"x": -2.8, "y": -5.5, "z": 4.0}, "R_mouth_corner": {"x": 2.8, "y": -5.5, "z": 4.0}, "lower_lip": {"x": 0.0, "y": -6.5, "z": 4.5}, "L_jaw": {"x": -6.5, "y": -7.0, "z": 1.0}, "R_jaw": {"x": 6.5, "y": -7.0, "z": 1.0}, "chin": {"x": 0.0, "y": -11.5, "z": 2.0}}, "body_connections": [["L_ankle", "L_knee"], ["L_knee", "L_hip"], ["L_hip", "pelvis"], ["R_ankle", "R_knee"], ["R_knee", "R_hip"], ["R_hip", "pelvis"], ["pelvis", "waist"], ["waist", "chest"], ["chest", "neck"], ["neck", "head"], ["chest", "L_shoulder"], ["L_shoulder", "L_elbow"], ["L_elbow", "L_wrist"], ["chest", "R_shoulder"], ["R_shoulder", "R_elbow"], ["R_elbow", "R_wrist"]], "face_connections": [["top_head", "forehead"], ["forehead", "nose_bridge"], ["nose_bridge", "nose_tip"], ["nose_bridge", "L_eye_inner"], ["L_eye_inner", "L_pupil"], ["L_pupil", "L_eye_outer"], ["nose_bridge", "R_eye_inner"], ["R_eye_inner", "R_pupil"], ["R_pupil", "R_eye_outer"], ["L_brow_outer", "L_brow_arch"], ["L_brow_arch", "L_brow_inner"], ["R_brow_inner", "R_brow_arch"], ["R_brow_arch", "R_brow_outer"], ["nose_tip", "L_nostril"], ["nose_tip", "R_nostril"], ["upper_lip", "mouth_center"], ["mouth_center", "lower_lip"], ["mouth_center", "L_mouth_corner"], ["mouth_center", "R_mouth_corner"], ["L_mouth_corner", "L_jaw"], ["R_mouth_corner", "R_jaw"], ["L_jaw", "chin"], ["R_jaw", "chin"], ["L_cheek", "L_mouth_corner"], ["R_cheek", "R_mouth_corner"]], "face_deltas": {"attentive": {"L_brow_outer": [0, 0.3, 0], "R_brow_outer": [0, 0.3, 0]}, "curious": {"L_brow_arch": [0, 0.6, 0], "R_brow_arch": [0, 0.6, 0], "L_brow_inner": [0, 0.5, 0], "R_brow_inner": [0, 0.5, 0], "upper_lip": [0, 0.2, 0]}, "warmth": {"L_mouth_corner": [0, 0.6, 0.2], "R_mouth_corner": [0, 0.6, 0.2], "L_cheek": [0, 0.4, 0.3], "R_cheek": [0, 0.4, 0.3]}, "playful": {"L_mouth_corner": [0.5, 0.5, 0.2], "R_mouth_corner": [-0.5, 0.5, 0.2], "L_cheek": [0, 0.5, 0.3], "R_cheek": [0, 0.5, 0.3]}, "serious": {"L_brow_inner": [0, -0.5, 0.3], "R_brow_inner": [0, -0.5, 0.3], "L_brow_outer": [0, -0.3, 0], "R_brow_outer": [0, -0.3, 0], "mouth_center": [0, 0, -0.2]}, "boundary": {"L_brow_inner": [0, -0.4, 0.2], "R_brow_inner": [0, -0.4, 0.2], "L_mouth_corner": [0, -0.3, 0], "R_mouth_corner": [0, -0.3, 0], "mouth_center": [0, 0, -0.3]}, "delight": {"L_mouth_corner": [0, 0.8, 0.3], "R_mouth_corner": [0, 0.8, 0.3], "L_cheek": [0, 0.6, 0.4], "R_cheek": [0, 0.6, 0.4], "lower_lip": [0, -0.3, 0.2]}, "considering": {"L_brow_inner": [0, 0.4, 0], "R_brow_inner": [0, 0.4, 0], "mouth_center": [0, 0, -0.1]}}, "posture_deltas": {"settled": {}, "lean_in": {"head": [0, -1, 3], "neck": [0, -0.5, 2.5], "L_shoulder": [0, -0.5, 1.5], "R_shoulder": [0, -0.5, 1.5], "chest": [0, -0.5, 2]}, "lean_back": {"head": [0, 0, -3], "neck": [0, 0, -2.5], "L_shoulder": [0, 0, -1.5], "R_shoulder": [0, 0, -1.5], "chest": [0, 0, -2]}, "alert": {"head": [0, 2, 0], "neck": [0, 1.5, 0], "L_shoulder": [0, 1, -0.5], "R_shoulder": [0, 1, -0.5]}}, "expressions": ["attentive", "curious", "warmth", "playful", "serious", "boundary", "delight", "considering"]};
+
+const BODY = DATA.body, FACE = DATA.face;
+const FACE_Y_OFFSET = 157;   // nasion -> eye level (head top 169 - 12cm)
+const SCALE = 0.12;          // cm -> scene units
+
+function pt(p){ return { x:p.x*SCALE, y:p.y*SCALE, z:p.z*SCALE }; }
+
+// Build rest positions
+const bodyKeys = Object.keys(BODY);
+const faceKeys = Object.keys(FACE);
+const bodyRest = {}, faceRest = {};
+bodyKeys.forEach(k => { const p = pt(BODY[k]); bodyRest[k] = [p.x, p.y, p.z]; });
+faceKeys.forEach(k => { const p = pt(FACE[k]); faceRest[k] = [p.x, p.y + FACE_Y_OFFSET*SCALE, p.z]; });
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 0.1, 500);
+camera.position.set(0, 11, 26);
+camera.lookAt(0, 11, 0);
+
+const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById('stage').appendChild(renderer.domElement);
+
+// ambient + key light
+scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+const key = new THREE.PointLight(0xffd9a0, 1.2, 80); key.position.set(8, 18, 10); scene.add(key);
+const rim = new THREE.PointLight(0xff1a3c, 0.8, 60); rim.position.set(-8, 10, -6); scene.add(rim);
+
+// Body points (gold) + Face points (cyan)
+function makePoints(rest, color, size){
+    const n = Object.keys(rest).length;
+    const g = new THREE.BufferGeometry();
+    const pos = new Float32Array(n*3);
+    const keys = Object.keys(rest);
+    keys.forEach((k,i)=>{ pos[i*3]=rest[k][0]; pos[i*3+1]=rest[k][1]; pos[i*3+2]=rest[k][2]; });
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    const m = new THREE.PointsMaterial({ color, size, transparent:true, opacity:0.95, blending:THREE.AdditiveBlending, depthWrite:false });
+    return { points: new THREE.Points(g, m), keys, n, pos };
+}
+const bodyCloud = makePoints(bodyRest, 0xd4af37, 0.28);
+const faceCloud = makePoints(faceRest, 0x00f3ff, 0.20);
+scene.add(bodyCloud.points, faceCloud.points);
+
+// Connections (lines)
+function makeLines(conns, rest, prefix, color){
+    const pts = [];
+    conns.forEach(([a,b])=>{
+        const A = rest[prefix+a], B = rest[prefix+b];
+        if(A && B){ pts.push(A[0],A[1],A[2], B[0],B[1],B[2]); }
+    });
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts), 3));
+    const m = new THREE.LineBasicMaterial({ color, transparent:true, opacity:0.35, blending:THREE.AdditiveBlending });
+    return { lines: new THREE.LineSegments(g, m), pts, n: pts.length/6 };
+}
+const bodyLines = makeLines(DATA.body_connections, bodyRest, '', 0xd4af37);
+const faceLines = makeLines(DATA.face_connections, faceRest, '', 0x00f3ff);
+scene.add(bodyLines.lines, faceLines.lines);
+
+// Animation state
+const exprNames = ['attentive','curious','warmth','delight','considering','serious','boundary','playful'];
+const leadMs = { warmth:840, delight:500, playful:400, curious:120, considering:200 };
+let idx = 0, phase = 0, hold = 3.5, trans = 1.2;
+
+function applyFaceDeltas(expr){
+    const d = DATA.face_deltas[expr] || {};
+    const arr = faceCloud.pos.array;
+    faceKeys.forEach((k,i)=>{
+        const r = faceRest[k];
+        let dx=0, dy=0, dz=0;
+        if(d[k]){ dx=d[k][0]*SCALE; dy=d[k][1]*SCALE; dz=d[k][2]*SCALE; }
+        arr[i*3]   = r[0] + dx;
+        arr[i*3+1] = r[1] + dy;
+        arr[i*3+2] = r[2] + dz;
+    });
+    faceCloud.pos.needsUpdate = true;
+}
+
+function applyPosture(posture){
+    const d = DATA.posture_deltas[posture] || {};
+    const arr = bodyCloud.pos.array;
+    bodyKeys.forEach((k,i)=>{
+        const r = bodyRest[k];
+        let dx=0, dy=0, dz=0;
+        if(d[k]){ dx=d[k][0]*SCALE; dy=d[k][1]*SCALE; dz=d[k][2]*SCALE; }
+        arr[i*3]=r[0]+dx; arr[i*3+1]=r[1]+dy; arr[i*3+2]=r[2]+dz;
+    });
+    bodyCloud.pos.needsUpdate = true;
+}
+
+let t = 0;
+const clock = new THREE.Clock();
+function animate(){
+    requestAnimationFrame(animate);
+    const dt = clock.getDelta();
+    t += dt;
+    phase += dt;
+
+    // cycle expressions
+    if(phase >= hold + trans){ phase = 0; idx = (idx+1) % exprNames.length; }
+    const expr = exprNames[idx];
+    const cur = exprNames[(idx-1+exprNames.length)%exprNames.length];
+
+    // interpolate between previous and current expression deltas
+    const p = Math.min(1, Math.max(0, phase/trans));
+    const dCur = DATA.face_deltas[expr]||{}, dPrev = DATA.face_deltas[cur]||{};
+    const arr = faceCloud.pos.array;
+    faceKeys.forEach((k,i)=>{
+        const r = faceRest[k];
+        const a = dPrev[k]||[0,0,0], b = dCur[k]||[0,0,0];
+        const dx = (a[0]+(b[0]-a[0])*p)*SCALE;
+        const dy = (a[1]+(b[1]-a[1])*p)*SCALE;
+        const dz = (a[2]+(b[2]-a[2])*p)*SCALE;
+        arr[i*3]=r[0]+dx; arr[i*3+1]=r[1]+dy; arr[i*3+2]=r[2]+dz;
+    });
+    faceCloud.pos.needsUpdate = true;
+
+    // posture: lean_in during warmth/curious, settled otherwise
+    const posture = (expr==='warmth'||expr==='curious') ? 'lean_in' : 'settled';
+    applyPosture(posture);
+
+    // slow rotation for presence
+    scene.rotation.y = Math.sin(t*0.15)*0.12;
+    scene.rotation.x = Math.sin(t*0.08)*0.04;
+
+    // HUD
+    document.getElementById('expr').textContent = expr;
+    document.getElementById('lead').innerHTML = leadMs[expr]
+        ? 'predictive lead <b>' + leadMs[expr] + 'ms</b> — anticipation, not reaction'
+        : 'resting · the third state ⊙';
+
+    renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+</body>
+</html>
