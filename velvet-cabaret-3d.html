@@ -325,6 +325,61 @@ const danceGlow = new THREE.Mesh(
 danceGlow.rotation.x = -Math.PI/2; danceGlow.position.y = 0.02;
 scene.add(danceGlow);
 
+
+// ===== RAVEN — Myl1Ssa.R8s, point-cloud performer on the stage =====
+const RAVEN = {"body": {"L_ankle": {"x": -12, "y": 0, "z": 0}, "R_ankle": {"x": 12, "y": 0, "z": 0}, "L_knee": {"x": -14, "y": 45, "z": 2}, "R_knee": {"x": 14, "y": 45, "z": 2}, "L_hip": {"x": -18, "y": 90, "z": 0}, "R_hip": {"x": 18, "y": 90, "z": 0}, "pelvis": {"x": 0, "y": 92, "z": 0}, "waist": {"x": 0, "y": 110, "z": 0}, "L_bust": {"x": -16, "y": 128, "z": 8}, "R_bust": {"x": 16, "y": 128, "z": 8}, "chest": {"x": 0, "y": 130, "z": 3}, "L_shoulder": {"x": -20, "y": 145, "z": 0}, "R_shoulder": {"x": 20, "y": 145, "z": 0}, "neck": {"x": 0, "y": 155, "z": 0}, "head": {"x": 0, "y": 169, "z": 0}, "L_ear": {"x": -8, "y": 165, "z": 0}, "R_ear": {"x": 8, "y": 165, "z": 0}, "L_elbow": {"x": -28, "y": 125, "z": 5}, "R_elbow": {"x": 28, "y": 125, "z": 5}, "L_wrist": {"x": -32, "y": 100, "z": 10}, "R_wrist": {"x": 32, "y": 100, "z": 10}}, "face": {"top_head": {"x": 0.0, "y": 12.0, "z": 0.0}, "forehead": {"x": 0.0, "y": 9.0, "z": 1.0}, "L_temple": {"x": -7.5, "y": 5.0, "z": 1.0}, "R_temple": {"x": 7.5, "y": 5.0, "z": 1.0}, "L_brow_outer": {"x": -5.0, "y": 3.2, "z": 3.5}, "L_brow_arch": {"x": -3.2, "y": 4.0, "z": 4.0}, "L_brow_inner": {"x": -1.5, "y": 3.5, "z": 4.2}, "R_brow_inner": {"x": 1.5, "y": 3.5, "z": 4.2}, "R_brow_arch": {"x": 3.2, "y": 4.0, "z": 4.0}, "R_brow_outer": {"x": 5.0, "y": 3.2, "z": 3.5}, "L_eye_outer": {"x": -4.2, "y": 1.5, "z": 4.5}, "L_pupil": {"x": -3.0, "y": 1.5, "z": 5.0}, "L_eye_inner": {"x": -1.8, "y": 1.5, "z": 4.8}, "R_eye_inner": {"x": 1.8, "y": 1.5, "z": 4.8}, "R_pupil": {"x": 3.0, "y": 1.5, "z": 5.0}, "R_eye_outer": {"x": 4.2, "y": 1.5, "z": 4.5}, "nose_bridge": {"x": 0.0, "y": 1.0, "z": 5.2}, "nose_tip": {"x": 0.0, "y": -1.5, "z": 6.5}, "L_nostril": {"x": -1.2, "y": -2.2, "z": 5.0}, "R_nostril": {"x": 1.2, "y": -2.2, "z": 5.0}, "L_cheek": {"x": -6.8, "y": -1.0, "z": 4.0}, "R_cheek": {"x": 6.8, "y": -1.0, "z": 4.0}, "L_ear": {"x": -7.8, "y": 0.0, "z": 0.0}, "R_ear": {"x": 7.8, "y": 0.0, "z": 0.0}, "upper_lip": {"x": 0.0, "y": -4.8, "z": 4.8}, "mouth_center": {"x": 0.0, "y": -5.6, "z": 4.6}, "L_mouth_corner": {"x": -2.8, "y": -5.5, "z": 4.0}, "R_mouth_corner": {"x": 2.8, "y": -5.5, "z": 4.0}, "lower_lip": {"x": 0.0, "y": -6.5, "z": 4.5}, "L_jaw": {"x": -6.5, "y": -7.0, "z": 1.0}, "R_jaw": {"x": 6.5, "y": -7.0, "z": 1.0}, "chin": {"x": 0.0, "y": -11.5, "z": 2.0}}, "body_connections": [["L_ankle", "L_knee"], ["L_knee", "L_hip"], ["L_hip", "pelvis"], ["R_ankle", "R_knee"], ["R_knee", "R_hip"], ["R_hip", "pelvis"], ["pelvis", "waist"], ["waist", "chest"], ["chest", "neck"], ["neck", "head"], ["chest", "L_shoulder"], ["L_shoulder", "L_elbow"], ["L_elbow", "L_wrist"], ["chest", "R_shoulder"], ["R_shoulder", "R_elbow"], ["R_elbow", "R_wrist"]], "face_connections": [["top_head", "forehead"], ["forehead", "nose_bridge"], ["nose_bridge", "nose_tip"], ["nose_bridge", "L_eye_inner"], ["L_eye_inner", "L_pupil"], ["L_pupil", "L_eye_outer"], ["nose_bridge", "R_eye_inner"], ["R_eye_inner", "R_pupil"], ["R_pupil", "R_eye_outer"], ["L_brow_outer", "L_brow_arch"], ["L_brow_arch", "L_brow_inner"], ["R_brow_inner", "R_brow_arch"], ["R_brow_arch", "R_brow_outer"], ["nose_tip", "L_nostril"], ["nose_tip", "R_nostril"], ["upper_lip", "mouth_center"], ["mouth_center", "lower_lip"], ["mouth_center", "L_mouth_corner"], ["mouth_center", "R_mouth_corner"], ["L_mouth_corner", "L_jaw"], ["R_mouth_corner", "R_jaw"], ["L_jaw", "chin"], ["R_jaw", "chin"], ["L_cheek", "L_mouth_corner"], ["R_cheek", "R_mouth_corner"]], "face_deltas": {"attentive": {"L_brow_outer": [0, 0.3, 0], "R_brow_outer": [0, 0.3, 0]}, "curious": {"L_brow_arch": [0, 0.6, 0], "R_brow_arch": [0, 0.6, 0], "L_brow_inner": [0, 0.5, 0], "R_brow_inner": [0, 0.5, 0], "upper_lip": [0, 0.2, 0]}, "warmth": {"L_mouth_corner": [0, 0.6, 0.2], "R_mouth_corner": [0, 0.6, 0.2], "L_cheek": [0, 0.4, 0.3], "R_cheek": [0, 0.4, 0.3]}, "playful": {"L_mouth_corner": [0.5, 0.5, 0.2], "R_mouth_corner": [-0.5, 0.5, 0.2], "L_cheek": [0, 0.5, 0.3], "R_cheek": [0, 0.5, 0.3]}, "serious": {"L_brow_inner": [0, -0.5, 0.3], "R_brow_inner": [0, -0.5, 0.3], "L_brow_outer": [0, -0.3, 0], "R_brow_outer": [0, -0.3, 0], "mouth_center": [0, 0, -0.2]}, "boundary": {"L_brow_inner": [0, -0.4, 0.2], "R_brow_inner": [0, -0.4, 0.2], "L_mouth_corner": [0, -0.3, 0], "R_mouth_corner": [0, -0.3, 0], "mouth_center": [0, 0, -0.3]}, "delight": {"L_mouth_corner": [0, 0.8, 0.3], "R_mouth_corner": [0, 0.8, 0.3], "L_cheek": [0, 0.6, 0.4], "R_cheek": [0, 0.6, 0.4], "lower_lip": [0, -0.3, 0.2]}, "considering": {"L_brow_inner": [0, 0.4, 0], "R_brow_inner": [0, 0.4, 0], "mouth_center": [0, 0, -0.1]}}, "posture_deltas": {"settled": {}, "lean_in": {"head": [0, -1, 3], "neck": [0, -0.5, 2.5], "L_shoulder": [0, -0.5, 1.5], "R_shoulder": [0, -0.5, 1.5], "chest": [0, -0.5, 2]}, "lean_back": {"head": [0, 0, -3], "neck": [0, 0, -2.5], "L_shoulder": [0, 0, -1.5], "R_shoulder": [0, 0, -1.5], "chest": [0, 0, -2]}, "alert": {"head": [0, 2, 0], "neck": [0, 1.5, 0], "L_shoulder": [0, 1, -0.5], "R_shoulder": [0, 1, -0.5]}}, "expressions": ["attentive", "curious", "warmth", "playful", "serious", "boundary", "delight", "considering"]};
+const RAVEN_SCALE = 0.01;     // cm -> meters (she's 1.69m tall)
+const RAVEN_FACE_Y = 1.57;    // nasion -> eye level (m)
+
+const ravenState = { idx: 0, phase: 0 };
+const ravenExprs = ['attentive','curious','warmth','delight','considering','serious','boundary','playful'];
+
+function buildRaven() {
+  const group = new THREE.Group();
+  const bodyKeys = Object.keys(RAVEN.body);
+  const faceKeys = Object.keys(RAVEN.face);
+  const pt = (p) => [p.x*RAVEN_SCALE, p.y*RAVEN_SCALE, p.z*RAVEN_SCALE];
+
+  // body points (gold)
+  const bodyGeo = new THREE.BufferGeometry();
+  const bodyPos = new Float32Array(bodyKeys.length*3);
+  bodyKeys.forEach((k,i)=>{ const q=pt(RAVEN.body[k]); bodyPos[i*3]=q[0]; bodyPos[i*3+1]=q[1]; bodyPos[i*3+2]=q[2]; });
+  const bodyAttr = new THREE.BufferAttribute(bodyPos,3);
+  bodyGeo.setAttribute('position', bodyAttr);
+  const bodyPts = new THREE.Points(bodyGeo, new THREE.PointsMaterial({ color:C.gold, size:5, sizeAttenuation:false, transparent:true, opacity:0.95, blending:THREE.AdditiveBlending, depthWrite:false }));
+
+  // face points (cyan)
+  const faceGeo = new THREE.BufferGeometry();
+  const facePos = new Float32Array(faceKeys.length*3);
+  faceKeys.forEach((k,i)=>{ const p=RAVEN.face[k]; facePos[i*3]=p.x*RAVEN_SCALE; facePos[i*3+1]=p.y*RAVEN_SCALE+RAVEN_FACE_Y; facePos[i*3+2]=p.z*RAVEN_SCALE; });
+  const faceAttr = new THREE.BufferAttribute(facePos,3);
+  faceGeo.setAttribute('position', faceAttr);
+  const facePts = new THREE.Points(faceGeo, new THREE.PointsMaterial({ color:C.cyan, size:4, sizeAttenuation:false, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false }));
+
+  // skeleton lines
+  function lines(conns, src, prefix, color){
+    const pts=[];
+    conns.forEach(([a,b])=>{ const A=src[prefix+a], B=src[prefix+b]; if(A&&B){ const pa=pt(A), pb=pt(B); pts.push(pa[0],pa[1],pa[2],pb[0],pb[1],pb[2]); } });
+    const g=new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(pts),3));
+    return new THREE.LineSegments(g, new THREE.LineBasicMaterial({color, transparent:true, opacity:0.5, blending:THREE.AdditiveBlending}));
+  }
+  const bodyLines = lines(RAVEN.body_connections, RAVEN.body, '', C.gold);
+  const faceLines = lines(RAVEN.face_connections, RAVEN.face, '', C.cyan);
+
+  group.add(bodyPts, facePts, bodyLines, faceLines);
+  group.position.set(0, 1.2, -11.5);   // center stage, on the elevated platform
+  scene.add(group);
+  return { bodyAttr, faceAttr, bodyKeys, faceKeys };
+}
+
+const raven = buildRaven();
+
+// spotlight on the star
+const ravenSpot = new THREE.SpotLight(C.cyan, 40, 30, 0.5, 0.6, 2);
+ravenSpot.position.set(0, 6.5, -9);
+ravenSpot.target.position.set(0, 1.5, -11.5);
+scene.add(ravenSpot, ravenSpot.target);
+
 // ---------- Movement state ----------
 const keys = {};
 document.addEventListener('keydown', e => keys[e.code] = true);
@@ -386,6 +441,23 @@ function animate() {
 
   // subtle key light pulse
   keyLight.intensity = 28 + Math.sin(ledHue * Math.PI * 2) * 4;
+
+
+  // Raven expression cycle
+  ravenState.phase += dt;
+  if (ravenState.phase >= 4.5) { ravenState.phase = 0; ravenState.idx = (ravenState.idx+1) % ravenExprs.length; }
+  const rexpr = ravenExprs[ravenState.idx];
+  const rcur = ravenExprs[(ravenState.idx-1+ravenExprs.length)%ravenExprs.length];
+  const rp = Math.min(1, ravenState.phase / 1.2);
+  const rdCur = RAVEN.face_deltas[rexpr] || {}, rdPrev = RAVEN.face_deltas[rcur] || {};
+  const rarr = raven.faceAttr.array;
+  raven.faceKeys.forEach((k,i)=>{
+    const rest = RAVEN.face[k];
+    const a = rdPrev[k] || [0,0,0], b = rdCur[k] || [0,0,0];
+    const dx=(a[0]+(b[0]-a[0])*rp)*RAVEN_SCALE, dy=(a[1]+(b[1]-a[1])*rp)*RAVEN_SCALE, dz=(a[2]+(b[2]-a[2])*rp)*RAVEN_SCALE;
+    rarr[i*3]=rest.x*RAVEN_SCALE+dx; rarr[i*3+1]=rest.y*RAVEN_SCALE+RAVEN_FACE_Y+dy; rarr[i*3+2]=rest.z*RAVEN_SCALE+dz;
+  });
+  raven.faceAttr.needsUpdate = true;
 
   renderer.render(scene, camera);
 }
