@@ -48,8 +48,6 @@
   }
 }
 </script>
-  <link rel="stylesheet" href="music/player.css">
-  <script src="music/player.js"></script>
 </head>
 <body>
 
@@ -59,7 +57,7 @@
   <div class="hint">CLICK TO ENTER</div>
   <div class="keys">WASD — move &nbsp;·&nbsp; MOUSE — look &nbsp;·&nbsp; ESC — release</div>
 </div>
-<div id="hud">WASD move · MOUSE look · M music · N/B tracks · L lights · ESC release</div>
+<div id="hud">WASD move · MOUSE look · M music · N/B skip · L house lights · ESC release</div>
 
 <script type="module">
 import * as THREE from 'three';
@@ -170,6 +168,7 @@ ravenVideo.addEventListener('ended', () => {
   ravenClipIdx = (ravenClipIdx + 1) % ravenClips.length;
   ravenVideo.src = ravenClips[ravenClipIdx];
   ravenVideo.play().catch(()=>{});
+  music.play().catch(()=>{});
 });
 ravenVideo.src = ravenClips[0];
 ravenVideo.play().catch(()=>{});
@@ -534,14 +533,28 @@ const keys = {};
 document.addEventListener('keydown', e => keys[e.code] = true);
 document.addEventListener('keyup', e => keys[e.code] = false);
 
-// Keyboard controls — work while moving (pointer-lock keeps the mouse for looking)
-// L = lights · M = music play/pause · N = next track · B = previous track
-let lightsLow = false;
+// Keyboard controls — no UI player. M = music, N/B = skip, L = house lights up.
+const musicTracks = [
+  'velvet-cabaret', 'cold-brew-conspiracy', 'cold-brew-conspiracy-v2',
+  'curdistan-v2', 'curdistan-v3', 'curdistan-v4',
+  'falling-through-the-blue', 'falling-through-the-blue-v2', 'falling-through-the-blue-v4',
+  'quantum-antenna-power-up', 'miles-first-set', 'open-mic-night-01', 'open-mic-close'
+];
+let musicIdx = 0;
+const music = new Audio();
+music.volume = 0.2;
+function loadMusic(i) { musicIdx = (i + musicTracks.length) % musicTracks.length; music.src = `music/tracks/${musicTracks[musicIdx]}.mp3`; music.play().catch(()=>{}); }
+function nextTrack() { loadMusic(musicIdx + 1); }
+function prevTrack() { loadMusic(musicIdx - 1); }
+music.addEventListener('ended', () => nextTrack());
+loadMusic(0);   // autoplay (may be blocked until first interaction)
+
+let houseLights = false;   // default: moody/dim — L brings the house lights up
 document.addEventListener('keydown', e => {
-  if (e.code === 'KeyL') lightsLow = !lightsLow;
-  if (e.code === 'KeyM' && window.TappyMusicPlayer) window.TappyMusicPlayer.toggle();
-  if (e.code === 'KeyN' && window.TappyMusicPlayer) window.TappyMusicPlayer.next();
-  if (e.code === 'KeyB' && window.TappyMusicPlayer) window.TappyMusicPlayer.prev();
+  if (e.code === 'KeyL') houseLights = !houseLights;
+  if (e.code === 'KeyM') { music.paused ? music.play().catch(()=>{}) : music.pause(); }
+  if (e.code === 'KeyN') nextTrack();
+  if (e.code === 'KeyB') prevTrack();
 });
 
 const SPEED = 6.0;
@@ -599,8 +612,8 @@ function animate() {
   // (LED wall now plays Raven's video reel)
 
   // subtle key light pulse
-  keyLight.intensity = lightsLow ? 4 : (28 + Math.sin(ledHue * Math.PI * 2) * 4);
-  ambient.intensity = lightsLow ? 0.5 : 1.6;
+  keyLight.intensity = houseLights ? (28 + Math.sin(ledHue * Math.PI * 2) * 4) : 4;
+  ambient.intensity = houseLights ? 1.6 : 0.5;
 
 
   directRaven(dt);
