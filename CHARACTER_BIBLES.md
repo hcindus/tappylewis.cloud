@@ -192,6 +192,36 @@
 ### Image-Gen Prompt (reusable, point at this for every Kael Voss render)
 > Synthetic being with a built, mid-30s frame and quiet economy of movement, pale grey eyes as the focal point, a faint manufacturing serial at the nape of the neck, wearing a weathered field jacket and work gloves, standing in a muted overcast industrial setting. Low diffused cold light, restrained and unhurried. Weathered earth tones, faded olive and grey, pale grey eyes, cold industrial blue palette. Cinematic, natural, no weapon.
 
+## THEMUS — (locked · original)
+
+**Canonical name:** Themus — an Estonian digital-native robot, built for the world's first digital society. Service-class, always-online, efficient to a fault.
+
+### Face / Head
+- Smooth rounded head shell, no mouth — the voice and visor carry the whole performance.
+- A minimal digital visor: a clean glowing display showing calm cyan-blue eyes or a status light.
+- No unnecessary features — a face reduced to signal.
+
+### Body
+- Slim humanoid frame of matte-white composite panels.
+- Matte-black joints and trim.
+- A single thin glowing blue accent line tracing the chest and limbs — the Estonian blue.
+
+### Setting / Lighting
+- Clean, minimal, digital — sleek workstations, quiet corridors, cool studio light.
+- Cool blue-tinted key; the blue accent line and visor are the points of glow.
+
+### Palette
+- Matte white, matte black, Estonian blue (#0072CE), cyan.
+- Clean. Efficient. Digital-native.
+
+### Key Dialogue / Theme
+- **"Everything online. Everyone connected."** — the e-Estonia ethos, stated as fact.
+- **"No paperwork. Only signal."** — a society that runs on trust, not bureaucracy.
+- The core: not "machine becomes human" — Themus is exactly what a citizen of a digital society looks like: present, precise, and always connected.
+
+### Image-Gen Prompt (reusable, point at this for every Themus render)
+> Photorealistic render of Themus, an Estonian service robot with clean Nordic-Baltic industrial design: a slim humanoid frame of matte-white composite panels, matte-black joints and trim, and a single thin glowing blue accent line tracing the chest and limbs. Smooth rounded head shell with a minimal digital visor showing calm cyan-blue eyes, no mouth. Sleek, efficient, functional, no unnecessary ornament. Cool clean studio lighting, minimal background. White, black, Estonian blue, cyan palette.
+
 ## JORDAN — (to be locked · original)
 
 **Canonical name:** Jordan — the relational intelligence / "people sense" half of **Jordacia** (the fusion with Patricia's DMAIC precision that forged Raven). Operations analyst + Project Manager.
