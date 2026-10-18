@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>International Fixed Calendar — 13-Month Perpetual Calendar</title>
+<style>
+  :root { --bg:#0f172a; --card:#1e293b; --bord:#334155; --txt:#e2e8f0; --muted:#94a3b8; --accent:#6366f1; --friday:#ef4444; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--txt); line-height:1.6; }
+  .h { background:linear-gradient(135deg,#1e3a5f,#2563eb); padding:40px 20px; text-align:center; }
+  .h h1 { font-size:30px; margin-bottom:8px; }
+  .h p { color:#93c5fd; }
+  .wrap { max-width:1100px; margin:0 auto; padding:30px 20px; }
+  .today { background:var(--card); border:1px solid var(--bord); border-radius:12px; padding:24px; text-align:center; margin-bottom:24px; }
+  .today .big { font-size:28px; font-weight:700; color:#60a5fa; margin-top:8px; }
+  .card { background:var(--card); border:1px solid var(--bord); border-radius:12px; padding:24px; margin-bottom:24px; }
+  .card h2 { font-size:20px; margin-bottom:16px; color:var(--accent); }
+  input { background:#0f172a; border:1px solid var(--bord); color:var(--txt); padding:10px 12px; border-radius:8px; font-size:15px; margin:4px; }
+  button { background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; border:none; padding:12px 20px; border-radius:8px; font-weight:600; cursor:pointer; margin:8px 4px; }
+  button:hover { opacity:.9; }
+  .result { font-size:22px; font-weight:700; color:#22c55e; margin-top:12px; }
+  .months { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+  .month { background:var(--card); border:1px solid var(--bord); border-radius:10px; padding:16px; }
+  .month h3 { text-align:center; font-size:16px; margin-bottom:8px; color:var(--txt); }
+  .month table { width:100%; border-collapse:collapse; font-size:12px; }
+  .month th { color:var(--muted); font-weight:600; padding:4px; }
+  .month td { text-align:center; padding:4px; border-radius:4px; }
+  .month td.friday { background:rgba(239,68,68,.2); color:#fca5a5; font-weight:700; }
+  .month td.other { color:var(--muted); }
+  .legend { text-align:center; margin-top:16px; color:var(--muted); font-size:13px; }
+  .friday-mark { color:var(--friday); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="h">
+  <h1>International Fixed Calendar</h1>
+  <p>13 months · 28 days each · every date on the same weekday forever</p>
+</div>
+<div class="wrap">
+
+  <div class="today">
+    <div style="color:var(--muted)">Today in the 13-month calendar</div>
+    <div class="big" id="today-ifc">—</div>
+    <div style="color:var(--muted);font-size:13px;margin-top:4px" id="today-greg">—</div>
+  </div>
+
+  <div class="card">
+    <h2>Gregorian → IFC Converter</h2>
+    <input type="date" id="g-date" value="2026-10-18">
+    <button onclick="convertGtoI()">Convert →</button>
+    <div class="result" id="conv-result">—</div>
+  </div>
+
+  <div class="card">
+    <h2>Perpetual Calendar (13 months)</h2>
+    <div class="months" id="months"></div>
+    <div class="legend"><span class="friday-mark">★13★</span> = Friday the 13th — occurs in <strong>all 13 months</strong></div>
+  </div>
+
+</div>
+
+<script>
+const MONTHS = ["January","February","March","April","May","June","Sol","July","August","September","October","November","December"];
+const WEEKS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+const WEEKDAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+
+function isLeap(y){ return (y%4===0 && y%100!==0) || (y%400===0); }
+
+function gToI(y,m,d){
+  const start = new Date(y,0,1);
+  const cur = new Date(y,m-1,d);
+  let doy = Math.floor((cur - start)/86400000) + 1;
+  const leap = isLeap(y);
+  if((leap && doy===366)||(!leap && doy===365)) return {year:y,month:null,day:null,special:"Year Day"};
+  if(leap && doy===169) return {year:y,month:null,day:null,special:"Leap Day"};
+  let adj = doy;
+  if(leap && doy>169) adj = doy-1;
+  const mi = Math.floor((adj-1)/28);
+  const dd = (adj-1)%28 + 1;
+  return {year:y, month:MONTHS[mi], day:dd, special:null};
+}
+
+function fmt(ifc){
+  if(ifc.special==="Year Day") return `Year Day, ${ifc.year}`;
+  if(ifc.special==="Leap Day") return `Leap Day, ${ifc.year}`;
+  const wd = WEEKDAYS[(ifc.day-1)%7];
+  return `${wd}, ${ifc.month} ${ifc.day}, ${ifc.year}`;
+}
+
+function todayIFC(){
+  const t = new Date();
+  const ifc = gToI(t.getFullYear(), t.getMonth()+1, t.getDate());
+  document.getElementById('today-ifc').textContent = fmt(ifc);
+  document.getElementById('today-greg').textContent = `Gregorian: ${t.toDateString()}`;
+}
+
+function convertGtoI(){
+  const v = document.getElementById('g-date').value;
+  if(!v){ document.getElementById('conv-result').textContent='Pick a date'; return; }
+  const [y,m,d] = v.split('-').map(Number);
+  const ifc = gToI(y,m,d);
+  document.getElementById('conv-result').textContent = fmt(ifc);
+}
+
+function renderCalendar(){
+  const wrap = document.getElementById('months');
+  let html = '';
+  MONTHS.forEach((mn)=>{
+    html += `<div class="month"><h3>${mn}</h3><table>`;
+    html += `<tr>${WEEKS.map(w=>`<th>${w}</th>`).join('')}</tr>`;
+    for(let r=0;r<4;r++){
+      html += '<tr>';
+      for(let c=0;c<7;c++){
+        const day = r*7 + c + 1;
+        const cls = day===13 ? 'friday' : 'other';
+        html += `<td class="${cls}">${day}</td>`;
+      }
+      html += '</tr>';
+    }
+    html += '</table></div>';
+  });
+  wrap.innerHTML = html;
+}
+
+todayIFC();
+renderCalendar();
+</script>
+</body>
+</html>
